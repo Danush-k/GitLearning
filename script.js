@@ -463,6 +463,23 @@ function setupScrollReveal() {
   });
 }
 
+function setupBackToTop() {
+  const btn = document.getElementById('back-to-top');
+  if (!btn) return;
+
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 400) {
+      btn.classList.add('show');
+    } else {
+      btn.classList.remove('show');
+    }
+  });
+
+  btn.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+}
+
 
 // ─────────────────────────────────────────────
 // INIT
@@ -476,7 +493,9 @@ document.addEventListener('DOMContentLoaded', () => {
   renderQuiz();
   setupNavbar();
   setupCommandTabs();
+  setupBackToTop();
 
   // Setup scroll reveal after a tick so elements exist
   setTimeout(setupScrollReveal, 100);
 });
+
