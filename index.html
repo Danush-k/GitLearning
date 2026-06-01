@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Learn Git & GitHub basics through an interactive, beautifully designed guide for beginners." />
+  <title>GitLearning — Learn GitHub Basics</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav id="navbar" class="navbar">
+    <div class="nav-container">
+      <a href="#hero" class="nav-logo">
+        <span class="logo-icon">⎇</span>
+        <span>GitLearning</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#basics" class="nav-link">Basics</a></li>
+        <li><a href="#commands" class="nav-link">Commands</a></li>
+        <li><a href="#workflow" class="nav-link">Workflow</a></li>
+        <li><a href="#cheatsheet" class="nav-link">Cheatsheet</a></li>
+        <li><a href="#quiz" class="nav-link">Quiz</a></li>
+      </ul>
+      <a href="https://github.com" target="_blank" class="btn btn-sm">Open GitHub ↗</a>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section id="hero" class="hero">
+    <div class="hero-bg">
+      <div class="hero-orb orb-1"></div>
+      <div class="hero-orb orb-2"></div>
+      <div class="hero-orb orb-3"></div>
+    </div>
+    <div class="container hero-content">
+      <div class="hero-badge">🚀 Beginner Friendly</div>
+      <h1 class="hero-title">Master <span class="gradient-text">Git & GitHub</span><br/>in One Page</h1>
+      <p class="hero-subtitle">From your first <code>git init</code> to pushing code like a pro — learn version control visually and interactively.</p>
+      <div class="hero-actions">
+        <a href="#basics" class="btn btn-primary">Start Learning</a>
+        <a href="#cheatsheet" class="btn btn-outline">View Cheatsheet</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat"><span class="stat-num">6</span><span class="stat-label">Topics</span></div>
+        <div class="stat-divider"></div>
+        <div class="stat"><span class="stat-num">20+</span><span class="stat-label">Commands</span></div>
+        <div class="stat-divider"></div>
+        <div class="stat"><span class="stat-num">10</span><span class="stat-label">Quiz Questions</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Git Basics Section -->
+  <section id="basics" class="section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Chapter 1</span>
+        <h2 class="section-title">Git Basics</h2>
+        <p class="section-desc">Understand the core concepts that power version control.</p>
+      </div>
+      <div class="concepts-grid" id="concepts-grid">
+        <!-- Cards injected by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Commands Section -->
+  <section id="commands" class="section section-dark">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Chapter 2</span>
+        <h2 class="section-title">Essential Commands</h2>
+        <p class="section-desc">Click any command card to copy it to your clipboard.</p>
+      </div>
+      <div class="commands-tabs">
+        <button class="tab-btn active" data-tab="setup" id="tab-setup">Setup</button>
+        <button class="tab-btn" data-tab="basic" id="tab-basic">Basic</button>
+        <button class="tab-btn" data-tab="branch" id="tab-branch">Branching</button>
+        <button class="tab-btn" data-tab="remote" id="tab-remote">Remote</button>
+      </div>
+      <div class="commands-grid" id="commands-grid">
+        <!-- Command cards injected by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Workflow Section -->
+  <section id="workflow" class="section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Chapter 3</span>
+        <h2 class="section-title">The Git Workflow</h2>
+        <p class="section-desc">Understand how files move through Git's three states.</p>
+      </div>
+      <div class="workflow-diagram" id="workflow-diagram">
+        <!-- Diagram injected by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Cheatsheet Section -->
+  <section id="cheatsheet" class="section section-dark">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Quick Reference</span>
+        <h2 class="section-title">Git Cheatsheet</h2>
+        <p class="section-desc">Your go-to reference for all essential Git commands.</p>
+      </div>
+      <div class="cheatsheet-grid" id="cheatsheet-grid">
+        <!-- Cheatsheet injected by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Quiz Section -->
+  <section id="quiz" class="section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Test Yourself</span>
+        <h2 class="section-title">Mini Quiz</h2>
+        <p class="section-desc">How much did you learn? Take the quiz and find out!</p>
+      </div>
+      <div class="quiz-container" id="quiz-container">
+        <!-- Quiz injected by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-content">
+      <div class="footer-logo">
+        <span class="logo-icon">⎇</span>
+        <span>GitLearning</span>
+      </div>
+      <p class="footer-text">Built to make Git learning joyful. Happy committing! 🎉</p>
+      <a href="https://github.com/Danush-k/GitLearning" target="_blank" class="btn btn-outline btn-sm">Star on GitHub ⭐</a>
+    </div>
+  </footer>
+
+  <div id="toast" class="toast" aria-live="polite"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
