@@ -236,16 +236,42 @@ function renderConcepts() {
   `).join('');
 }
 
-function renderCommands(tab = 'setup') {
+function renderCommands(tab = 'setup', filterQuery = '') {
   const grid = document.getElementById('commands-grid');
-  const cmds = commandsData[tab] || [];
-  grid.innerHTML = cmds.map(c => `
-    <div class="cmd-card" onclick="copyCommand(this, '${c.cmd.replace(/'/g, "\\'")}')" title="Click to copy">
-      <div class="cmd-command">${escapeHtml(c.cmd)}</div>
-      <div class="cmd-desc">${c.desc}</div>
-      <span class="copy-hint">📋 Click to copy</span>
-    </div>
-  `).join('');
+  let cmds = commandsData[tab] || [];
+
+  if (filterQuery) {
+    const query = filterQuery.toLowerCase();
+    cmds = cmds.filter(c => c.cmd.toLowerCase().includes(query) || c.desc.toLowerCase().includes(query));
+  }
+
+  if (cmds.length === 0) {
+    grid.innerHTML = `
+      <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--clr-text-muted);">
+        🔍 No commands found matching "${escapeHtml(filterQuery)}"
+      </div>
+    `;
+    return;
+  }
+
+  grid.innerHTML = cmds.map(c => {
+    let cmdDisplay = escapeHtml(c.cmd);
+    let descDisplay = escapeHtml(c.desc);
+
+    if (filterQuery) {
+      const regex = new RegExp(`(${escapeHtml(filterQuery)})`, 'gi');
+      cmdDisplay = cmdDisplay.replace(regex, '<mark class="search-highlight">$1</mark>');
+      descDisplay = descDisplay.replace(regex, '<mark class="search-highlight">$1</mark>');
+    }
+
+    return `
+      <div class="cmd-card" onclick="copyCommand(this, '${c.cmd.replace(/'/g, "\\'")}')" title="Click to copy">
+        <div class="cmd-command">${cmdDisplay}</div>
+        <div class="cmd-desc">${descDisplay}</div>
+        <span class="copy-hint">📋 Click to copy</span>
+      </div>
+    `;
+  }).join('');
 }
 
 function renderWorkflow() {
@@ -434,12 +460,59 @@ function setupNavbar() {
 
 function setupCommandTabs() {
   const tabs = document.querySelectorAll('.tab-btn');
+  const searchInput = document.getElementById('commands-search');
   tabs.forEach(btn => {
     btn.addEventListener('click', () => {
       tabs.forEach(t => t.classList.remove('active'));
       btn.classList.add('active');
+      if (searchInput) searchInput.value = '';
       renderCommands(btn.dataset.tab);
+      filterCheatsheet('');
     });
+  });
+}
+
+function setupSearch() {
+  const searchInput = document.getElementById('commands-search');
+  if (!searchInput) return;
+
+  searchInput.addEventListener('input', (e) => {
+    const query = e.target.value;
+    const activeTabBtn = document.querySelector('.tab-btn.active');
+    const activeTab = activeTabBtn ? activeTabBtn.dataset.tab : 'setup';
+    renderCommands(activeTab, query);
+    filterCheatsheet(query);
+  });
+}
+
+function filterCheatsheet(query) {
+  const cleanQuery = query.toLowerCase().trim();
+  const cheatGroups = document.querySelectorAll('.cheat-group');
+
+  cheatGroups.forEach(group => {
+    const rows = group.querySelectorAll('.cheat-row');
+    let visibleRows = 0;
+
+    rows.forEach(row => {
+      const cmdSpan = row.querySelector('.cheat-cmd');
+      const labelSpan = row.querySelector('.cheat-label');
+      
+      const cmdText = cmdSpan ? cmdSpan.textContent.toLowerCase() : '';
+      const labelText = labelSpan ? labelSpan.textContent.toLowerCase() : '';
+
+      if (cmdText.includes(cleanQuery) || labelText.includes(cleanQuery)) {
+        row.style.display = '';
+        visibleRows++;
+      } else {
+        row.style.display = 'none';
+      }
+    });
+
+    if (visibleRows > 0 || cleanQuery === '') {
+      group.style.display = '';
+    } else {
+      group.style.display = 'none';
+    }
   });
 }
 
@@ -524,6 +597,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderQuiz();
   setupNavbar();
   setupCommandTabs();
+  setupSearch();
   setupBackToTop();
 
   // Setup scroll reveal after a tick so elements exist
