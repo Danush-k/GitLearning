@@ -328,12 +328,13 @@ function renderQuiz() {
 
   const q = quizData[current];
   const pct = Math.round((current / quizData.length) * 100);
+  const highScore = localStorage.getItem('quiz-highscore') || 0;
 
   container.innerHTML = `
     <div class="quiz-card">
       <div class="quiz-progress">
         <div class="quiz-bar"><div class="quiz-bar-fill" style="width:${pct}%"></div></div>
-        <span class="quiz-counter">${current + 1} / ${quizData.length}</span>
+        <span class="quiz-counter">Q: ${current + 1} / ${quizData.length} | 🏆 Best: ${highScore}</span>
       </div>
       <div class="quiz-question">${q.q}</div>
       <div class="quiz-options" id="quiz-options">
@@ -384,8 +385,22 @@ function renderQuizResult(container) {
   const { score } = quizState;
   const total = quizData.length;
   const pct = Math.round((score / total) * 100);
+  
+  let oldHighScore = parseInt(localStorage.getItem('quiz-highscore') || '0', 10);
+  let isNewHighScore = false;
+  
+  if (score > oldHighScore) {
+    localStorage.setItem('quiz-highscore', score);
+    isNewHighScore = true;
+  }
+  
+  const highScore = localStorage.getItem('quiz-highscore') || score;
+  
   let emoji, msg;
-  if (pct === 100) { emoji = '🏆'; msg = "Perfect score! You're a Git master!"; }
+  if (isNewHighScore) {
+    emoji = '👑';
+    msg = `New Personal Best! You got ${score} out of ${total}!`;
+  } else if (pct === 100) { emoji = '🏆'; msg = "Perfect score! You're a Git master!"; }
   else if (pct >= 80) { emoji = '🎉'; msg = "Great job! You know your Git well!"; }
   else if (pct >= 60) { emoji = '👍'; msg = "Good effort! Keep practicing!"; }
   else { emoji = '📚'; msg = "Keep learning — you'll get there!"; }
@@ -398,10 +413,23 @@ function renderQuizResult(container) {
           ${score}/${total}
         </div>
         <div class="result-msg">${msg}</div>
+        <div class="result-highscore" style="font-size: 0.95rem; color: var(--clr-text-muted); margin-bottom: 24px;">
+          🏆 Personal Best: ${highScore} / ${total}
+          ${highScore > 0 ? `<button class="btn btn-sm btn-outline" style="margin-left:12px; padding: 4px 10px; font-size:0.75rem; vertical-align: middle;" onclick="resetHighScore()">Reset 🔄</button>` : ''}
+        </div>
         <button class="btn btn-primary" onclick="restartQuiz()">Try Again 🔄</button>
       </div>
     </div>
   `;
+}
+
+function resetHighScore() {
+  if (confirm("Are you sure you want to reset your high score?")) {
+    localStorage.removeItem('quiz-highscore');
+    showToast('High score reset! 🔄');
+    const container = document.getElementById('quiz-container');
+    renderQuizResult(container);
+  }
 }
 
 function restartQuiz() {
