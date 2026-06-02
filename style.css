@@ -473,6 +473,110 @@ code {
 .arrow-line { font-size: 1.2rem; color: var(--clr-text-muted); }
 
 /* ============================================
+   COMMAND GENERATOR
+   ============================================ */
+.generator-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  background: var(--clr-bg-2);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  box-shadow: var(--shadow-glow);
+}
+@media (max-width: 768px) {
+  .generator-container {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 20px;
+  }
+}
+.generator-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.form-label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--clr-text);
+}
+.form-select, .form-input {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--clr-border);
+  background: var(--clr-bg-3);
+  color: var(--clr-text);
+  font-family: var(--font-main);
+  font-size: 0.95rem;
+  transition: all var(--transition);
+}
+.form-select:focus, .form-input:focus {
+  outline: none;
+  border-color: var(--clr-accent);
+  box-shadow: 0 0 10px rgba(88, 166, 255, 0.15);
+}
+.generator-params {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.generator-output-box {
+  display: flex;
+  flex-direction: column;
+  background: var(--clr-bg-3);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-md);
+  padding: 24px;
+}
+.output-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.output-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--clr-accent);
+}
+.output-body {
+  background: var(--clr-bg);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  margin-bottom: 16px;
+  overflow-x: auto;
+}
+.output-body pre {
+  margin: 0;
+}
+.output-body code {
+  background: transparent;
+  border: none;
+  padding: 0;
+  color: var(--clr-accent-3);
+  font-size: 1rem;
+}
+.generator-explanation {
+  font-size: 0.9rem;
+  color: var(--clr-text-muted);
+  line-height: 1.6;
+}
+.generator-explanation code {
+  color: var(--clr-accent-warm);
+}
+
+/* ============================================
    CHEATSHEET
    ============================================ */
 .cheatsheet-grid {

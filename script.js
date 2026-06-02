@@ -555,6 +555,230 @@ function setupBackToTop() {
 
 
 // ─────────────────────────────────────────────
+// COMMAND GENERATOR DATA
+// ─────────────────────────────────────────────
+
+const generatorActions = {
+  init: {
+    command: () => 'git init',
+    explanation: 'This initializes a new local Git repository in your current working directory, creating a hidden <code>.git</code> folder.',
+    params: []
+  },
+  clone: {
+    command: (params) => `git clone ${params.url || 'https://github.com/username/repo.git'}`,
+    explanation: 'This downloads a complete copy of an existing remote repository from the specified URL to your local machine.',
+    params: [
+      { id: 'url', label: 'Repository URL', type: 'text', placeholder: 'https://github.com/username/repo.git' }
+    ]
+  },
+  commit: {
+    command: (params) => {
+      const msg = params.message ? params.message.replace(/'/g, "'\\''") : 'Initial commit';
+      return `git add .\ngit commit -m '${msg}'`;
+    },
+    explanation: 'This stages all current changes in the directory (<code>git add .</code>) and commits them (<code>git commit</code>) with a descriptive message to your local version history.',
+    params: [
+      { id: 'message', label: 'Commit Message', type: 'text', placeholder: 'Add new awesome feature' }
+    ]
+  },
+  branch: {
+    command: (params) => {
+      const name = params.name || 'feature-branch';
+      if (params.actionType === 'create-switch') {
+        return `git checkout -b ${name}`;
+      } else if (params.actionType === 'switch') {
+        return `git checkout ${name}`;
+      } else {
+        return `git branch -d ${name}`;
+      }
+    },
+    explanation: 'Branches let you work on a new feature isolated from the main code. You can switch to a branch, create a branch and switch immediately, or delete a branch when finished.',
+    params: [
+      {
+        id: 'actionType',
+        label: 'Action',
+        type: 'select',
+        options: [
+          { value: 'create-switch', label: 'Create new branch and switch to it' },
+          { value: 'switch', label: 'Switch to an existing branch' },
+          { value: 'delete', label: 'Delete a branch locally' }
+        ]
+      },
+      { id: 'name', label: 'Branch Name', type: 'text', placeholder: 'feature/login-system' }
+    ]
+  },
+  'remote-add': {
+    command: (params) => `git remote add origin ${params.url || 'https://github.com/username/repo.git'}`,
+    explanation: 'This establishes a remote connection between your local repository and a server (like GitHub) under the shortcut name "origin".',
+    params: [
+      { id: 'url', label: 'GitHub Repository URL', type: 'text', placeholder: 'https://github.com/username/repo.git' }
+    ]
+  },
+  push: {
+    command: (params) => {
+      const branch = params.branch || 'main';
+      const isUpstream = params.upstream === 'true';
+      return isUpstream ? `git push -u origin ${branch}` : `git push origin ${branch}`;
+    },
+    explanation: 'This uploads your local commits to the remote repository on GitHub so others can access them.',
+    params: [
+      { id: 'branch', label: 'Local Branch Name', type: 'text', placeholder: 'main' },
+      {
+        id: 'upstream',
+        label: 'Set Upstream (-u)?',
+        type: 'select',
+        options: [
+          { value: 'true', label: 'Yes, set upstream tracking (for the first push)' },
+          { value: 'false', label: 'No (for subsequent pushes)' }
+        ]
+      }
+    ]
+  },
+  pull: {
+    command: (params) => `git pull origin ${params.branch || 'main'}`,
+    explanation: 'This downloads the latest updates from the remote GitHub branch and merges them directly into your current local branch.',
+    params: [
+      { id: 'branch', label: 'Remote Branch Name', type: 'text', placeholder: 'main' }
+    ]
+  },
+  undo: {
+    command: (params) => {
+      if (params.undoType === 'unstaged') {
+        return `git restore ${params.file || 'index.html'}`;
+      } else if (params.undoType === 'staged') {
+        return `git restore --staged ${params.file || 'index.html'}`;
+      } else if (params.undoType === 'commit-keep') {
+        return 'git reset HEAD~1';
+      } else {
+        return `git revert ${params.hash || 'abc1234'}`;
+      }
+    },
+    explanation: 'Git offers multiple ways to undo changes. You can restore working files, unstage files, undo your last commit (keeping your changes), or safely revert a past commit by creating a new opposing commit.',
+    params: [
+      {
+        id: 'undoType',
+        label: 'What do you want to undo?',
+        type: 'select',
+        options: [
+          { value: 'unstaged', label: 'Discard unstaged changes in a file' },
+          { value: 'staged', label: 'Unstage a staged file (undo git add)' },
+          { value: 'commit-keep', label: 'Undo the last commit (keep the changes in workspace)' },
+          { value: 'revert', label: 'Revert a past commit (by hash)' }
+        ]
+      },
+      { id: 'file', label: 'File name (if restoring/unstaging)', type: 'text', placeholder: 'index.html', dependsOn: { param: 'undoType', values: ['unstaged', 'staged'] } },
+      { id: 'hash', label: 'Commit Hash (if reverting)', type: 'text', placeholder: 'abc1234', dependsOn: { param: 'undoType', values: ['revert'] } }
+    ]
+  }
+};
+
+// ─────────────────────────────────────────────
+// COMMAND GENERATOR ENGINE
+// ─────────────────────────────────────────────
+
+function setupGenerator() {
+  const selectAction = document.getElementById('generator-action');
+  const paramsContainer = document.getElementById('generator-params');
+  const outputText = document.getElementById('generated-command-text');
+  const explanationText = document.getElementById('generator-explanation');
+  const copyBtn = document.getElementById('copy-generated-btn');
+
+  if (!selectAction || !paramsContainer || !outputText || !explanationText || !copyBtn) return;
+
+  function updateGenerator() {
+    const actionKey = selectAction.value;
+    const actionDef = generatorActions[actionKey];
+    if (!actionDef) return;
+
+    // Render parameters
+    const prevValues = {};
+    paramsContainer.querySelectorAll('input, select').forEach(el => {
+      prevValues[el.dataset.id] = el.value;
+    });
+
+    paramsContainer.innerHTML = actionDef.params.map(p => {
+      // Check dependency
+      if (p.dependsOn) {
+        const dependentVal = prevValues[p.dependsOn.param] || (actionDef.params.find(x => x.id === p.dependsOn.param).options?.[0]?.value || '');
+        if (!p.dependsOn.values.includes(dependentVal)) {
+          return '';
+        }
+      }
+
+      const val = prevValues[p.id] !== undefined ? prevValues[p.id] : (p.options?.[0]?.value || '');
+      
+      if (p.type === 'select') {
+        return `
+          <div class="form-group">
+            <label class="form-label" for="gen-param-${p.id}">${p.label}</label>
+            <select id="gen-param-${p.id}" class="form-select" data-id="${p.id}">
+              ${p.options.map(opt => `<option value="${opt.value}" ${opt.value === val ? 'selected' : ''}>${opt.label}</option>`).join('')}
+            </select>
+          </div>
+        `;
+      } else {
+        return `
+          <div class="form-group">
+            <label class="form-label" for="gen-param-${p.id}">${p.label}</label>
+            <input type="text" id="gen-param-${p.id}" class="form-input" data-id="${p.id}" value="${escapeHtml(val)}" placeholder="${escapeHtml(p.placeholder || '')}" />
+          </div>
+        `;
+      }
+    }).join('');
+
+    // Wire up inputs
+    paramsContainer.querySelectorAll('input, select').forEach(el => {
+      el.addEventListener('input', () => {
+        if (el.tagName === 'SELECT') {
+          updateGenerator();
+        } else {
+          regenerateOutput();
+        }
+      });
+    });
+
+    regenerateOutput();
+  }
+
+  function regenerateOutput() {
+    const actionKey = selectAction.value;
+    const actionDef = generatorActions[actionKey];
+    if (!actionDef) return;
+
+    const params = {};
+    paramsContainer.querySelectorAll('input, select').forEach(el => {
+      params[el.dataset.id] = el.value || el.placeholder;
+    });
+
+    // Make sure we evaluate dependencies correctly when gathering params
+    actionDef.params.forEach(p => {
+      if (params[p.id] === undefined) {
+        params[p.id] = p.options?.[0]?.value || p.placeholder || '';
+      }
+    });
+
+    const command = actionDef.command(params);
+    outputText.textContent = command;
+    explanationText.innerHTML = actionDef.explanation;
+  }
+
+  selectAction.addEventListener('change', updateGenerator);
+  
+  copyBtn.addEventListener('click', () => {
+    const cmd = outputText.textContent;
+    navigator.clipboard.writeText(cmd).then(() => {
+      copyBtn.textContent = 'Copied! ✅';
+      showToast('Command copied! 📋');
+      setTimeout(() => { copyBtn.textContent = 'Copy 📋'; }, 1500);
+    });
+  });
+
+  // Initial call
+  updateGenerator();
+}
+
+
+// ─────────────────────────────────────────────
 // THEME SWITCHER
 // ─────────────────────────────────────────────
 
@@ -593,6 +817,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderConcepts();
   renderCommands('setup');
   renderWorkflow();
+  setupGenerator();
   renderCheatsheet();
   renderQuiz();
   setupNavbar();
