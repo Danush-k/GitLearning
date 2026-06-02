@@ -702,6 +702,158 @@ code {
 .result-msg { font-size: 1.1rem; color: var(--clr-text-muted); margin-bottom: 24px; }
 
 /* ============================================
+   GIT COMMIT VISUALIZER
+   ============================================ */
+.visualizer-container {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 32px;
+  background: var(--clr-bg-2);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  box-shadow: var(--shadow-glow);
+}
+@media (max-width: 992px) {
+  .visualizer-container {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 20px;
+  }
+}
+.visualizer-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: var(--clr-bg-3);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-md);
+  padding: 24px;
+}
+.visualizer-controls .control-group {
+  display: flex;
+  gap: 8px;
+}
+.visualizer-controls .control-group input,
+.visualizer-controls .control-group select {
+  flex: 1;
+}
+.visualizer-canvas-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: var(--clr-bg-3);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-md);
+  padding: 24px;
+}
+.visualizer-status {
+  font-size: 0.95rem;
+  color: var(--clr-text-muted);
+  border-bottom: 1px solid var(--clr-border);
+  padding-bottom: 12px;
+}
+.visualizer-graph-area {
+  position: relative;
+  width: 100%;
+  height: 350px;
+  background: var(--clr-bg);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-sm);
+  overflow: auto;
+}
+.visualizer-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 2000px;
+  height: 350px;
+  z-index: 1;
+  pointer-events: none;
+}
+.visualizer-svg path {
+  fill: none;
+  stroke: var(--clr-accent);
+  stroke-width: 3;
+  transition: all var(--transition);
+}
+.visualizer-nodes {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 2000px;
+  height: 350px;
+  z-index: 2;
+}
+.viz-node {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--clr-bg-3);
+  border: 3px solid var(--clr-border);
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-code);
+  font-size: 0.75rem;
+  font-weight: bold;
+  color: var(--clr-text-muted);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.viz-node:hover {
+  transform: translate(-50%, -50%) scale(1.15);
+  box-shadow: 0 0 12px rgba(88, 166, 255, 0.4);
+}
+.viz-node.active-head {
+  border-color: var(--clr-accent);
+  background: var(--clr-accent);
+  color: #000;
+  box-shadow: 0 0 16px rgba(88, 166, 255, 0.6);
+}
+.viz-node.merge-commit {
+  border-color: var(--clr-accent-2);
+}
+.viz-node.merge-commit.active-head {
+  background: var(--clr-accent-2);
+  color: #fff;
+}
+.viz-label {
+  position: absolute;
+  font-family: var(--font-main);
+  font-size: 0.7rem;
+  color: var(--clr-text-muted);
+  white-space: nowrap;
+  pointer-events: none;
+  transform: translate(-50%, 0);
+  background: rgba(13, 17, 23, 0.85);
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--clr-border);
+}
+.viz-branch-tag {
+  position: absolute;
+  font-family: var(--font-main);
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #fff;
+  background: var(--clr-accent-3);
+  padding: 2px 6px;
+  border-radius: 4px;
+  pointer-events: none;
+  white-space: nowrap;
+  transform: translate(-50%, -100%);
+  margin-top: -24px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+.viz-branch-tag.head-tag {
+  background: var(--clr-accent);
+  color: #000;
+}
+
+/* ============================================
    FOOTER
    ============================================ */
 .footer {

@@ -806,6 +806,283 @@ function setupGenerator() {
 }
 
 
+
+
+// ─────────────────────────────────────────────
+// GIT COMMIT VISUALIZER
+// ─────────────────────────────────────────────
+
+let visualGit = {
+  commits: [
+    { id: 'c0', message: 'Initial commit', parents: [], branch: 'main', column: 0, lane: 0 }
+  ],
+  branches: { main: 'c0' },
+  head: 'main',
+  lanes: { main: 0 },
+  nextLane: 1,
+  commitCount: 1
+};
+
+const initialVisualGit = JSON.stringify(visualGit);
+
+function setupVisualizer() {
+  const btnCommit = document.getElementById('viz-btn-commit');
+  const btnBranch = document.getElementById('viz-btn-branch');
+  const btnCheckout = document.getElementById('viz-btn-checkout');
+  const btnMerge = document.getElementById('viz-btn-merge');
+  const btnReset = document.getElementById('viz-btn-reset');
+  const branchInput = document.getElementById('viz-branch-input');
+  const checkoutSelect = document.getElementById('viz-checkout-select');
+  const mergeSelect = document.getElementById('viz-merge-select');
+  const statusHead = document.getElementById('viz-status-head');
+  const statusBranches = document.getElementById('viz-status-branches');
+
+  if (!btnCommit) return;
+
+  function resetSandbox() {
+    visualGit = JSON.parse(initialVisualGit);
+    if (branchInput) branchInput.value = '';
+    renderGraph();
+    showToast('Sandbox reset! 🔄');
+  }
+
+  function handleCommit() {
+    const parentId = visualGit.branches[visualGit.head];
+    const parentCommit = visualGit.commits.find(c => c.id === parentId);
+    
+    const newId = `c${visualGit.commitCount}`;
+    const newMsg = `Commit ${visualGit.commitCount}`;
+    visualGit.commitCount++;
+
+    const newCommit = {
+      id: newId,
+      message: newMsg,
+      parents: [parentId],
+      branch: visualGit.head,
+      column: parentCommit ? parentCommit.column + 1 : 0,
+      lane: visualGit.lanes[visualGit.head]
+    };
+
+    visualGit.commits.push(newCommit);
+    visualGit.branches[visualGit.head] = newId;
+
+    renderGraph();
+    showToast(`Created commit ${newId} on ${visualGit.head} 📸`);
+  }
+
+  function handleBranch() {
+    const branchName = branchInput.value.trim().replace(/\s+/g, '-');
+    if (!branchName) {
+      showToast('Please enter a branch name!');
+      return;
+    }
+    if (visualGit.branches[branchName]) {
+      showToast('Branch already exists!');
+      return;
+    }
+
+    const currentCommitId = visualGit.branches[visualGit.head];
+    visualGit.branches[branchName] = currentCommitId;
+    visualGit.lanes[branchName] = visualGit.nextLane++;
+    visualGit.head = branchName; // auto checkout
+    branchInput.value = '';
+
+    renderGraph();
+    showToast(`Created and checked out branch ${branchName} 🌿`);
+  }
+
+  function handleCheckout() {
+    const targetBranch = checkoutSelect.value;
+    if (!targetBranch || targetBranch === visualGit.head) return;
+
+    visualGit.head = targetBranch;
+    renderGraph();
+    showToast(`Switched to branch ${targetBranch} 🔀`);
+  }
+
+  function handleMerge() {
+    const sourceBranch = mergeSelect.value;
+    if (!sourceBranch || sourceBranch === visualGit.head) {
+      showToast('Select a different branch to merge!');
+      return;
+    }
+
+    const targetCommitId = visualGit.branches[visualGit.head];
+    const sourceCommitId = visualGit.branches[sourceBranch];
+
+    if (targetCommitId === sourceCommitId) {
+      showToast('Already up to date!');
+      return;
+    }
+
+    // Check if sourceCommitId is already ancestor of targetCommitId
+    if (isAncestor(sourceCommitId, targetCommitId)) {
+      showToast('Already up to date!');
+      return;
+    }
+
+    const targetCommit = visualGit.commits.find(c => c.id === targetCommitId);
+    const sourceCommit = visualGit.commits.find(c => c.id === sourceCommitId);
+
+    const newId = `c${visualGit.commitCount}`;
+    const newMsg = `Merge branch '${sourceBranch}' into ${visualGit.head}`;
+    visualGit.commitCount++;
+
+    const newCommit = {
+      id: newId,
+      message: newMsg,
+      parents: [targetCommitId, sourceCommitId],
+      branch: visualGit.head,
+      column: Math.max(targetCommit.column, sourceCommit.column) + 1,
+      lane: visualGit.lanes[visualGit.head],
+      isMerge: true
+    };
+
+    visualGit.commits.push(newCommit);
+    visualGit.branches[visualGit.head] = newId;
+
+    renderGraph();
+    showToast(`Merged branch ${sourceBranch} into ${visualGit.head} 🤝`);
+  }
+
+  function isAncestor(ancestorId, currentId) {
+    if (ancestorId === currentId) return true;
+    const currentCommit = visualGit.commits.find(c => c.id === currentId);
+    if (!currentCommit || !currentCommit.parents) return false;
+    return currentCommit.parents.some(p => isAncestor(ancestorId, p));
+  }
+
+  function updateSelects() {
+    const allBranches = Object.keys(visualGit.branches);
+    
+    // Checkout select
+    checkoutSelect.innerHTML = allBranches.map(b => 
+      `<option value="${b}" ${b === visualGit.head ? 'selected' : ''}>${b}</option>`
+    ).join('');
+
+    // Merge select
+    const mergeBranches = allBranches.filter(b => b !== visualGit.head);
+    mergeSelect.innerHTML = mergeBranches.length > 0
+      ? mergeBranches.map(b => `<option value="${b}">${b}</option>`).join('')
+      : '<option value="">(No other branches)</option>';
+  }
+
+  function renderGraph() {
+    updateSelects();
+
+    // Update status
+    if (statusHead) statusHead.textContent = visualGit.head;
+    if (statusBranches) statusBranches.textContent = Object.keys(visualGit.branches).join(', ');
+
+    const nodesContainer = document.getElementById('visualizer-nodes');
+    const svgContainer = document.getElementById('visualizer-svg');
+
+    if (!nodesContainer || !svgContainer) return;
+
+    nodesContainer.innerHTML = '';
+    svgContainer.innerHTML = '';
+
+    const colWidth = 90;
+    const laneHeight = 60;
+    const paddingX = 50;
+    const paddingY = 60;
+
+    // Render connection lines (SVG paths)
+    visualGit.commits.forEach(commit => {
+      const childX = paddingX + commit.column * colWidth;
+      const childY = paddingY + commit.lane * laneHeight;
+
+      commit.parents.forEach(parentId => {
+        const parent = visualGit.commits.find(c => c.id === parentId);
+        if (!parent) return;
+
+        const parentX = paddingX + parent.column * colWidth;
+        const parentY = paddingY + parent.lane * laneHeight;
+
+        // Draw bezier path
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        const controlX1 = (parentX + childX) / 2;
+        const controlY1 = parentY;
+        const controlX2 = (parentX + childX) / 2;
+        const controlY2 = childY;
+
+        path.setAttribute('d', `M ${parentX} ${parentY} C ${controlX1} ${controlY1}, ${controlX2} ${controlY2}, ${childX} ${childY}`);
+        
+        // Match branch line colors
+        let strokeColor = 'var(--clr-accent)';
+        if (parent.lane === 1) strokeColor = 'var(--clr-accent-2)';
+        else if (parent.lane === 2) strokeColor = 'var(--clr-accent-3)';
+        else if (parent.lane > 2) strokeColor = 'var(--clr-accent-warm)';
+        
+        path.setAttribute('stroke', strokeColor);
+        path.setAttribute('style', `stroke: ${strokeColor}`);
+        svgContainer.appendChild(path);
+      });
+    });
+
+    // Render node elements
+    visualGit.commits.forEach(commit => {
+      const x = paddingX + commit.column * colWidth;
+      const y = paddingY + commit.lane * laneHeight;
+
+      // Circle node
+      const nodeEl = document.createElement('div');
+      nodeEl.className = 'viz-node';
+      if (commit.isMerge) nodeEl.classList.add('merge-commit');
+      
+      const headCommitId = visualGit.branches[visualGit.head];
+      if (commit.id === headCommitId) {
+        nodeEl.classList.add('active-head');
+      }
+
+      nodeEl.style.left = `${x}px`;
+      nodeEl.style.top = `${y}px`;
+      nodeEl.textContent = commit.id;
+      nodeEl.title = `${commit.id}: ${commit.message} (Branch: ${commit.branch})`;
+      nodesContainer.appendChild(nodeEl);
+
+      // Label below node
+      const labelEl = document.createElement('div');
+      labelEl.className = 'viz-label';
+      labelEl.style.left = `${x}px`;
+      labelEl.style.top = `${y + 22}px`;
+      labelEl.textContent = commit.message;
+      nodesContainer.appendChild(labelEl);
+
+      // Branch tags pointing to this commit
+      const pointingBranches = Object.entries(visualGit.branches)
+        .filter(([name, id]) => id === commit.id)
+        .map(([name]) => name);
+
+      pointingBranches.forEach((branchName, idx) => {
+        const tagEl = document.createElement('div');
+        tagEl.className = 'viz-branch-tag';
+        if (branchName === visualGit.head) {
+          tagEl.classList.add('head-tag');
+          tagEl.innerHTML = `HEAD → ${branchName}`;
+        } else {
+          tagEl.textContent = branchName;
+        }
+
+        tagEl.style.left = `${x}px`;
+        // offset vertically if multiple branches point to same commit
+        tagEl.style.top = `${y - 20 - (idx * 24)}px`;
+        nodesContainer.appendChild(tagEl);
+      });
+    });
+  }
+
+  btnCommit.addEventListener('click', handleCommit);
+  btnBranch.addEventListener('click', handleBranch);
+  btnCheckout.addEventListener('click', handleCheckout);
+  btnMerge.addEventListener('click', handleMerge);
+  btnReset.addEventListener('click', resetSandbox);
+
+  // Initial draw
+  renderGraph();
+}
+
+
 // ─────────────────────────────────────────────
 // THEME SWITCHER
 // ─────────────────────────────────────────────
@@ -846,6 +1123,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderCommands('setup');
   renderWorkflow();
   setupGenerator();
+  setupVisualizer();
   renderCheatsheet();
   renderQuiz();
   setupNavbar();

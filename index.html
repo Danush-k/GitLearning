@@ -24,6 +24,7 @@
         <li><a href="#commands" class="nav-link">Commands</a></li>
         <li><a href="#workflow" class="nav-link">Workflow</a></li>
         <li><a href="#generator" class="nav-link">Generator</a></li>
+        <li><a href="#visualizer" class="nav-link">Visualizer</a></li>
         <li><a href="#cheatsheet" class="nav-link">Cheatsheet</a></li>
         <li><a href="#quiz" class="nav-link">Quiz</a></li>
       </ul>
@@ -181,6 +182,54 @@
       </div>
       <div class="quiz-container" id="quiz-container">
         <!-- Quiz injected by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive Git Visualizer Section -->
+  <section id="visualizer" class="section section-dark">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Interactive Sandbox</span>
+        <h2 class="section-title">Git Commit Visualizer</h2>
+        <p class="section-desc">Simulate Git commands and visualize the commit history graph in real-time.</p>
+      </div>
+      <div class="visualizer-container">
+        <div class="visualizer-controls">
+          <button id="viz-btn-commit" class="btn btn-primary">git commit 📸</button>
+          
+          <div class="control-group">
+            <input type="text" id="viz-branch-input" placeholder="new-branch" class="form-input" aria-label="Branch Name" />
+            <button id="viz-btn-branch" class="btn btn-outline">git branch 🌿</button>
+          </div>
+
+          <div class="control-group">
+            <select id="viz-checkout-select" class="form-select" aria-label="Checkout Branch">
+              <!-- Dynamically populated -->
+            </select>
+            <button id="viz-btn-checkout" class="btn btn-outline">git checkout 🔀</button>
+          </div>
+
+          <div class="control-group">
+            <select id="viz-merge-select" class="form-select" aria-label="Merge Branch">
+              <!-- Dynamically populated -->
+            </select>
+            <button id="viz-btn-merge" class="btn btn-outline">git merge 🤝</button>
+          </div>
+
+          <button id="viz-btn-reset" class="btn btn-outline" style="border-color: var(--clr-accent-warm); color: var(--clr-accent-warm); margin-top: auto;">Reset Sandbox 🔄</button>
+        </div>
+
+        <div class="visualizer-canvas-wrapper">
+          <div class="visualizer-status">
+            <span>HEAD: <strong id="viz-status-head" class="gradient-text">main</strong></span>
+            <span style="margin-left: 20px;">Active Branches: <span id="viz-status-branches">main</span></span>
+          </div>
+          <div class="visualizer-graph-area" id="visualizer-graph-area">
+            <svg id="visualizer-svg" class="visualizer-svg"></svg>
+            <div id="visualizer-nodes" class="visualizer-nodes"></div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
