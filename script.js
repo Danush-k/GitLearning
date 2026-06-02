@@ -482,10 +482,41 @@ function setupBackToTop() {
 
 
 // ─────────────────────────────────────────────
+// THEME SWITCHER
+// ─────────────────────────────────────────────
+
+function initTheme() {
+  const savedTheme = localStorage.getItem('theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  updateThemeToggleIcon(savedTheme);
+}
+
+function toggleTheme() {
+  const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+  const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', newTheme);
+  localStorage.setItem('theme', newTheme);
+  updateThemeToggleIcon(newTheme);
+}
+
+function updateThemeToggleIcon(theme) {
+  const iconSpan = document.querySelector('.theme-toggle-icon');
+  if (iconSpan) {
+    iconSpan.textContent = theme === 'dark' ? '🌙' : '☀️';
+  }
+}
+
+// ─────────────────────────────────────────────
 // INIT
 // ─────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', () => {
+  initTheme();
+  const themeToggle = document.getElementById('theme-toggle');
+  if (themeToggle) {
+    themeToggle.addEventListener('click', toggleTheme);
+  }
+
   renderConcepts();
   renderCommands('setup');
   renderWorkflow();

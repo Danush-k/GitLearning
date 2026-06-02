@@ -15,6 +15,8 @@
   --clr-accent-3: #3fb950;
   --clr-accent-warm: #f78166;
   --clr-accent-yellow: #e3b341;
+  --clr-navbar-bg: rgba(13, 17, 23, 0.7);
+  --clr-navbar-bg-scrolled: rgba(13, 17, 23, 0.95);
   --gradient-main: linear-gradient(135deg, #58a6ff 0%, #a371f7 100%);
   --gradient-green: linear-gradient(135deg, #3fb950, #26a641);
   --gradient-warm: linear-gradient(135deg, #f78166, #ff6b35);
@@ -25,6 +27,26 @@
   --radius-lg: 20px;
   --shadow-glow: 0 0 40px rgba(88, 166, 255, 0.15);
   --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+:root[data-theme="light"] {
+  --clr-bg: #f6f8fa;
+  --clr-bg-2: #ffffff;
+  --clr-bg-3: #f0f3f6;
+  --clr-border: #d0d7de;
+  --clr-text: #24292f;
+  --clr-text-muted: #57606a;
+  --clr-accent: #0969da;
+  --clr-accent-2: #8250df;
+  --clr-accent-3: #1a7f37;
+  --clr-accent-warm: #cf222e;
+  --clr-accent-yellow: #9a6700;
+  --clr-navbar-bg: rgba(246, 248, 250, 0.7);
+  --clr-navbar-bg-scrolled: rgba(246, 248, 250, 0.95);
+  --gradient-main: linear-gradient(135deg, #0969da 0%, #8250df 100%);
+  --gradient-green: linear-gradient(135deg, #1a7f37, #115c26);
+  --gradient-warm: linear-gradient(135deg, #cf222e, #a40e1b);
+  --shadow-glow: 0 4px 20px rgba(9, 105, 218, 0.1);
 }
 
 /* --- Reset --- */
@@ -92,12 +114,31 @@ code {
   top: 0; left: 0; right: 0;
   z-index: 100;
   padding: 14px 0;
-  background: rgba(13, 17, 23, 0.7);
+  background: var(--clr-navbar-bg);
   backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--clr-border);
   transition: all var(--transition);
 }
-.navbar.scrolled { background: rgba(13, 17, 23, 0.95); }
+.navbar.scrolled { background: var(--clr-navbar-bg-scrolled); }
+
+.theme-toggle-btn {
+  background: var(--clr-bg-3);
+  border: 1px solid var(--clr-border);
+  color: var(--clr-text);
+  cursor: pointer;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition);
+  font-size: 1.1rem;
+}
+.theme-toggle-btn:hover {
+  border-color: var(--clr-accent);
+  background: rgba(88, 166, 255, 0.08);
+}
 .nav-container {
   max-width: 1140px;
   margin: 0 auto;
