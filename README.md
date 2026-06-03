@@ -30,3 +30,5 @@ Just open `index.html` in your browser — no build tools needed!
 
 ---
 Made with ❤️ to make Git learning fun.
+
+Let's learn Git together!
