@@ -12,6 +12,9 @@
 </head>
 <body>
 
+  <!-- Reading Progress Bar -->
+  <div id="reading-progress" class="reading-progress"></div>
+
   <!-- Navigation -->
   <nav id="navbar" class="navbar">
     <div class="nav-container">
@@ -19,7 +22,7 @@
         <span class="logo-icon">⎇</span>
         <span>GitLearning</span>
       </a>
-      <ul class="nav-links">
+      <ul class="nav-links" id="nav-links">
         <li><a href="#basics" class="nav-link">Basics</a></li>
         <li><a href="#commands" class="nav-link">Commands</a></li>
         <li><a href="#workflow" class="nav-link">Workflow</a></li>
@@ -31,7 +34,10 @@
       <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle theme" title="Toggle Light/Dark Mode">
         <span class="theme-toggle-icon">🌙</span>
       </button>
-      <a href="https://github.com" target="_blank" class="btn btn-sm">Open GitHub ↗</a>
+      <button id="menu-toggle" class="menu-toggle" aria-label="Toggle menu" title="Toggle Menu">
+        <span class="menu-toggle-icon">☰</span>
+      </button>
+      <a href="https://github.com" target="_blank" class="btn btn-sm nav-github-btn">Open GitHub ↗</a>
     </div>
   </nav>
 

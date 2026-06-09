@@ -471,6 +471,35 @@ function setupNavbar() {
   const navbar = document.getElementById('navbar');
   const links = document.querySelectorAll('.nav-link');
   const sections = document.querySelectorAll('section[id]');
+  const progressBar = document.getElementById('reading-progress');
+  const menuToggle = document.getElementById('menu-toggle');
+  const navLinks = document.getElementById('nav-links');
+
+  // Mobile menu toggle
+  if (menuToggle && navLinks) {
+    menuToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      navLinks.classList.toggle('active');
+      const isExpanded = navLinks.classList.contains('active');
+      menuToggle.querySelector('.menu-toggle-icon').textContent = isExpanded ? '✕' : '☰';
+    });
+
+    // Close menu when clicking outside
+    document.addEventListener('click', (e) => {
+      if (navLinks.classList.contains('active') && !navLinks.contains(e.target) && e.target !== menuToggle) {
+        navLinks.classList.remove('active');
+        menuToggle.querySelector('.menu-toggle-icon').textContent = '☰';
+      }
+    });
+
+    // Close menu when clicking a link
+    links.forEach(link => {
+      link.addEventListener('click', () => {
+        navLinks.classList.remove('active');
+        menuToggle.querySelector('.menu-toggle-icon').textContent = '☰';
+      });
+    });
+  }
 
   window.addEventListener('scroll', () => {
     navbar.classList.toggle('scrolled', window.scrollY > 50);
@@ -483,6 +512,14 @@ function setupNavbar() {
     links.forEach(link => {
       link.classList.toggle('active', link.getAttribute('href') === `#${current}`);
     });
+
+    // Update Reading Progress Bar
+    if (progressBar) {
+      const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const scrolled = height > 0 ? (winScroll / height) * 100 : 0;
+      progressBar.style.width = scrolled + '%';
+    }
   });
 }
 

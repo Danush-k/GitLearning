@@ -900,10 +900,76 @@ code {
 }
 
 /* ============================================
+   PROGRESS BAR & MOBILE MENU
+   ============================================ */
+.reading-progress {
+  position: fixed;
+  top: 0; left: 0;
+  height: 4px;
+  background: var(--gradient-main);
+  width: 0%;
+  z-index: 1000;
+  transition: width 0.1s ease-out;
+}
+
+.menu-toggle {
+  display: none;
+  background: var(--clr-bg-3);
+  border: 1px solid var(--clr-border);
+  color: var(--clr-text);
+  cursor: pointer;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-md);
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition);
+  font-size: 1.2rem;
+}
+.menu-toggle:hover {
+  border-color: var(--clr-accent);
+  background: rgba(88, 166, 255, 0.08);
+}
+
+/* ============================================
    RESPONSIVE
    ============================================ */
 @media (max-width: 768px) {
-  .nav-links { display: none; }
+  .menu-toggle {
+    display: flex;
+  }
+  .nav-github-btn {
+    display: none; /* Hide Github button on tiny viewports to avoid overflow */
+  }
+  .nav-links {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 67px;
+    left: 0;
+    right: 0;
+    background: var(--clr-bg-2);
+    border-bottom: 1px solid var(--clr-border);
+    padding: 20px;
+    gap: 8px;
+    transform: translateY(-150%);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 99;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  }
+  .nav-links.active {
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+  }
+  .nav-link {
+    display: block;
+    width: 100%;
+    padding: 10px 16px;
+    border-radius: var(--radius-sm);
+  }
   .workflow-diagram { flex-direction: column; }
   .workflow-arrow .arrow-line { transform: rotate(90deg); }
   .footer-content { flex-direction: column; text-align: center; }
