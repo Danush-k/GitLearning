@@ -405,19 +405,35 @@ function renderQuizResult(container) {
   else if (pct >= 60) { emoji = '👍'; msg = "Good effort! Keep practicing!"; }
   else { emoji = '📚'; msg = "Keep learning — you'll get there!"; }
 
+  let certificateClaimBox = '';
+  if (score >= 8) {
+    const savedName = localStorage.getItem('cert-name') || '';
+    certificateClaimBox = `
+      <div class="result-certificate-claim" style="margin-top: 24px; padding: 20px; border: 1px dashed var(--clr-accent); border-radius: var(--radius-md); background: rgba(88, 166, 255, 0.05);">
+        <div style="font-size: 1.15rem; font-weight: 700; margin-bottom: 8px;">🎓 Claim Your Assessment Certificate</div>
+        <p style="font-size: 0.85rem; color: var(--clr-text-muted); margin-bottom: 12px;">You passed the test! Enter your name below to generate your personalized Certificate of Completion.</p>
+        <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; max-width: 400px; margin: 0 auto;">
+          <input type="text" id="cert-name-input" class="form-input" style="flex: 1; min-width: 200px; padding: 8px 12px; font-size: 0.9rem;" placeholder="Enter your full name" value="${escapeHtml(savedName)}" />
+          <button class="btn btn-primary btn-sm" onclick="generateCertificate(${score}, ${total})">Get Certificate 📜</button>
+        </div>
+      </div>
+    `;
+  }
+
   container.innerHTML = `
     <div class="quiz-card">
       <div class="quiz-result">
         <div style="font-size:3rem;">${emoji}</div>
-        <div class="result-score" style="background:var(--gradient-main);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">
+        <div class="result-score" style="background:var(--gradient-main);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text; margin: 8px 0;">
           ${score}/${total}
         </div>
         <div class="result-msg">${msg}</div>
-        <div class="result-highscore" style="font-size: 0.95rem; color: var(--clr-text-muted); margin-bottom: 24px;">
+        <div class="result-highscore" style="font-size: 0.95rem; color: var(--clr-text-muted); margin-bottom: 16px;">
           🏆 Personal Best: ${highScore} / ${total}
           ${highScore > 0 ? `<button class="btn btn-sm btn-outline" style="margin-left:12px; padding: 4px 10px; font-size:0.75rem; vertical-align: middle;" onclick="resetHighScore()">Reset 🔄</button>` : ''}
         </div>
         <button class="btn btn-primary" onclick="restartQuiz()">Try Again 🔄</button>
+        ${certificateClaimBox}
       </div>
     </div>
   `;
@@ -1426,6 +1442,119 @@ function setupConfigBuilder() {
 
   // Run initial generate
   updateOutputs();
+// ─────────────────────────────────────────────
+// ASSESSMENT CERTIFICATE GENERATOR
+// ─────────────────────────────────────────────
+
+function generateCertificate(score, total) {
+  const nameInput = document.getElementById('cert-name-input');
+  const recipientName = nameInput ? nameInput.value.trim() : 'Danush K';
+
+  if (!recipientName) {
+    showToast('⚠️ Please enter your name first!');
+    if (nameInput) nameInput.focus();
+    return;
+  }
+
+  // Save the name
+  localStorage.setItem('cert-name', recipientName);
+
+  const today = new Date().toISOString().split('T')[0];
+  const scorePercent = Math.round((score / total) * 100);
+
+  const printArea = document.getElementById('certificate-print-area');
+  const certModal = document.getElementById('cert-modal');
+
+  if (!printArea || !certModal) return;
+
+  // Render SVG Certificate
+  printArea.innerHTML = `
+    <svg id="certificate-svg" viewBox="0 0 800 560" style="width: 100%; height: auto; max-width: 700px; background: #0d1117; border: 8px double var(--clr-accent); border-radius: 12px; font-family: 'Inter', sans-serif;">
+      <!-- Border lines -->
+      <rect x="15" y="15" width="770" height="530" fill="none" stroke="var(--clr-border)" stroke-width="2" />
+      <rect x="22" y="22" width="756" height="516" fill="none" stroke="var(--clr-border)" stroke-width="1" stroke-dasharray="4" />
+      
+      <!-- Watermark logo -->
+      <text x="400" y="280" font-size="120" fill="rgba(88, 166, 255, 0.025)" font-weight="800" text-anchor="middle" transform="rotate(-30 400 280)" pointer-events="none">⎇ Git</text>
+      
+      <!-- Content -->
+      <text x="400" y="90" font-size="20" fill="var(--clr-accent)" text-anchor="middle" letter-spacing="4" font-weight="700">CERTIFICATE OF COMPLETION</text>
+      <text x="400" y="140" font-size="14" fill="var(--clr-text-muted)" text-anchor="middle">This is proudly presented to</text>
+      
+      <!-- Recipient -->
+      <text id="cert-recipient-name" x="400" y="215" font-size="34" fill="#fff" font-weight="800" text-anchor="middle" style="text-shadow: 0 0 10px rgba(88,166,255,0.3); text-transform: uppercase;">${escapeHtml(recipientName)}</text>
+      <line x1="200" y1="235" x2="600" y2="235" stroke="var(--clr-accent-2)" stroke-width="2" />
+      
+      <!-- Text details -->
+      <text x="400" y="280" font-size="14" fill="var(--clr-text)" text-anchor="middle">for successfully mastering the foundations of version control and passing the</text>
+      <text x="400" y="310" font-size="18" fill="var(--clr-accent-3)" font-weight="700" text-anchor="middle">Interactive Git & GitHub Basics Assessment</text>
+      <text id="cert-score-text" x="400" y="340" font-size="14" fill="var(--clr-text-muted)" text-anchor="middle">with a score of ${score} / ${total} (${scorePercent}%)</text>
+      
+      <!-- Date & Verification -->
+      <text x="220" y="445" font-size="11" fill="var(--clr-text-muted)" text-anchor="middle">DATE</text>
+      <text id="cert-date-text" x="220" y="420" font-size="14" fill="#fff" text-anchor="middle" font-weight="600">${today}</text>
+      <line x1="120" y1="430" x2="320" y2="430" stroke="var(--clr-border)" stroke-width="1" />
+      
+      <text x="580" y="445" font-size="11" fill="var(--clr-text-muted)" text-anchor="middle">AUTHORIZED SIGNATURE</text>
+      <text x="580" y="420" fill="var(--clr-accent-warm)" font-family="cursive" font-size="18" text-anchor="middle" font-weight="600">GitLearning Team</text>
+      <line x1="480" y1="430" x2="680" y2="430" stroke="var(--clr-border)" stroke-width="1" />
+      
+      <!-- Badge -->
+      <g transform="translate(370, 385)">
+        <circle cx="30" cy="30" r="28" fill="var(--clr-accent)" opacity="0.08" />
+        <circle cx="30" cy="30" r="22" fill="none" stroke="var(--clr-accent)" stroke-width="2" stroke-dasharray="4" />
+        <text x="30" y="37" fill="var(--clr-accent)" font-weight="bold" text-anchor="middle">⎇</text>
+      </g>
+    </svg>
+  `;
+
+  // Show modal
+  certModal.classList.add('show');
+}
+
+function setupCertificateEvents() {
+  const certModal = document.getElementById('cert-modal');
+  const closeBtn = document.getElementById('close-cert-btn');
+  const printBtn = document.getElementById('print-cert-btn');
+  const downloadBtn = document.getElementById('download-cert-btn');
+
+  if (!certModal) return;
+
+  if (closeBtn) {
+    closeBtn.addEventListener('click', () => {
+      certModal.classList.remove('show');
+    });
+  }
+
+  // Close on backdrop click
+  certModal.addEventListener('click', (e) => {
+    if (e.target === certModal) {
+      certModal.classList.remove('show');
+    }
+  });
+
+  if (printBtn) {
+    printBtn.addEventListener('click', () => {
+      window.print();
+    });
+  }
+
+  if (downloadBtn) {
+    downloadBtn.addEventListener('click', () => {
+      const svgEl = document.getElementById('certificate-svg');
+      if (!svgEl) return;
+      const svgData = new XMLSerializer().serializeToString(svgEl);
+      const svgBlob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
+      const svgUrl = URL.createObjectURL(svgBlob);
+      const downloadLink = document.createElement("a");
+      downloadLink.href = svgUrl;
+      downloadLink.download = `GitLearning_Certificate_${localStorage.getItem('cert-name') || 'Completed'}.svg`;
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+      showToast('Downloaded certificate SVG! ⬇️');
+    });
+  }
 }
 
 // ─────────────────────────────────────────────
@@ -1444,6 +1573,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderWorkflow();
   setupBranchingStrategies();
   setupConfigBuilder();
+  setupCertificateEvents();
   setupGenerator();
   setupVisualizer();
   renderCheatsheet();

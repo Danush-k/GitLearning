@@ -388,7 +388,19 @@
 
   <button id="back-to-top" class="back-to-top" aria-label="Back to top">↑</button>
 
-  <div id="toast" class="toast" aria-live="polite"></div>
+  <!-- Certificate Modal -->
+  <div id="cert-modal" class="cert-modal">
+    <div class="cert-modal-content">
+      <button id="close-cert-btn" class="close-cert-btn">&times;</button>
+      <div id="certificate-print-area">
+        <!-- SVG injected dynamically -->
+      </div>
+      <div class="cert-modal-actions">
+        <button id="print-cert-btn" class="btn btn-primary">Print / Save as PDF 🖨️</button>
+        <button id="download-cert-btn" class="btn btn-outline">Download SVG ⬇️</button>
+      </div>
+    </div>
+  </div>
 
   <script src="script.js"></script>
 </body>
