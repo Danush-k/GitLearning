@@ -1146,6 +1146,181 @@ function updateThemeToggleIcon(theme) {
 }
 
 // ─────────────────────────────────────────────
+// BRANCHING STRATEGIES DATA & LOGIC
+// ─────────────────────────────────────────────
+
+const strategiesData = {
+  'github-flow': {
+    name: "GitHub Flow",
+    tagline: "Simple, lightweight, and perfect for continuous delivery.",
+    desc: "Developers branch off the main branch, make changes, commit, submit a pull request, discuss/review, merge back into main, and immediately deploy.",
+    pros: [
+      "Simple to learn and maintain.",
+      "Ideal for fast-paced web apps and SaaS products.",
+      "Minimizes build and merge complexity."
+    ],
+    cons: [
+      "Main must always be in a deployable state.",
+      "Not suited for release cycles or multiple product versions.",
+      "Less control over feature testing before production."
+    ],
+    diagram: `
+      <svg viewBox="0 0 400 120" style="width: 100%; height: auto;">
+        <!-- tracks -->
+        <line x1="50" y1="30" x2="350" y2="30" stroke="var(--clr-accent)" stroke-width="3" />
+        <line x1="160" y1="30" x2="200" y2="90" stroke="var(--clr-accent-2)" stroke-width="3" stroke-dasharray="4" />
+        <line x1="200" y1="90" x2="280" y2="90" stroke="var(--clr-accent-2)" stroke-width="3" />
+        <line x1="280" y1="90" x2="320" y2="30" stroke="var(--clr-accent-2)" stroke-width="3" stroke-dasharray="4" />
+        <!-- nodes -->
+        <circle cx="80" cy="30" r="8" fill="var(--clr-accent)" stroke="var(--clr-bg-2)" stroke-width="2" />
+        <circle cx="150" cy="30" r="8" fill="var(--clr-accent)" stroke="var(--clr-bg-2)" stroke-width="2" />
+        <circle cx="335" cy="30" r="8" fill="var(--clr-accent)" stroke="var(--clr-bg-2)" stroke-width="2" />
+        <circle cx="210" cy="90" r="8" fill="var(--clr-accent-2)" stroke="var(--clr-bg-2)" stroke-width="2" />
+        <circle cx="270" cy="90" r="8" fill="var(--clr-accent-2)" stroke="var(--clr-bg-2)" stroke-width="2" />
+        <!-- text -->
+        <text x="35" y="34" fill="var(--clr-text-muted)" font-family="monospace" font-size="11" text-anchor="end">main</text>
+        <text x="35" y="94" fill="var(--clr-text-muted)" font-family="monospace" font-size="11" text-anchor="end">feature</text>
+      </svg>
+    `
+  },
+  'git-flow': {
+    name: "Git Flow",
+    tagline: "Robust and structured workflow for releases and versioning.",
+    desc: "Utilizes two permanent branches (main and develop) alongside supporting branches (feature, release, hotfix). Perfect for applications that have versioned releases.",
+    pros: [
+      "Clear separation of working code, staging, and production.",
+      "Handles release cycles and hotfixes elegantly.",
+      "Excellent for complex, multi-team projects."
+    ],
+    cons: [
+      "High overhead and complexity.",
+      "Branches can diverge quickly and lead to merge conflicts.",
+      "Slower feedback loop for continuous deployment."
+    ],
+    diagram: `
+      <svg viewBox="0 0 400 180" style="width: 100%; height: auto;">
+        <!-- Tracks -->
+        <line x1="50" y1="30" x2="350" y2="30" stroke="var(--clr-accent)" stroke-width="3" />
+        <line x1="235" y1="75" x2="295" y2="75" stroke="var(--clr-accent-yellow)" stroke-width="3" />
+        <line x1="50" y1="120" x2="350" y2="120" stroke="var(--clr-accent-3)" stroke-width="3" />
+        <line x1="100" y1="165" x2="180" y2="165" stroke="var(--clr-accent-2)" stroke-width="3" />
+        
+        <!-- Connectors -->
+        <line x1="70" y1="30" x2="90" y2="120" stroke="var(--clr-accent-3)" stroke-width="2" stroke-dasharray="3" />
+        <line x1="100" y1="120" x2="120" y2="165" stroke="var(--clr-accent-2)" stroke-width="2" stroke-dasharray="3" />
+        <line x1="160" y1="165" x2="180" y2="120" stroke="var(--clr-accent-2)" stroke-width="2" stroke-dasharray="3" />
+        <line x1="220" y1="120" x2="240" y2="75" stroke="var(--clr-accent-yellow)" stroke-width="2" stroke-dasharray="3" />
+        <line x1="285" y1="75" x2="305" y2="30" stroke="var(--clr-accent)" stroke-width="2" stroke-dasharray="3" />
+        <line x1="285" y1="75" x2="305" y2="120" stroke="var(--clr-accent-3)" stroke-width="2" stroke-dasharray="3" />
+
+        <!-- Nodes -->
+        <circle cx="65" cy="30" r="6" fill="var(--clr-accent)" stroke="var(--clr-bg-2)" stroke-width="1.5" />
+        <circle cx="315" cy="30" r="6" fill="var(--clr-accent)" stroke="var(--clr-bg-2)" stroke-width="1.5" />
+        
+        <circle cx="95" cy="120" r="6" fill="var(--clr-accent-3)" stroke="var(--clr-bg-2)" stroke-width="1.5" />
+        <circle cx="195" cy="120" r="6" fill="var(--clr-accent-3)" stroke="var(--clr-bg-2)" stroke-width="1.5" />
+        <circle cx="315" cy="120" r="6" fill="var(--clr-accent-3)" stroke="var(--clr-bg-2)" stroke-width="1.5" />
+        
+        <circle cx="130" cy="165" r="6" fill="var(--clr-accent-2)" stroke="var(--clr-bg-2)" stroke-width="1.5" />
+        <circle cx="155" cy="165" r="6" fill="var(--clr-accent-2)" stroke="var(--clr-bg-2)" stroke-width="1.5" />
+        
+        <circle cx="250" cy="75" r="6" fill="var(--clr-accent-yellow)" stroke="var(--clr-bg-2)" stroke-width="1.5" />
+        <circle cx="275" cy="75" r="6" fill="var(--clr-accent-yellow)" stroke="var(--clr-bg-2)" stroke-width="1.5" />
+
+        <!-- Labels -->
+        <text x="40" y="34" fill="var(--clr-text-muted)" font-family="monospace" font-size="10" text-anchor="end">main (prod)</text>
+        <text x="40" y="79" fill="var(--clr-text-muted)" font-family="monospace" font-size="10" text-anchor="end">release</text>
+        <text x="40" y="124" fill="var(--clr-text-muted)" font-family="monospace" font-size="10" text-anchor="end">develop</text>
+        <text x="40" y="169" fill="var(--clr-text-muted)" font-family="monospace" font-size="10" text-anchor="end">feature</text>
+      </svg>
+    `
+  },
+  'trunk': {
+    name: "Trunk-Based Development",
+    tagline: "High-velocity workflow focusing on frequent, small changes.",
+    desc: "All developers commit directly to a single branch ('trunk' or main) or work in very short-lived feature branches (< 1 day). Avoids branch drift using feature flags.",
+    pros: [
+      "Prevents merge conflicts and branch drift completely.",
+      "Enables true Continuous Integration (CI/CD).",
+      "Fastest feedback loop for developers."
+    ],
+    cons: [
+      "Requires high team discipline and strong testing automation.",
+      "Inexperienced developers can easily break the main build.",
+      "Relies heavily on feature flags for half-done code."
+    ],
+    diagram: `
+      <svg viewBox="0 0 400 120" style="width: 100%; height: auto;">
+        <!-- Trunk Line (y=40) -->
+        <line x1="50" y1="40" x2="350" y2="40" stroke="var(--clr-accent)" stroke-width="4" />
+        
+        <!-- Short Lived Branch 1 -->
+        <path d="M 100 40 Q 130 90 160 40" fill="none" stroke="var(--clr-accent-2)" stroke-width="3" stroke-dasharray="3" />
+        <!-- Short Lived Branch 2 -->
+        <path d="M 220 40 Q 250 90 280 40" fill="none" stroke="var(--clr-accent-2)" stroke-width="3" stroke-dasharray="3" />
+
+        <!-- Nodes on Trunk -->
+        <circle cx="70" cy="40" r="7" fill="var(--clr-accent)" stroke="var(--clr-bg-2)" stroke-width="2" />
+        <circle cx="110" cy="40" r="7" fill="var(--clr-accent)" stroke="var(--clr-bg-2)" stroke-width="2" />
+        <circle cx="170" cy="40" r="7" fill="var(--clr-accent)" stroke="var(--clr-bg-2)" stroke-width="2" />
+        <circle cx="200" cy="40" r="7" fill="var(--clr-accent)" stroke="var(--clr-bg-2)" stroke-width="2" />
+        <circle cx="290" cy="40" r="7" fill="var(--clr-accent)" stroke="var(--clr-bg-2)" stroke-width="2" />
+        <circle cx="330" cy="40" r="7" fill="var(--clr-accent)" stroke="var(--clr-bg-2)" stroke-width="2" />
+
+        <!-- Nodes on branches -->
+        <circle cx="130" cy="65" r="5" fill="var(--clr-accent-2)" stroke="var(--clr-bg-2)" stroke-width="1.5" />
+        <circle cx="250" cy="65" r="5" fill="var(--clr-accent-2)" stroke="var(--clr-bg-2)" stroke-width="1.5" />
+
+        <!-- Labels -->
+        <text x="40" y="44" fill="var(--clr-text-muted)" font-family="monospace" font-size="11" text-anchor="end">trunk</text>
+        <text x="130" y="85" fill="var(--clr-accent-2)" font-family="monospace" font-size="9" text-anchor="middle">short branch</text>
+        <text x="250" y="85" fill="var(--clr-accent-2)" font-family="monospace" font-size="9" text-anchor="middle">short branch</text>
+      </svg>
+    `
+  }
+};
+
+function setupBranchingStrategies() {
+  const tabs = document.querySelectorAll('.strategy-tab-btn');
+  const nameEl = document.getElementById('strategy-name');
+  const taglineEl = document.getElementById('strategy-tagline');
+  const descEl = document.getElementById('strategy-desc');
+  const prosEl = document.getElementById('strategy-pros');
+  const consEl = document.getElementById('strategy-cons');
+  const diagramEl = document.getElementById('strategy-diagram');
+
+  if (!tabs.length || !nameEl) return;
+
+  function selectStrategy(strategyKey) {
+    const data = strategiesData[strategyKey];
+    if (!data) return;
+
+    // Set text contents
+    nameEl.textContent = data.name;
+    taglineEl.textContent = data.tagline;
+    descEl.textContent = data.desc;
+    
+    // Set lists
+    prosEl.innerHTML = data.pros.map(pro => `<li>${pro}</li>`).join('');
+    consEl.innerHTML = data.cons.map(con => `<li>${con}</li>`).join('');
+    
+    // Set diagram
+    diagramEl.innerHTML = data.diagram;
+  }
+
+  tabs.forEach(btn => {
+    btn.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      selectStrategy(btn.dataset.strategy);
+    });
+  });
+
+  // Initial Strategy Load
+  selectStrategy('github-flow');
+}
+
+// ─────────────────────────────────────────────
 // INIT
 // ─────────────────────────────────────────────
 
@@ -1159,6 +1334,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderConcepts();
   renderCommands('setup');
   renderWorkflow();
+  setupBranchingStrategies();
   setupGenerator();
   setupVisualizer();
   renderCheatsheet();

@@ -26,6 +26,7 @@
         <li><a href="#basics" class="nav-link">Basics</a></li>
         <li><a href="#commands" class="nav-link">Commands</a></li>
         <li><a href="#workflow" class="nav-link">Workflow</a></li>
+        <li><a href="#strategies" class="nav-link">Strategies</a></li>
         <li><a href="#generator" class="nav-link">Generator</a></li>
         <li><a href="#visualizer" class="nav-link">Visualizer</a></li>
         <li><a href="#cheatsheet" class="nav-link">Cheatsheet</a></li>
@@ -114,6 +115,64 @@
       </div>
       <div class="workflow-diagram" id="workflow-diagram">
         <!-- Diagram injected by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Branching Strategies Section -->
+  <section id="strategies" class="section section-dark">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Chapter 4</span>
+        <h2 class="section-title">Branching Strategies</h2>
+        <p class="section-desc">Choose the right workflow model for your team's development cycle.</p>
+      </div>
+
+      <div class="strategies-container">
+        <div class="strategies-tabs">
+          <button class="strategy-tab-btn active" data-strategy="github-flow">GitHub Flow</button>
+          <button class="strategy-tab-btn" data-strategy="git-flow">Git Flow</button>
+          <button class="strategy-tab-btn" data-strategy="trunk">Trunk-Based</button>
+        </div>
+
+        <div class="strategy-card">
+          <div class="strategy-info">
+            <h3 id="strategy-name" class="strategy-card-title">GitHub Flow</h3>
+            <p id="strategy-tagline" class="strategy-card-tagline">Simple, lightweight, and perfect for continuous delivery.</p>
+            
+            <div class="strategy-details">
+              <div class="detail-box">
+                <strong>💡 How it works:</strong>
+                <p id="strategy-desc">Developers branch off the main branch, make changes, commit, submit a pull request, discuss/review, merge back into main, and immediately deploy.</p>
+              </div>
+              <div class="detail-grid">
+                <div class="detail-box pros">
+                  <strong>🟢 Pros:</strong>
+                  <ul id="strategy-pros">
+                    <li>Simple to learn and maintain.</li>
+                    <li>Ideal for fast-paced web apps and SaaS products.</li>
+                    <li>Minimizes build and merge complexity.</li>
+                  </ul>
+                </div>
+                <div class="detail-box cons">
+                  <strong>🔴 Cons:</strong>
+                  <ul id="strategy-cons">
+                    <li>Main must always be in a deployable state.</li>
+                    <li>Not suited for release cycles or multiple product versions.</li>
+                    <li>Less control over feature testing before production.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="strategy-diagram-box">
+            <div class="diagram-title">Visual Commit Branching Diagram</div>
+            <div id="strategy-diagram" class="strategy-diagram">
+              <!-- Rendered via CSS and DOM elements -->
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
