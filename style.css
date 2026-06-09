@@ -1428,6 +1428,81 @@ code {
   }
 }
 
+/* ============================================
+   MOCK TERMINAL SIMULATOR
+   ============================================ */
+.mock-terminal {
+  background: #0d1117;
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  font-family: var(--font-code);
+  font-size: 0.85rem;
+  color: #3fb950; /* Hacker green by default */
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  margin-top: 16px;
+}
+.terminal-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--clr-bg-2);
+  border-bottom: 1px solid var(--clr-border);
+  padding: 8px 16px;
+}
+.terminal-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+.terminal-dot.red { background: #ff5f56; }
+.terminal-dot.yellow { background: #ffbd2e; }
+.terminal-dot.green { background: #27c93f; }
+.terminal-title {
+  margin-left: 10px;
+  font-size: 0.75rem;
+  color: var(--clr-text-muted);
+}
+.terminal-body {
+  padding: 16px;
+  max-height: 180px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: #05070a;
+}
+.terminal-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #fff;
+  line-height: 1.4;
+}
+.terminal-line .prompt {
+  color: var(--clr-accent);
+}
+.terminal-output {
+  color: var(--clr-text-muted);
+  padding-left: 12px;
+  font-size: 0.8rem;
+  white-space: pre-wrap;
+  line-height: 1.4;
+  margin-top: -4px;
+  margin-bottom: 4px;
+}
+.cursor {
+  animation: blink 1s step-end infinite;
+  color: var(--clr-accent);
+  font-weight: bold;
+}
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
 @media print {
   /* hide everything else on the page when printing */
   body * {

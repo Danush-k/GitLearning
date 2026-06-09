@@ -336,7 +336,10 @@
       </div>
       <div class="visualizer-container">
         <div class="visualizer-controls">
-          <button id="viz-btn-commit" class="btn btn-primary">git commit 📸</button>
+          <div class="control-group" style="flex-direction: row; gap: 8px;">
+            <button id="viz-btn-commit" class="btn btn-primary" style="flex: 1;">git commit 📸</button>
+            <button id="viz-btn-amend" class="btn btn-outline" style="padding: 12px 14px;" title="Amend last commit message">git commit --amend ✏️</button>
+          </div>
           
           <div class="control-group">
             <input type="text" id="viz-branch-input" placeholder="new-branch" class="form-input" aria-label="Branch Name" />
@@ -357,6 +360,7 @@
             <button id="viz-btn-merge" class="btn btn-outline">git merge 🤝</button>
           </div>
 
+          <button id="viz-btn-reset-soft" class="btn btn-outline" style="border-color: var(--clr-accent-warm); color: var(--clr-accent-warm); margin-top: 10px;" title="Undo the last commit (keeps changes)">git reset --soft HEAD~1 ↩️</button>
           <button id="viz-btn-reset" class="btn btn-outline" style="border-color: var(--clr-accent-warm); color: var(--clr-accent-warm); margin-top: auto;">Reset Sandbox 🔄</button>
         </div>
 
@@ -368,6 +372,19 @@
           <div class="visualizer-graph-area" id="visualizer-graph-area">
             <svg id="visualizer-svg" class="visualizer-svg"></svg>
             <div id="visualizer-nodes" class="visualizer-nodes"></div>
+          </div>
+
+          <!-- Mock Terminal Simulator -->
+          <div class="mock-terminal">
+            <div class="terminal-header">
+              <span class="terminal-dot red"></span><span class="terminal-dot yellow"></span><span class="terminal-dot green"></span>
+              <span class="terminal-title">danush@GitLearning: ~/desktop/git-sandbox</span>
+            </div>
+            <div class="terminal-body" id="viz-terminal-body">
+              <div class="terminal-line"><span class="prompt">git-sandbox %</span> git init</div>
+              <div class="terminal-output">Initialized empty Git repository in /Users/danush/desktop/git-sandbox/.git/</div>
+              <div class="terminal-line"><span class="prompt">git-sandbox %</span> <span class="cursor">_</span></div>
+            </div>
           </div>
         </div>
       </div>

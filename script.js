@@ -880,22 +880,64 @@ const initialVisualGit = JSON.stringify(visualGit);
 
 function setupVisualizer() {
   const btnCommit = document.getElementById('viz-btn-commit');
+  const btnAmend = document.getElementById('viz-btn-amend');
   const btnBranch = document.getElementById('viz-btn-branch');
   const btnCheckout = document.getElementById('viz-btn-checkout');
   const btnMerge = document.getElementById('viz-btn-merge');
+  const btnResetSoft = document.getElementById('viz-btn-reset-soft');
   const btnReset = document.getElementById('viz-btn-reset');
   const branchInput = document.getElementById('viz-branch-input');
   const checkoutSelect = document.getElementById('viz-checkout-select');
   const mergeSelect = document.getElementById('viz-merge-select');
   const statusHead = document.getElementById('viz-status-head');
   const statusBranches = document.getElementById('viz-status-branches');
+  const terminalBody = document.getElementById('viz-terminal-body');
 
   if (!btnCommit) return;
+
+  function logToTerminal(command, output) {
+    if (!terminalBody) return;
+    const lines = terminalBody.querySelectorAll('.terminal-line');
+    if (lines.length === 0) return;
+    const lastLine = lines[lines.length - 1]; // active prompt line with cursor
+
+    // Remove cursor from last line
+    const cursorSpan = lastLine.querySelector('.cursor');
+    if (cursorSpan) cursorSpan.remove();
+
+    // Append actual command text to the prompt line
+    lastLine.innerHTML += escapeHtml(command);
+
+    // Append command output if any
+    if (output) {
+      const outEl = document.createElement('div');
+      outEl.className = 'terminal-output';
+      outEl.innerHTML = output.replace(/\n/g, '<br>');
+      terminalBody.appendChild(outEl);
+    }
+
+    // Append a new empty prompt line at the bottom
+    const newline = document.createElement('div');
+    newline.className = 'terminal-line';
+    newline.innerHTML = `<span class="prompt">${visualGit.head} %</span> <span class="cursor">_</span>`;
+    terminalBody.appendChild(newline);
+
+    // Scroll to bottom
+    terminalBody.scrollTop = terminalBody.scrollHeight;
+  }
 
   function resetSandbox() {
     visualGit = JSON.parse(initialVisualGit);
     if (branchInput) branchInput.value = '';
     renderGraph();
+    // Clear terminal and print init message
+    if (terminalBody) {
+      terminalBody.innerHTML = `
+        <div class="terminal-line"><span class="prompt">git-sandbox %</span> git init</div>
+        <div class="terminal-output">Initialized empty Git repository in /Users/danush/desktop/git-sandbox/.git/</div>
+        <div class="terminal-line"><span class="prompt">main %</span> <span class="cursor">_</span></div>
+      `;
+    }
     showToast('Sandbox reset! 🔄');
   }
 
@@ -920,7 +962,25 @@ function setupVisualizer() {
     visualGit.branches[visualGit.head] = newId;
 
     renderGraph();
+    logToTerminal(`git commit -m "${newMsg}"`, `[${visualGit.head} ${newId}] ${newMsg}\n 1 file changed, 1 insertion(+)\n create mode 100644 file.txt`);
     showToast(`Created commit ${newId} on ${visualGit.head} 📸`);
+  }
+
+  function handleAmend() {
+    const headCommitId = visualGit.branches[visualGit.head];
+    const lastCommit = visualGit.commits.find(c => c.id === headCommitId);
+    if (!lastCommit || lastCommit.id === 'c0') {
+      showToast('Cannot amend initial commit!');
+      return;
+    }
+    const newMsg = prompt("Enter new commit message:", lastCommit.message);
+    if (newMsg === null) return; // cancelled
+    const cleanMsg = newMsg.trim() || lastCommit.message;
+    
+    lastCommit.message = cleanMsg;
+    renderGraph();
+    logToTerminal(`git commit --amend -m "${cleanMsg}"`, `[${visualGit.head} ${lastCommit.id}] ${cleanMsg}\n Date: ${new Date().toUTCString()}\n 1 file changed, 1 insertion(+)`);
+    showToast(`Amended commit ${lastCommit.id} message ✏️`);
   }
 
   function handleBranch() {
@@ -941,6 +1001,7 @@ function setupVisualizer() {
     branchInput.value = '';
 
     renderGraph();
+    logToTerminal(`git branch ${branchName} && git checkout ${branchName}`, `Switched to branch '${branchName}'`);
     showToast(`Created and checked out branch ${branchName} 🌿`);
   }
 
@@ -950,6 +1011,7 @@ function setupVisualizer() {
 
     visualGit.head = targetBranch;
     renderGraph();
+    logToTerminal(`git checkout ${targetBranch}`, `Switched to branch '${targetBranch}'`);
     showToast(`Switched to branch ${targetBranch} 🔀`);
   }
 
@@ -995,7 +1057,33 @@ function setupVisualizer() {
     visualGit.branches[visualGit.head] = newId;
 
     renderGraph();
+    logToTerminal(`git merge ${sourceBranch}`, `Updating ${targetCommitId.substring(0,7)}..${sourceCommitId.substring(0,7)}\nFast-forward\n file.txt | 2 +-\n 1 file changed, 1 insertion(+), 1 deletion(-)\nMerge made by the 'recursive' strategy.`);
     showToast(`Merged branch ${sourceBranch} into ${visualGit.head} 🤝`);
+  }
+
+  function handleResetSoft() {
+    const headCommitId = visualGit.branches[visualGit.head];
+    const lastCommit = visualGit.commits.find(c => c.id === headCommitId);
+    if (!lastCommit || lastCommit.id === 'c0') {
+      showToast('Cannot reset initial commit!');
+      return;
+    }
+    
+    const parentId = lastCommit.parents[0];
+    if (!parentId) {
+      showToast('Cannot reset initial commit!');
+      return;
+    }
+    
+    // Set active branch pointer to parentId
+    visualGit.branches[visualGit.head] = parentId;
+    
+    // Remove commit from the list to update graph visually
+    visualGit.commits = visualGit.commits.filter(c => c.id !== headCommitId);
+    
+    renderGraph();
+    logToTerminal(`git reset --soft HEAD~1`, `Unstaged changes after reset:\nM\tfile.txt`);
+    showToast(`Undid last commit (soft reset) ↩️`);
   }
 
   function isAncestor(ancestorId, currentId) {
@@ -1126,10 +1214,20 @@ function setupVisualizer() {
   }
 
   btnCommit.addEventListener('click', handleCommit);
+  if (btnAmend) btnAmend.addEventListener('click', handleAmend);
   btnBranch.addEventListener('click', handleBranch);
   btnCheckout.addEventListener('click', handleCheckout);
   btnMerge.addEventListener('click', handleMerge);
+  if (btnResetSoft) btnResetSoft.addEventListener('click', handleResetSoft);
   btnReset.addEventListener('click', resetSandbox);
+
+  // Initial prompt setup
+  if (terminalBody) {
+    const lines = terminalBody.querySelectorAll('.terminal-line');
+    if (lines.length > 0) {
+      lines[lines.length - 1].querySelector('.prompt').innerHTML = `${visualGit.head} %`;
+    }
+  }
 
   // Initial draw
   renderGraph();
