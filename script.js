@@ -1321,6 +1321,114 @@ function setupBranchingStrategies() {
 }
 
 // ─────────────────────────────────────────────
+// GIT CONFIG BUILDER
+// ─────────────────────────────────────────────
+
+function setupConfigBuilder() {
+  const usernameInput = document.getElementById('cfg-username');
+  const emailInput = document.getElementById('cfg-email');
+  const branchInput = document.getElementById('cfg-branch');
+  const editorSelect = document.getElementById('cfg-editor');
+  const colorCheckbox = document.getElementById('cfg-color');
+  
+  const commandsText = document.getElementById('cfg-commands-text');
+  const fileText = document.getElementById('cfg-file-text');
+
+  const btnTerminal = document.getElementById('btn-cfg-terminal');
+  const btnFile = document.getElementById('btn-cfg-file');
+  const terminalView = document.getElementById('cfg-terminal-view');
+  const fileView = document.getElementById('cfg-file-view');
+
+  const copyCommandsBtn = document.getElementById('copy-cfg-commands');
+  const copyFileBtn = document.getElementById('copy-cfg-file');
+
+  if (!usernameInput || !commandsText || !fileText) return;
+
+  // Toggle views
+  if (btnTerminal && btnFile && terminalView && fileView) {
+    btnTerminal.addEventListener('click', () => {
+      btnTerminal.classList.add('active');
+      btnFile.classList.remove('active');
+      terminalView.style.display = 'flex';
+      fileView.style.display = 'none';
+    });
+
+    btnFile.addEventListener('click', () => {
+      btnFile.classList.add('active');
+      btnTerminal.classList.remove('active');
+      fileView.style.display = 'flex';
+      terminalView.style.display = 'none';
+    });
+  }
+
+  function updateOutputs() {
+    const name = usernameInput.value.trim() || 'Your Name';
+    const email = emailInput.value.trim() || 'your.email@example.com';
+    const branch = branchInput.value.trim() || 'main';
+    const editor = editorSelect.value;
+    const isColor = colorCheckbox.checked;
+
+    // 1. Generate commands
+    let commands = '';
+    commands += `git config --global user.name "${name}"\n`;
+    commands += `git config --global user.email "${email}"\n`;
+    commands += `git config --global init.defaultBranch "${branch}"\n`;
+    commands += `git config --global core.editor "${editor}"\n`;
+    if (isColor) {
+      commands += `git config --global color.ui auto`;
+    } else {
+      commands += `git config --global color.ui false`;
+    }
+    commandsText.textContent = commands;
+
+    // 2. Generate file content
+    let fileContent = '';
+    fileContent += `[user]\n`;
+    fileContent += `    name = ${name}\n`;
+    fileContent += `    email = ${email}\n`;
+    fileContent += `[init]\n`;
+    fileContent += `    defaultBranch = ${branch}\n`;
+    fileContent += `[core]\n`;
+    fileContent += `    editor = ${editor}\n`;
+    fileContent += `[color]\n`;
+    fileContent += `    ui = ${isColor ? 'auto' : 'false'}`;
+    fileText.textContent = fileContent;
+  }
+
+  // Setup inputs event listeners
+  [usernameInput, emailInput, branchInput, editorSelect, colorCheckbox].forEach(el => {
+    if (el) {
+      el.addEventListener('input', updateOutputs);
+      el.addEventListener('change', updateOutputs);
+    }
+  });
+
+  // Setup copy buttons
+  if (copyCommandsBtn) {
+    copyCommandsBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText(commandsText.textContent).then(() => {
+        copyCommandsBtn.textContent = 'Commands Copied! ✅';
+        showToast('Config commands copied! 📋');
+        setTimeout(() => { copyCommandsBtn.textContent = 'Copy Commands 📋'; }, 2000);
+      });
+    });
+  }
+
+  if (copyFileBtn) {
+    copyFileBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText(fileText.textContent).then(() => {
+        copyFileBtn.textContent = 'File Content Copied! ✅';
+        showToast('.gitconfig preview copied! 📋');
+        setTimeout(() => { copyFileBtn.textContent = 'Copy File Contents 📋'; }, 2000);
+      });
+    });
+  }
+
+  // Run initial generate
+  updateOutputs();
+}
+
+// ─────────────────────────────────────────────
 // INIT
 // ─────────────────────────────────────────────
 
@@ -1335,6 +1443,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderCommands('setup');
   renderWorkflow();
   setupBranchingStrategies();
+  setupConfigBuilder();
   setupGenerator();
   setupVisualizer();
   renderCheatsheet();

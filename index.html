@@ -28,6 +28,7 @@
         <li><a href="#workflow" class="nav-link">Workflow</a></li>
         <li><a href="#strategies" class="nav-link">Strategies</a></li>
         <li><a href="#generator" class="nav-link">Generator</a></li>
+        <li><a href="#config-builder" class="nav-link">Config</a></li>
         <li><a href="#visualizer" class="nav-link">Visualizer</a></li>
         <li><a href="#cheatsheet" class="nav-link">Cheatsheet</a></li>
         <li><a href="#quiz" class="nav-link">Quiz</a></li>
@@ -217,6 +218,80 @@
           </div>
           <div id="generator-explanation" class="generator-explanation">
             This creates a hidden <code>.git</code> folder in your current directory, turning it into a Git repository.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Git Config Builder Section -->
+  <section id="config-builder" class="section section-dark">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Interactive Setup</span>
+        <h2 class="section-title">Config Profile Builder</h2>
+        <p class="section-desc">Generate your global Git identity and preview your <code>.gitconfig</code> file live.</p>
+      </div>
+
+      <div class="config-builder-container">
+        <div class="config-inputs-card">
+          <div class="form-group">
+            <label for="cfg-username" class="form-label">Full Name</label>
+            <input type="text" id="cfg-username" class="form-input" placeholder="e.g. Danush K" value="Danush K" />
+          </div>
+
+          <div class="form-group">
+            <label for="cfg-email" class="form-label">Email Address</label>
+            <input type="email" id="cfg-email" class="form-input" placeholder="e.g. danusu2470030@ssn.edu.in" value="danusu2470030@ssn.edu.in" />
+          </div>
+
+          <div class="form-group">
+            <label for="cfg-branch" class="form-label">Default Branch Name</label>
+            <input type="text" id="cfg-branch" class="form-input" placeholder="e.g. main" value="main" />
+          </div>
+
+          <div class="form-group">
+            <label for="cfg-editor" class="form-label">Preferred Text Editor</label>
+            <select id="cfg-editor" class="form-select">
+              <option value="code --wait">VS Code (code)</option>
+              <option value="vim">Vim (vim)</option>
+              <option value="nano">Nano (nano)</option>
+              <option value="subl -w">Sublime Text (subl)</option>
+            </select>
+          </div>
+
+          <div class="form-group" style="margin-top: 8px;">
+            <label class="form-label" style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: normal;">
+              <input type="checkbox" id="cfg-color" checked style="width: 18px; height: 18px; cursor: pointer;" />
+              <span>Enable Colored Terminal Output (color.ui = auto)</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="config-output-card">
+          <div class="tab-header">
+            <button class="config-tab active" id="btn-cfg-terminal">Commands to Run 💻</button>
+            <button class="config-tab" id="btn-cfg-file">Resulting .gitconfig 📄</button>
+          </div>
+          
+          <div class="config-display-area">
+            <div id="cfg-terminal-view" class="config-code-view">
+              <div class="code-container">
+                <pre><code id="cfg-commands-text"># Config commands will go here</code></pre>
+              </div>
+              <button id="copy-cfg-commands" class="btn btn-sm btn-outline copy-overlay-btn">Copy Commands 📋</button>
+            </div>
+            
+            <div id="cfg-file-view" class="config-code-view" style="display: none;">
+              <div class="editor-header">
+                <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+                <span class="editor-filename">~/.gitconfig</span>
+              </div>
+              <div class="code-container file-code-container">
+                <pre><code id="cfg-file-text"># Config file preview will go here</code></pre>
+              </div>
+              <button id="copy-cfg-file" class="btn btn-sm btn-outline copy-overlay-btn">Copy File Contents 📋</button>
+            </div>
           </div>
         </div>
       </div>

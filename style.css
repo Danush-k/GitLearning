@@ -932,6 +932,144 @@ code {
 }
 
 
+
+/* ============================================
+   CONFIG PROFILE BUILDER
+   ============================================ */
+.config-builder-container {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 32px;
+  background: var(--clr-bg-2);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  box-shadow: var(--shadow-glow);
+}
+@media (max-width: 992px) {
+  .config-builder-container {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 24px;
+  }
+}
+.config-inputs-card {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background: var(--clr-bg-3);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-md);
+  padding: 24px;
+}
+.config-output-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--clr-bg-3);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  position: relative;
+}
+.config-output-card .tab-header {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--clr-border);
+  padding-bottom: 12px;
+}
+.config-tab {
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--clr-text-muted);
+  font-family: var(--font-main);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.config-tab:hover {
+  color: var(--clr-text);
+}
+.config-tab.active {
+  background: rgba(88, 166, 255, 0.1);
+  border-color: rgba(88, 166, 255, 0.3);
+  color: var(--clr-accent);
+}
+.config-display-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.config-code-view {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: relative;
+}
+.config-code-view .code-container {
+  flex: 1;
+  background: var(--clr-bg);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  margin-bottom: 56px; /* space for copy button below */
+  overflow: auto;
+  min-height: 200px;
+}
+.config-code-view pre {
+  margin: 0;
+}
+.config-code-view code {
+  background: transparent;
+  border: none;
+  padding: 0;
+  color: var(--clr-accent-3);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+/* Simulated File Editor Header */
+.editor-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--clr-bg-2);
+  border: 1px solid var(--clr-border);
+  border-bottom: none;
+  border-top-left-radius: var(--radius-sm);
+  border-top-right-radius: var(--radius-sm);
+  padding: 8px 16px;
+}
+.editor-header .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+.editor-header .dot.red { background: #ff5f56; }
+.editor-header .dot.yellow { background: #ffbd2e; }
+.editor-header .dot.green { background: #27c93f; }
+.editor-header .editor-filename {
+  margin-left: 10px;
+  font-family: var(--font-code);
+  font-size: 0.8rem;
+  color: var(--clr-text-muted);
+}
+.file-code-container {
+  border-top-left-radius: 0 !important;
+  border-top-right-radius: 0 !important;
+}
+
+.copy-overlay-btn {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  justify-content: center;
+}
+
 /* ============================================
    BRANCHING STRATEGIES
    ============================================ */
