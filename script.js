@@ -482,7 +482,7 @@ function renderQuizResult(container) {
         <div class="result-msg">${msg}</div>
         <div class="result-highscore" style="font-size: 0.95rem; color: var(--clr-text-muted); margin-bottom: 16px;">
           🏆 Personal Best: ${highScore} / ${total}
-          ${highScore > 0 ? `<button class="btn btn-sm btn-outline" style="margin-left:12px; padding: 4px 10px; font-size:0.75rem; vertical-align: middle;" onclick="resetHighScore()">Reset 🔄</button>` : ''}
+          ${highScore > 0 ? `<button class="btn btn-sm btn-outline" style="margin-left:12px; padding: 4px 10px; font-size:0.75rem; vertical-align: middle;" onclick="confirmResetHighScore()">Reset 🔄</button>` : ''}
         </div>
         <button class="btn btn-primary" onclick="restartQuiz()">Try Again 🔄</button>
         ${certificateClaimBox}
@@ -491,13 +491,37 @@ function renderQuizResult(container) {
   `;
 }
 
-function resetHighScore() {
-  if (confirm("Are you sure you want to reset your high score?")) {
-    localStorage.removeItem('quiz-highscore');
-    showToast('High score reset! 🔄');
-    const container = document.getElementById('quiz-container');
-    renderQuizResult(container);
-  }
+function confirmResetHighScore() {
+  const container = document.getElementById('quiz-container');
+  if (!container) return;
+
+  const btnContainer = container.querySelector('.result-highscore');
+  if (!btnContainer) return;
+
+  const savedScore = quizState.score;
+  const savedTotal = quizData.length;
+
+  btnContainer.innerHTML = `
+    <div style="margin-top: 12px; padding: 14px; border: 1px dashed var(--clr-accent-warm); border-radius: var(--radius-md); background: rgba(207, 34, 46, 0.05); display: inline-block; text-align: center;">
+      <span style="font-size: 0.85rem; display: block; margin-bottom: 10px; color: var(--clr-text); font-weight: 500;">Are you sure you want to reset your high score?</span>
+      <div style="display: flex; gap: 8px; justify-content: center;">
+        <button class="btn btn-sm" style="background: var(--clr-accent-warm); color: #fff; padding: 6px 12px; font-size: 0.75rem; border: none;" onclick="executeResetHighScore()">Yes, Reset 🔄</button>
+        <button class="btn btn-sm btn-outline" style="padding: 6px 12px; font-size: 0.75rem; border-color: var(--clr-border);" onclick="cancelResetHighScore()">Cancel</button>
+      </div>
+    </div>
+  `;
+}
+
+function executeResetHighScore() {
+  localStorage.removeItem('quiz-highscore');
+  showToast('High score reset! 🔄');
+  const container = document.getElementById('quiz-container');
+  renderQuizResult(container);
+}
+
+function cancelResetHighScore() {
+  const container = document.getElementById('quiz-container');
+  renderQuizResult(container);
 }
 
 function restartQuiz() {
