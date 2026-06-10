@@ -262,8 +262,47 @@ code {
   font-size: 1.15rem;
   color: var(--clr-text-muted);
   max-width: 600px;
-  margin: 0 auto 36px;
+  margin: 0 auto 28px;
   animation: fadeInUp 0.7s ease 0.2s both;
+}
+.hero-protip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: rgba(88, 166, 255, 0.04);
+  border: 1px solid rgba(88, 166, 255, 0.12);
+  padding: 10px 22px;
+  border-radius: 100px;
+  max-width: 650px;
+  margin: 0 auto 36px;
+  font-size: 0.9rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  animation: fadeInUp 0.7s ease 0.25s both;
+}
+.protip-title {
+  color: var(--clr-accent-yellow);
+  font-weight: 700;
+  white-space: nowrap;
+}
+.protip-text {
+  color: var(--clr-text);
+}
+.next-tip-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 0.95rem;
+  color: var(--clr-text-muted);
+  transition: transform var(--transition), color var(--transition);
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.next-tip-btn:hover {
+  color: var(--clr-accent);
+  transform: rotate(180deg);
 }
 .hero-actions {
   display: flex;

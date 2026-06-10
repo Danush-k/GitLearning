@@ -1826,6 +1826,45 @@ function setupCertificateEvents() {
   }
 }
 
+const gitProTips = [
+  "Use 'git commit --amend' to add forgotten changes or edit the message of your last commit.",
+  "Wrote code on the wrong branch? Use 'git stash', switch branches, and run 'git stash pop' to move it.",
+  "You can switch back to your previously checked-out branch instantly using 'git checkout -'.",
+  "Use 'git status -s' to show your files' status in a compact, easy-to-read format.",
+  "A merge conflict is not a bug; it is Git stopping so you can decide which changes are correct.",
+  "Create custom shortcuts in Git! Try 'git config --global alias.co checkout' to use 'git co' instead.",
+  "Use 'git log --oneline --graph --all' to see a neat text representation of your complete branch structure.",
+  "Lost a commit or branch? Don't panic! Check 'git reflog' to find the SHA-1 of deleted history."
+];
+
+function setupProTipWidget() {
+  const textEl = document.getElementById('protip-text');
+  const btnEl = document.getElementById('next-tip-btn');
+  const wrapperEl = document.getElementById('hero-protip');
+  if (!textEl || !wrapperEl) return;
+
+  let currentTipIndex = Math.floor(Math.random() * gitProTips.length);
+
+  function displayTip() {
+    textEl.textContent = gitProTips[currentTipIndex];
+    wrapperEl.style.opacity = '1';
+    wrapperEl.style.transform = 'translateY(0)';
+  }
+
+  displayTip();
+
+  if (btnEl) {
+    btnEl.addEventListener('click', () => {
+      wrapperEl.style.opacity = '0';
+      wrapperEl.style.transform = 'translateY(-5px)';
+      setTimeout(() => {
+        currentTipIndex = (currentTipIndex + 1) % gitProTips.length;
+        displayTip();
+      }, 250);
+    });
+  }
+}
+
 function setupKeyboardShortcuts() {
   document.addEventListener('keydown', (e) => {
     // 1. Focus command search with Ctrl+/ or Cmd+/
@@ -1895,6 +1934,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupVisualizer();
   renderCheatsheet();
   renderQuiz();
+  setupProTipWidget();
   setupNavbar();
   setupCommandTabs();
   setupSearch();
