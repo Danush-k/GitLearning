@@ -223,6 +223,51 @@ const quizData = [
     ],
     answer: 2,
     explanation: "✅ `git stash` saves your uncommitted changes so you can work on something else."
+  },
+  {
+    q: "Which command is used to apply a specific commit from one branch onto the current branch?",
+    options: ["git merge", "git cherry-pick", "git pull", "git checkout"],
+    answer: 1,
+    explanation: "✅ `git cherry-pick <commit-hash>` applies the changes introduced by an existing commit onto your current branch."
+  },
+  {
+    q: "What is the primary purpose of 'git rebase'?",
+    options: [
+      "Reapplies commits on top of another base tip to maintain a linear history",
+      "Deletes the entire commit history",
+      "Creates a remote copy of the repository",
+      "Undoes the staging area changes"
+    ],
+    answer: 0,
+    explanation: "✅ `git rebase` integrates changes from one branch into another by moving the base of your branch to the tip of the target branch, keeping commits clean and linear."
+  },
+  {
+    q: "What does the command 'git reset --hard HEAD' do?",
+    options: [
+      "Undoes the last commit but keeps staged changes",
+      "Resets the branch to match origin/main",
+      "Discards all unstaged, staged, and local changes since the last commit",
+      "Deletes the .git directory"
+    ],
+    answer: 2,
+    explanation: "✅ `git reset --hard HEAD` resets the staging area and working directory to the state of the last commit, discarding all uncommitted changes."
+  },
+  {
+    q: "Which command lists the log of all local actions taken in your repository (including resets, checkouts, and commits)?",
+    options: ["git history", "git reflog", "git log --all", "git status"],
+    answer: 1,
+    explanation: "✅ `git reflog` tracks every change made to references (HEAD, branch tips, etc.), allowing you to recover lost commits or branches."
+  },
+  {
+    q: "What is the key difference between 'git revert' and 'git reset'?",
+    options: [
+      "Revert creates a new commit that undoes changes; reset moves the branch pointer back in history",
+      "Revert deletes history; reset preserves it",
+      "Revert is only for remote repos; reset is only for local repos",
+      "There is no difference between them"
+    ],
+    answer: 0,
+    explanation: "✅ `git revert` safely creates a new commit that records the exact opposite changes, making it ideal for shared branches. `git reset` alters the commit history by moving branch tips backward."
   }
 ];
 
