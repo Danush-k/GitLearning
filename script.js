@@ -52,30 +52,37 @@ const commandsData = {
     { cmd: "git init", desc: "Initialize a new Git repository" },
     { cmd: "git clone <url>", desc: "Clone a remote repository locally" },
     { cmd: "git config --list", desc: "View all Git configuration" },
+    { cmd: "git help <command>", desc: "Get help info for a specific git command" },
   ],
   basic: [
     { cmd: "git status", desc: "Show the working tree status" },
+    { cmd: "git status -s", desc: "Show working tree status in a short format" },
     { cmd: "git add .", desc: "Stage all changed files for commit" },
     { cmd: "git add <file>", desc: "Stage a specific file" },
     { cmd: "git commit -m 'message'", desc: "Commit staged changes with a message" },
     { cmd: "git log --oneline", desc: "View compact commit history" },
     { cmd: "git diff", desc: "Show unstaged changes" },
+    { cmd: "git diff --staged", desc: "Show differences between staged files and last commit" },
   ],
   branch: [
     { cmd: "git branch", desc: "List all local branches" },
+    { cmd: "git branch -a", desc: "List all local and remote-tracking branches" },
     { cmd: "git branch <name>", desc: "Create a new branch" },
     { cmd: "git checkout <branch>", desc: "Switch to an existing branch" },
     { cmd: "git checkout -b <name>", desc: "Create and switch to a new branch" },
+    { cmd: "git checkout -", desc: "Switch to the previously checked out branch" },
     { cmd: "git merge <branch>", desc: "Merge a branch into current branch" },
     { cmd: "git branch -d <name>", desc: "Delete a local branch" },
   ],
   remote: [
     { cmd: "git remote -v", desc: "List all remote connections" },
     { cmd: "git remote add origin <url>", desc: "Add a remote named 'origin'" },
+    { cmd: "git remote show origin", desc: "Show detailed information about origin remote" },
     { cmd: "git push origin main", desc: "Push main branch to remote" },
     { cmd: "git pull origin main", desc: "Pull latest from remote main" },
     { cmd: "git fetch", desc: "Download remote changes (without merge)" },
     { cmd: "git push -u origin main", desc: "Push and set upstream tracking" },
+    { cmd: "git push origin --delete <branch>", desc: "Delete a branch on the remote repository" },
   ]
 };
 
