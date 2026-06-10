@@ -897,6 +897,41 @@ code {
   color: #000;
 }
 
+.viz-tooltip {
+  background: rgba(22, 27, 34, 0.95);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-md);
+  padding: 12px 16px;
+  font-size: 0.85rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+  width: max-content;
+  max-width: 280px;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+  line-height: 1.4;
+  text-align: left;
+}
+.viz-tooltip-hash {
+  font-family: var(--font-code);
+  color: var(--clr-accent);
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.viz-tooltip-msg {
+  color: var(--clr-text);
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+.viz-tooltip-meta {
+  color: var(--clr-text-muted);
+  font-size: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
 /* ============================================
    FOOTER
    ============================================ */

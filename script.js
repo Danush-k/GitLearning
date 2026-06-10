@@ -1259,7 +1259,43 @@ function setupVisualizer() {
       nodeEl.style.left = `${x}px`;
       nodeEl.style.top = `${y}px`;
       nodeEl.textContent = commit.id;
-      nodeEl.title = `${commit.id}: ${commit.message} (Branch: ${commit.branch})`;
+      
+      // Custom Tooltip Event Handlers
+      const tooltipEl = document.getElementById('viz-tooltip');
+      nodeEl.addEventListener('mouseenter', () => {
+        if (!tooltipEl) return;
+        const parentIds = commit.parents && commit.parents.length > 0 ? commit.parents.join(', ') : 'None';
+        tooltipEl.innerHTML = `
+          <div class="viz-tooltip-hash">Commit: ${commit.id}</div>
+          <div class="viz-tooltip-msg">${commit.message}</div>
+          <div class="viz-tooltip-meta">
+            <span><strong>Branch:</strong> ${commit.branch}</span>
+            <span><strong>Parents:</strong> ${parentIds}</span>
+            <span><strong>Author:</strong> Danush K</span>
+          </div>
+        `;
+        tooltipEl.style.display = 'block';
+        tooltipEl.style.opacity = '1';
+      });
+
+      nodeEl.addEventListener('mousemove', (e) => {
+        if (!tooltipEl) return;
+        const graphArea = document.getElementById('visualizer-graph-area');
+        if (!graphArea) return;
+        const rect = graphArea.getBoundingClientRect();
+        // Position relative to the scrolling graph area
+        const tooltipX = e.clientX - rect.left + graphArea.scrollLeft + 15;
+        const tooltipY = e.clientY - rect.top + graphArea.scrollTop + 15;
+        tooltipEl.style.left = `${tooltipX}px`;
+        tooltipEl.style.top = `${tooltipY}px`;
+      });
+
+      nodeEl.addEventListener('mouseleave', () => {
+        if (!tooltipEl) return;
+        tooltipEl.style.opacity = '0';
+        tooltipEl.style.display = 'none';
+      });
+
       nodesContainer.appendChild(nodeEl);
 
       // Label below node
