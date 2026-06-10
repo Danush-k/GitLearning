@@ -648,9 +648,20 @@ code {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 0;
+  padding: 8px 10px;
   border-bottom: 1px solid rgba(48,54,61,0.5);
   gap: 12px;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition);
+}
+.cheat-row:hover {
+  background: rgba(88, 166, 255, 0.05);
+  padding-left: 14px;
+}
+.cheat-row.copied {
+  background: rgba(63, 185, 80, 0.1);
+  color: var(--clr-accent-3);
 }
 .cheat-row:last-child { border-bottom: none; }
 .cheat-cmd {

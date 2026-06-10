@@ -353,7 +353,7 @@ function renderCheatsheet() {
     <div class="cheat-group">
       <div class="cheat-group-title">${group.title}</div>
       ${group.rows.map(row => `
-        <div class="cheat-row">
+        <div class="cheat-row" onclick="copyCommand(this, '${row.cmd.replace(/'/g, "\\'")}')" title="Click to copy command">
           <span class="cheat-cmd">${escapeHtml(row.cmd)}</span>
           <span class="cheat-label">${row.label}</span>
         </div>
