@@ -1700,12 +1700,21 @@ function generateCertificate(score, total) {
 
   if (!printArea || !certModal) return;
 
+  const nameHash = recipientName.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  const verID = `GL-${nameHash.toString(16).toUpperCase().padStart(4, '0')}-${today.replace(/-/g, '')}`;
+
   // Render SVG Certificate
   printArea.innerHTML = `
     <svg id="certificate-svg" viewBox="0 0 800 560" style="width: 100%; height: auto; max-width: 700px; background: #0d1117; border: 8px double var(--clr-accent); border-radius: 12px; font-family: 'Inter', sans-serif;">
       <!-- Border lines -->
       <rect x="15" y="15" width="770" height="530" fill="none" stroke="var(--clr-border)" stroke-width="2" />
       <rect x="22" y="22" width="756" height="516" fill="none" stroke="var(--clr-border)" stroke-width="1" stroke-dasharray="4" />
+      
+      <!-- Corner Accents -->
+      <path d="M 25 45 L 25 25 L 45 25" fill="none" stroke="var(--clr-accent)" stroke-width="3" />
+      <path d="M 775 45 L 775 25 L 755 25" fill="none" stroke="var(--clr-accent)" stroke-width="3" />
+      <path d="M 25 515 L 25 535 L 45 535" fill="none" stroke="var(--clr-accent)" stroke-width="3" />
+      <path d="M 775 515 L 775 535 L 755 535" fill="none" stroke="var(--clr-accent)" stroke-width="3" />
       
       <!-- Watermark logo -->
       <text x="400" y="280" font-size="120" fill="rgba(88, 166, 255, 0.025)" font-weight="800" text-anchor="middle" transform="rotate(-30 400 280)" pointer-events="none">⎇ Git</text>
@@ -1738,6 +1747,9 @@ function generateCertificate(score, total) {
         <circle cx="30" cy="30" r="22" fill="none" stroke="var(--clr-accent)" stroke-width="2" stroke-dasharray="4" />
         <text x="30" y="37" fill="var(--clr-accent)" font-weight="bold" text-anchor="middle">⎇</text>
       </g>
+      
+      <!-- Credential Verification Code -->
+      <text x="400" y="495" font-size="10" fill="var(--clr-text-muted)" text-anchor="middle" font-family="'Fira Code', monospace">Credential Verification ID: ${verID}</text>
     </svg>
   `;
 
