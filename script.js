@@ -1790,6 +1790,54 @@ function setupCertificateEvents() {
   }
 }
 
+function setupKeyboardShortcuts() {
+  document.addEventListener('keydown', (e) => {
+    // 1. Focus command search with Ctrl+/ or Cmd+/
+    if ((e.ctrlKey || e.metaKey) && e.key === '/') {
+      const searchInput = document.getElementById('commands-search');
+      if (searchInput) {
+        e.preventDefault();
+        searchInput.focus();
+        showToast('Search focused! 🔍');
+      }
+    }
+
+    // 2. Escape to close Certificate Modal
+    if (e.key === 'Escape') {
+      const certModal = document.getElementById('cert-modal');
+      if (certModal && certModal.classList.contains('show')) {
+        certModal.classList.remove('show');
+      }
+    }
+
+    // 3. Quiz keyboard shortcuts (1, 2, 3, 4 for options, Enter for next)
+    const quizContainer = document.getElementById('quiz-container');
+    if (quizContainer) {
+      const isQuizVisible = quizContainer.getBoundingClientRect().top < window.innerHeight && quizContainer.getBoundingClientRect().bottom > 0;
+      if (isQuizVisible) {
+        const nextBtn = document.getElementById('quiz-next');
+        if (nextBtn && nextBtn.classList.contains('show') && e.key === 'Enter') {
+          const nameInput = document.getElementById('cert-name-input');
+          if (document.activeElement !== nameInput) {
+            e.preventDefault();
+            nextBtn.click();
+            return;
+          }
+        }
+
+        if (!quizState.answered && ['1', '2', '3', '4'].includes(e.key)) {
+          const optIndex = parseInt(e.key, 10) - 1;
+          const optBtn = document.getElementById(`quiz-opt-${optIndex}`);
+          if (optBtn && !optBtn.disabled) {
+            e.preventDefault();
+            selectAnswer(optIndex);
+          }
+        }
+      }
+    }
+  });
+}
+
 // ─────────────────────────────────────────────
 // INIT
 // ─────────────────────────────────────────────
@@ -1814,6 +1862,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupNavbar();
   setupCommandTabs();
   setupSearch();
+  setupKeyboardShortcuts();
   setupBackToTop();
 
   // Setup scroll reveal after a tick so elements exist
