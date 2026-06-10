@@ -570,13 +570,26 @@ function setupNavbar() {
   }
 
   window.addEventListener('scroll', () => {
-    navbar.classList.toggle('scrolled', window.scrollY > 50);
+    const scrollPos = window.scrollY || window.pageYOffset;
+    navbar.classList.toggle('scrolled', scrollPos > 50);
 
-    // Highlight active nav link
+    // Highlight active nav link (Scrollspy)
     let current = '';
-    sections.forEach(sec => {
-      if (window.scrollY >= sec.offsetTop - 120) current = sec.id;
-    });
+    const isAtBottom = (window.innerHeight + scrollPos) >= document.documentElement.scrollHeight - 20;
+
+    if (isAtBottom) {
+      if (sections.length > 0) {
+        current = sections[sections.length - 1].id;
+      }
+    } else {
+      sections.forEach(sec => {
+        const top = sec.offsetTop - 150;
+        if (scrollPos >= top) {
+          current = sec.id;
+        }
+      });
+    }
+
     links.forEach(link => {
       link.classList.toggle('active', link.getAttribute('href') === `#${current}`);
     });
