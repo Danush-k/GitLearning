@@ -1523,6 +1523,7 @@ function setupConfigBuilder() {
   const emailInput = document.getElementById('cfg-email');
   const branchInput = document.getElementById('cfg-branch');
   const editorSelect = document.getElementById('cfg-editor');
+  const protocolSelect = document.getElementById('cfg-protocol');
   const colorCheckbox = document.getElementById('cfg-color');
   
   const commandsText = document.getElementById('cfg-commands-text');
@@ -1560,6 +1561,7 @@ function setupConfigBuilder() {
     const email = emailInput.value.trim() || 'your.email@example.com';
     const branch = branchInput.value.trim() || 'main';
     const editor = editorSelect.value;
+    const protocol = protocolSelect ? protocolSelect.value : 'https';
     const isColor = colorCheckbox.checked;
 
     // 1. Generate commands
@@ -1569,9 +1571,20 @@ function setupConfigBuilder() {
     commands += `git config --global init.defaultBranch "${branch}"\n`;
     commands += `git config --global core.editor "${editor}"\n`;
     if (isColor) {
-      commands += `git config --global color.ui auto`;
+      commands += `git config --global color.ui auto\n`;
     } else {
-      commands += `git config --global color.ui false`;
+      commands += `git config --global color.ui false\n`;
+    }
+
+    if (protocol === 'ssh') {
+      commands += `\n# Generate a secure SSH keypair (press Enter to accept default path):\n`;
+      commands += `ssh-keygen -t ed25519 -C "${email}"\n`;
+      commands += `# Print public key to copy & add to GitHub (Settings -> SSH keys):\n`;
+      commands += `cat ~/.ssh/id_ed25519.pub`;
+    } else {
+      commands += `\n# Set credential helper to cache HTTPS password/PAT tokens:\n`;
+      commands += `# On macOS: git config --global credential.helper osxkeychain\n`;
+      commands += `# On Windows: git config --global credential.helper manager`;
     }
     commandsText.textContent = commands;
 
@@ -1585,12 +1598,18 @@ function setupConfigBuilder() {
     fileContent += `[core]\n`;
     fileContent += `    editor = ${editor}\n`;
     fileContent += `[color]\n`;
-    fileContent += `    ui = ${isColor ? 'auto' : 'false'}`;
+    fileContent += `    ui = ${isColor ? 'auto' : 'false'}\n`;
+    if (protocol === 'https') {
+      fileContent += `[credential]\n`;
+      fileContent += `    helper = osxkeychain # or 'manager' on Windows`;
+    } else {
+      fileContent += `# SSH config is managed via ~/.ssh/config, not .gitconfig`;
+    }
     fileText.textContent = fileContent;
   }
 
   // Setup inputs event listeners
-  [usernameInput, emailInput, branchInput, editorSelect, colorCheckbox].forEach(el => {
+  [usernameInput, emailInput, branchInput, editorSelect, protocolSelect, colorCheckbox].forEach(el => {
     if (el) {
       el.addEventListener('input', updateOutputs);
       el.addEventListener('change', updateOutputs);
