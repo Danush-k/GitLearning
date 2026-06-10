@@ -555,15 +555,30 @@ function setupCommandTabs() {
 
 function setupSearch() {
   const searchInput = document.getElementById('commands-search');
+  const clearBtn = document.getElementById('clear-search-btn');
   if (!searchInput) return;
 
-  searchInput.addEventListener('input', (e) => {
-    const query = e.target.value;
+  function updateSearchUI(query) {
     const activeTabBtn = document.querySelector('.tab-btn.active');
     const activeTab = activeTabBtn ? activeTabBtn.dataset.tab : 'setup';
     renderCommands(activeTab, query);
     filterCheatsheet(query);
+    if (clearBtn) {
+      clearBtn.style.display = query ? 'flex' : 'none';
+    }
+  }
+
+  searchInput.addEventListener('input', (e) => {
+    updateSearchUI(e.target.value);
   });
+
+  if (clearBtn) {
+    clearBtn.addEventListener('click', () => {
+      searchInput.value = '';
+      updateSearchUI('');
+      searchInput.focus();
+    });
+  }
 }
 
 function filterCheatsheet(query) {

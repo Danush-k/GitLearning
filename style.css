@@ -377,6 +377,26 @@ code {
   border-color: var(--clr-accent);
   box-shadow: 0 0 10px rgba(88, 166, 255, 0.15);
 }
+.clear-search-btn {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: var(--clr-text-muted);
+  font-size: 1.4rem;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  transition: color var(--transition);
+}
+.clear-search-btn:hover {
+  color: var(--clr-text);
+}
 .search-highlight {
   background: rgba(247, 129, 102, 0.3);
   color: inherit;
