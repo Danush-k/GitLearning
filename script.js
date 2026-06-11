@@ -868,6 +868,32 @@ const generatorActions = {
       { id: 'file', label: 'File name (if restoring/unstaging)', type: 'text', placeholder: 'index.html', dependsOn: { param: 'undoType', values: ['unstaged', 'staged'] } },
       { id: 'hash', label: 'Commit Hash (if reverting)', type: 'text', placeholder: 'abc1234', dependsOn: { param: 'undoType', values: ['revert'] } }
     ]
+  },
+  stash: {
+    command: (params) => {
+      if (params.stashAction === 'pop') {
+        return 'git stash pop';
+      } else if (params.stashAction === 'list') {
+        return 'git stash list';
+      } else {
+        const msg = params.stashMsg ? ` -m '${params.stashMsg.replace(/'/g, "'\\''")}'` : '';
+        return `git stash${msg}`;
+      }
+    },
+    explanation: 'Stashing allows you to temporarily save all uncommitted local modifications, clearing your working directory without losing work. You can pop changes back, list all stashes, or create a stash with a message.',
+    params: [
+      {
+        id: 'stashAction',
+        label: 'Action',
+        type: 'select',
+        options: [
+          { value: 'save', label: 'Save changes to stash' },
+          { value: 'pop', label: 'Pop/Restore the last stashed changes' },
+          { value: 'list', label: 'List all saved stashes' }
+        ]
+      },
+      { id: 'stashMsg', label: 'Stash Message (optional, if saving)', type: 'text', placeholder: 'work in progress', dependsOn: { param: 'stashAction', values: ['save'] } }
+    ]
   }
 };
 
