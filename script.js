@@ -83,6 +83,14 @@ const commandsData = {
     { cmd: "git fetch", desc: "Download remote changes (without merge)" },
     { cmd: "git push -u origin main", desc: "Push and set upstream tracking" },
     { cmd: "git push origin --delete <branch>", desc: "Delete a branch on the remote repository" },
+  ],
+  advanced: [
+    { cmd: "git stash", desc: "Temporarily shelve (stash) changes made to your working directory" },
+    { cmd: "git stash pop", desc: "Restore the most recently stashed files and remove from stash list" },
+    { cmd: "git cherry-pick <commit>", desc: "Apply the changes introduced by an existing commit" },
+    { cmd: "git reflog", desc: "Show a log of all reference updates (recovery tool)" },
+    { cmd: "git reset --hard HEAD~1", desc: "Discard commits and local modifications permanently" },
+    { cmd: "git clean -fd", desc: "Remove untracked files and directories from the working tree" }
   ]
 };
 
