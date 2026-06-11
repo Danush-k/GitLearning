@@ -5,13 +5,13 @@ A beautifully designed, interactive website to help beginners learn Git & GitHub
 ## 📚 What's Inside
 
 - **Git Basics** — Core concepts explained simply with illustrative examples.
-- **Common Commands** — Interactive command reference cards organized by category with search functionality.
+- **Common Commands** — Interactive command reference cards organized by category (Setup, Basic, Branching, Remote, and Advanced) with search functionality.
 - **Branching Strategies** — Visual tabbed section explaining GitHub Flow, Git Flow, and Trunk-Based Development.
-- **Git Command Generator** — Choose actions and parameters to generate exact Git terminal command syntax.
+- **Git Command Generator** — Choose actions (including stashing and undoing) and configure parameters to generate exact Git terminal command syntax.
 - **Config Profile Builder** — Live preview generator for Git username, email, default branch, editor, and colored output.
 - **Git Commit Visualizer** — Interactive sandbox to simulate commits, switches, branches, merges, and soft resets on a real-time graph.
 - **Git Cheatsheet** — Quick-reference lookup tables for basic commands, branching, remotes, undoing, and extras.
-- **Mini Quiz & Certificate** — Test your Git knowledge and receive a downloadable / printable Certificate of Completion when you score 8/10 or higher.
+- **Mini Quiz & Certificate** — Test your Git knowledge with 16 comprehensive questions and receive a downloadable / printable Certificate of Completion when you score 8/10 or higher.
 
 ## 🚀 Getting Started
 
