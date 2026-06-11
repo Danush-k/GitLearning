@@ -276,6 +276,12 @@ const quizData = [
     ],
     answer: 0,
     explanation: "✅ `git revert` safely creates a new commit that records the exact opposite changes, making it ideal for shared branches. `git reset` alters the commit history by moving branch tips backward."
+  },
+  {
+    q: "Which command allows you to temporarily save your working directory changes without committing them, so you can work on something else?",
+    options: ["git commit --amend", "git stash", "git checkout -b", "git reset --soft"],
+    answer: 1,
+    explanation: "✅ `git stash` temporarily shelves (stashes) changes made to your working directory so you can work on a clean branch, and you can apply them back later with `git stash pop`."
   }
 ];
 
