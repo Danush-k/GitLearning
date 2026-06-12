@@ -439,6 +439,20 @@
         </div>
 
         <div class="visualizer-canvas-wrapper">
+          <!-- Mission Dashboard -->
+          <div id="viz-mission-dashboard" style="background: rgba(88, 166, 255, 0.04); border: 1px solid rgba(88, 166, 255, 0.15); border-radius: var(--radius-md); padding: 16px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 4px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+              <span style="font-weight: 700; color: var(--clr-accent-yellow); font-size: 0.85rem; display: flex; align-items: center; gap: 6px;">🎯 Git Learning Mission</span>
+              <span id="viz-mission-progress" style="font-size: 0.72rem; color: var(--clr-text-muted); font-weight: 600;">Mission 1 / 4</span>
+            </div>
+            <div id="viz-mission-title" style="font-size: 0.95rem; font-weight: 700; color: #fff;">Branch Out</div>
+            <div id="viz-mission-desc" style="font-size: 0.8rem; color: var(--clr-text-muted); line-height: 1.4; margin-bottom: 6px;">Create a new branch named 'dev' and checkout to it using the git branch input.</div>
+            <div style="display: flex; gap: 8px; align-items: center; justify-content: space-between;">
+              <div id="viz-mission-status-indicator" style="font-size: 0.78rem; font-weight: 600; color: var(--clr-accent-warm); display: flex; align-items: center; gap: 4px;">❌ Objective not met</div>
+              <button id="viz-mission-next-btn" class="btn btn-primary" style="display: none; padding: 6px 12px; font-size: 0.72rem; border-radius: var(--radius-sm); border: none;">Next Mission ➡️</button>
+            </div>
+          </div>
+
           <div class="visualizer-status">
             <span>HEAD: <strong id="viz-status-head" class="gradient-text">main</strong></span>
             <span style="margin-left: 20px;">Active Branches: <span id="viz-status-branches">main</span></span>

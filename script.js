@@ -1111,6 +1111,53 @@ function setupVisualizer() {
   const unstagedList = document.getElementById('viz-unstaged-list');
   const stagedList = document.getElementById('viz-staged-list');
 
+  // Mission Mode Elements
+  const missionTitle = document.getElementById('viz-mission-title');
+  const missionDesc = document.getElementById('viz-mission-desc');
+  const missionProgress = document.getElementById('viz-mission-progress');
+  const missionIndicator = document.getElementById('viz-mission-status-indicator');
+  const missionNextBtn = document.getElementById('viz-mission-next-btn');
+
+  const visualMissions = [
+    {
+      title: "Branch Out",
+      desc: "Branches allow you to work in isolation. Create a new branch named <strong>dev</strong> using the 'git branch' control panel.",
+      check: (state) => state.branches['dev'] !== undefined && state.head === 'dev',
+      successMsg: "Fantastic! You've created and checked out 'dev' branch! 🎉"
+    },
+    {
+      title: "Document Changes",
+      desc: "Before making commits, you need to stage changes. Click <strong>git add .</strong> to stage your changes, then click <strong>git commit</strong> to commit. Do this twice to make 2 commits on your 'dev' branch.",
+      check: (state) => {
+        const devCommits = state.commits.filter(c => c.branch === 'dev');
+        return devCommits.length >= 2;
+      },
+      successMsg: "Awesome! You've recorded version history by making commits! 📸"
+    },
+    {
+      title: "Safe Merge",
+      desc: "Integrate your new features back. Checkout branch <strong>main</strong> first using 'git checkout', then select <strong>dev</strong> and click <strong>git merge</strong>.",
+      check: (state) => {
+        const currentCommitId = state.branches[state.head];
+        const currentCommit = state.commits.find(c => c.id === currentCommitId);
+        return state.head === 'main' && currentCommit && currentCommit.isMerge && currentCommit.parents.includes(state.branches['dev']);
+      },
+      successMsg: "Perfect! You successfully merged dev into main! 🤝"
+    },
+    {
+      title: "Clean Up & Restart",
+      desc: "Undoing mistakes is crucial. Perform a <strong>git reset --soft HEAD~1</strong> on main to undo the merge commit.",
+      check: (state) => {
+        const currentCommitId = state.branches[state.head];
+        const currentCommit = state.commits.find(c => c.id === currentCommitId);
+        return state.head === 'main' && currentCommit && !currentCommit.isMerge;
+      },
+      successMsg: "Mission complete! You've mastered branch checkout, commit, merge, and soft reset! 🏆"
+    }
+  ];
+
+  let currentMissionIndex = 0;
+
   if (!btnCommit) return;
 
   function logToTerminal(command, output) {
@@ -1146,6 +1193,7 @@ function setupVisualizer() {
 
   function resetSandbox() {
     visualGit = JSON.parse(initialVisualGit);
+    currentMissionIndex = 0;
     if (branchInput) branchInput.value = '';
     renderGraph();
     // Clear terminal and print init message
@@ -1388,9 +1436,40 @@ function setupVisualizer() {
     }
   }
 
+  function updateMissionUI() {
+    if (!missionTitle || currentMissionIndex >= visualMissions.length) {
+      if (missionTitle) {
+        missionTitle.textContent = "🏆 All Missions Complete!";
+        missionDesc.innerHTML = "You've successfully finished all Git Learning Missions. Feel free to continue playing in sandbox mode!";
+        missionProgress.textContent = "Finished";
+        missionIndicator.innerHTML = "✨ Git Master Status Unlocked";
+        missionIndicator.style.color = "var(--clr-accent-3)";
+        missionNextBtn.style.display = "none";
+      }
+      return;
+    }
+
+    const mission = visualMissions[currentMissionIndex];
+    missionTitle.textContent = mission.title;
+    missionDesc.innerHTML = mission.desc;
+    missionProgress.textContent = `Mission ${currentMissionIndex + 1} / ${visualMissions.length}`;
+
+    const completed = mission.check(visualGit);
+    if (completed) {
+      missionIndicator.innerHTML = "✅ Objective met!";
+      missionIndicator.style.color = "var(--clr-accent-3)";
+      missionNextBtn.style.display = "inline-block";
+    } else {
+      missionIndicator.innerHTML = "❌ Objective not met";
+      missionIndicator.style.color = "var(--clr-accent-warm)";
+      missionNextBtn.style.display = "none";
+    }
+  }
+
   function renderGraph() {
     updateSelects();
     updateStagingUI();
+    updateMissionUI();
 
     // Update status
     if (statusHead) statusHead.textContent = visualGit.head;
@@ -1540,6 +1619,15 @@ function setupVisualizer() {
 
   if (btnAdd) btnAdd.addEventListener('click', handleAdd);
   if (btnRestore) btnRestore.addEventListener('click', handleRestore);
+
+  if (missionNextBtn) {
+    missionNextBtn.addEventListener('click', () => {
+      const mission = visualMissions[currentMissionIndex];
+      showToast(mission.successMsg);
+      currentMissionIndex++;
+      updateMissionUI();
+    });
+  }
 
   // Initial prompt setup
   if (terminalBody) {
