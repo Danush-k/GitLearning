@@ -287,6 +287,32 @@
             </label>
           </div>
 
+          <div class="form-group" style="margin-top: 16px;">
+            <label class="form-label">Git Aliases (Shortcuts)</label>
+            <div class="alias-checkbox-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px;">
+              <label class="form-label" style="display: flex; align-items: center; gap: 8px; font-weight: normal; font-size: 0.85rem; cursor: pointer;">
+                <input type="checkbox" id="cfg-alias-co" checked style="width: 16px; height: 16px; cursor: pointer;" />
+                <span>co → checkout</span>
+              </label>
+              <label class="form-label" style="display: flex; align-items: center; gap: 8px; font-weight: normal; font-size: 0.85rem; cursor: pointer;">
+                <input type="checkbox" id="cfg-alias-br" checked style="width: 16px; height: 16px; cursor: pointer;" />
+                <span>br → branch</span>
+              </label>
+              <label class="form-label" style="display: flex; align-items: center; gap: 8px; font-weight: normal; font-size: 0.85rem; cursor: pointer;">
+                <input type="checkbox" id="cfg-alias-ci" checked style="width: 16px; height: 16px; cursor: pointer;" />
+                <span>ci → commit</span>
+              </label>
+              <label class="form-label" style="display: flex; align-items: center; gap: 8px; font-weight: normal; font-size: 0.85rem; cursor: pointer;">
+                <input type="checkbox" id="cfg-alias-st" checked style="width: 16px; height: 16px; cursor: pointer;" />
+                <span>st → status</span>
+              </label>
+              <label class="form-label" style="display: flex; align-items: center; gap: 8px; font-weight: normal; font-size: 0.85rem; cursor: pointer;">
+                <input type="checkbox" id="cfg-alias-lg" checked style="width: 16px; height: 16px; cursor: pointer;" />
+                <span>lg → pretty graph</span>
+              </label>
+            </div>
+          </div>
+
           <button id="cfg-reset-btn" class="btn btn-sm btn-outline" style="margin-top: 16px; border-color: var(--clr-accent-warm); color: var(--clr-accent-warm); width: fit-content;">Reset to Defaults 🔄</button>
         </div>
 

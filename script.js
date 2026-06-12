@@ -1689,6 +1689,13 @@ function setupConfigBuilder() {
   const editorSelect = document.getElementById('cfg-editor');
   const protocolSelect = document.getElementById('cfg-protocol');
   const colorCheckbox = document.getElementById('cfg-color');
+
+  // Aliases checkboxes
+  const aliasCoCheckbox = document.getElementById('cfg-alias-co');
+  const aliasBrCheckbox = document.getElementById('cfg-alias-br');
+  const aliasCiCheckbox = document.getElementById('cfg-alias-ci');
+  const aliasStCheckbox = document.getElementById('cfg-alias-st');
+  const aliasLgCheckbox = document.getElementById('cfg-alias-lg');
   
   const commandsText = document.getElementById('cfg-commands-text');
   const fileText = document.getElementById('cfg-file-text');
@@ -1711,6 +1718,12 @@ function setupConfigBuilder() {
   if (localStorage.getItem('cfg-editor') !== null) editorSelect.value = localStorage.getItem('cfg-editor');
   if (localStorage.getItem('cfg-protocol') !== null) protocolSelect.value = localStorage.getItem('cfg-protocol');
   if (localStorage.getItem('cfg-color') !== null) colorCheckbox.checked = localStorage.getItem('cfg-color') === 'true';
+
+  if (aliasCoCheckbox && localStorage.getItem('cfg-alias-co') !== null) aliasCoCheckbox.checked = localStorage.getItem('cfg-alias-co') === 'true';
+  if (aliasBrCheckbox && localStorage.getItem('cfg-alias-br') !== null) aliasBrCheckbox.checked = localStorage.getItem('cfg-alias-br') === 'true';
+  if (aliasCiCheckbox && localStorage.getItem('cfg-alias-ci') !== null) aliasCiCheckbox.checked = localStorage.getItem('cfg-alias-ci') === 'true';
+  if (aliasStCheckbox && localStorage.getItem('cfg-alias-st') !== null) aliasStCheckbox.checked = localStorage.getItem('cfg-alias-st') === 'true';
+  if (aliasLgCheckbox && localStorage.getItem('cfg-alias-lg') !== null) aliasLgCheckbox.checked = localStorage.getItem('cfg-alias-lg') === 'true';
 
   // Toggle views
   if (btnTerminal && btnFile && terminalView && fileView) {
@@ -1745,6 +1758,12 @@ function setupConfigBuilder() {
     localStorage.setItem('cfg-protocol', protocolSelect ? protocolSelect.value : 'https');
     localStorage.setItem('cfg-color', colorCheckbox.checked.toString());
 
+    if (aliasCoCheckbox) localStorage.setItem('cfg-alias-co', aliasCoCheckbox.checked.toString());
+    if (aliasBrCheckbox) localStorage.setItem('cfg-alias-br', aliasBrCheckbox.checked.toString());
+    if (aliasCiCheckbox) localStorage.setItem('cfg-alias-ci', aliasCiCheckbox.checked.toString());
+    if (aliasStCheckbox) localStorage.setItem('cfg-alias-st', aliasStCheckbox.checked.toString());
+    if (aliasLgCheckbox) localStorage.setItem('cfg-alias-lg', aliasLgCheckbox.checked.toString());
+
     // 1. Generate commands
     let commands = '';
     commands += `git config --global user.name "${name}"\n`;
@@ -1755,6 +1774,34 @@ function setupConfigBuilder() {
       commands += `git config --global color.ui auto\n`;
     } else {
       commands += `git config --global color.ui false\n`;
+    }
+
+    // Add aliases if checked
+    let aliasCmds = '';
+    let aliasFile = '';
+    if (aliasCoCheckbox && aliasCoCheckbox.checked) {
+      aliasCmds += `git config --global alias.co "checkout"\n`;
+      aliasFile += `    co = checkout\n`;
+    }
+    if (aliasBrCheckbox && aliasBrCheckbox.checked) {
+      aliasCmds += `git config --global alias.br "branch"\n`;
+      aliasFile += `    br = branch\n`;
+    }
+    if (aliasCiCheckbox && aliasCiCheckbox.checked) {
+      aliasCmds += `git config --global alias.ci "commit"\n`;
+      aliasFile += `    ci = commit\n`;
+    }
+    if (aliasStCheckbox && aliasStCheckbox.checked) {
+      aliasCmds += `git config --global alias.st "status"\n`;
+      aliasFile += `    st = status\n`;
+    }
+    if (aliasLgCheckbox && aliasLgCheckbox.checked) {
+      aliasCmds += `git config --global alias.lg "log --oneline --graph --all"\n`;
+      aliasFile += `    lg = log --oneline --graph --all\n`;
+    }
+
+    if (aliasCmds) {
+      commands += `\n# Setup custom shortcuts (aliases):\n` + aliasCmds;
     }
 
     if (protocol === 'ssh') {
@@ -1780,6 +1827,11 @@ function setupConfigBuilder() {
     fileContent += `    editor = ${editor}\n`;
     fileContent += `[color]\n`;
     fileContent += `    ui = ${isColor ? 'auto' : 'false'}\n`;
+    
+    if (aliasFile) {
+      fileContent += `[alias]\n` + aliasFile;
+    }
+
     if (protocol === 'https') {
       fileContent += `[credential]\n`;
       fileContent += `    helper = osxkeychain # or 'manager' on Windows`;
@@ -1790,7 +1842,8 @@ function setupConfigBuilder() {
   }
 
   // Setup inputs event listeners
-  [usernameInput, emailInput, branchInput, editorSelect, protocolSelect, colorCheckbox].forEach(el => {
+  const allInputs = [usernameInput, emailInput, branchInput, editorSelect, protocolSelect, colorCheckbox, aliasCoCheckbox, aliasBrCheckbox, aliasCiCheckbox, aliasStCheckbox, aliasLgCheckbox];
+  allInputs.forEach(el => {
     if (el) {
       el.addEventListener('input', updateOutputs);
       el.addEventListener('change', updateOutputs);
@@ -1828,12 +1881,24 @@ function setupConfigBuilder() {
       localStorage.removeItem('cfg-protocol');
       localStorage.removeItem('cfg-color');
 
+      localStorage.removeItem('cfg-alias-co');
+      localStorage.removeItem('cfg-alias-br');
+      localStorage.removeItem('cfg-alias-ci');
+      localStorage.removeItem('cfg-alias-st');
+      localStorage.removeItem('cfg-alias-lg');
+
       usernameInput.value = 'Danush K';
       emailInput.value = 'danusu2470030@ssn.edu.in';
       branchInput.value = 'main';
       editorSelect.value = 'code --wait';
       if (protocolSelect) protocolSelect.value = 'https';
       colorCheckbox.checked = true;
+
+      if (aliasCoCheckbox) aliasCoCheckbox.checked = true;
+      if (aliasBrCheckbox) aliasBrCheckbox.checked = true;
+      if (aliasCiCheckbox) aliasCiCheckbox.checked = true;
+      if (aliasStCheckbox) aliasStCheckbox.checked = true;
+      if (aliasLgCheckbox) aliasLgCheckbox.checked = true;
 
       updateOutputs();
       showToast('Config reset to defaults! 🔄');
