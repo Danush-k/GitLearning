@@ -920,6 +920,24 @@ const generatorActions = {
 // COMMAND GENERATOR ENGINE
 // ─────────────────────────────────────────────
 
+const conventionalCommitMessages = [
+  "feat: implement user authentication flow via OAuth2",
+  "fix: resolve race condition in token refresh handler",
+  "docs: update API endpoints and deployment instructions in README",
+  "style: align checkout button layout with design system guidelines",
+  "refactor: optimize database query performance in dashboard analytics",
+  "test: add unit tests for repository metadata parser",
+  "chore: bump dependencies and security patches",
+  "feat: add export to CSV functionality in cheatsheet view",
+  "fix: resolve memory leak in web socket listener",
+  "docs: correct typo in git branching strategy diagrams"
+];
+
+function getRandomConventionalCommit() {
+  const idx = Math.floor(Math.random() * conventionalCommitMessages.length);
+  return conventionalCommitMessages[idx];
+}
+
 function setupGenerator() {
   const selectAction = document.getElementById('generator-action');
   const paramsContainer = document.getElementById('generator-params');
@@ -961,9 +979,13 @@ function setupGenerator() {
           </div>
         `;
       } else {
+        const hasSuggestBtn = p.id === 'message' || p.id === 'stashMsg';
         return `
           <div class="form-group">
-            <label class="form-label" for="gen-param-${p.id}">${p.label}</label>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <label class="form-label" for="gen-param-${p.id}">${p.label}</label>
+              ${hasSuggestBtn ? `<button class="btn btn-outline" id="suggest-msg-btn-${p.id}" style="padding: 4px 10px; font-size: 0.75rem; border-radius: var(--radius-sm);" title="Suggest a Conventional Commit message">🎲 Suggest Message</button>` : ''}
+            </div>
             <input type="text" id="gen-param-${p.id}" class="form-input" data-id="${p.id}" value="${escapeHtml(val)}" placeholder="${escapeHtml(p.placeholder || '')}" />
           </div>
         `;
@@ -980,6 +1002,31 @@ function setupGenerator() {
         }
       });
     });
+
+    // Wire up suggest buttons
+    const suggestMsgBtn = paramsContainer.querySelector('#suggest-msg-btn-message');
+    if (suggestMsgBtn) {
+      suggestMsgBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const input = paramsContainer.querySelector('#gen-param-message');
+        if (input) {
+          input.value = getRandomConventionalCommit();
+          regenerateOutput();
+        }
+      });
+    }
+
+    const suggestStashBtn = paramsContainer.querySelector('#suggest-msg-btn-stashMsg');
+    if (suggestStashBtn) {
+      suggestStashBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const input = paramsContainer.querySelector('#gen-param-stashMsg');
+        if (input) {
+          input.value = getRandomConventionalCommit();
+          regenerateOutput();
+        }
+      });
+    }
 
     regenerateOutput();
   }
