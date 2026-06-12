@@ -1700,8 +1700,17 @@ function setupConfigBuilder() {
 
   const copyCommandsBtn = document.getElementById('copy-cfg-commands');
   const copyFileBtn = document.getElementById('copy-cfg-file');
+  const resetBtn = document.getElementById('cfg-reset-btn');
 
   if (!usernameInput || !commandsText || !fileText) return;
+
+  // Load saved config values if they exist
+  if (localStorage.getItem('cfg-username') !== null) usernameInput.value = localStorage.getItem('cfg-username');
+  if (localStorage.getItem('cfg-email') !== null) emailInput.value = localStorage.getItem('cfg-email');
+  if (localStorage.getItem('cfg-branch') !== null) branchInput.value = localStorage.getItem('cfg-branch');
+  if (localStorage.getItem('cfg-editor') !== null) editorSelect.value = localStorage.getItem('cfg-editor');
+  if (localStorage.getItem('cfg-protocol') !== null) protocolSelect.value = localStorage.getItem('cfg-protocol');
+  if (localStorage.getItem('cfg-color') !== null) colorCheckbox.checked = localStorage.getItem('cfg-color') === 'true';
 
   // Toggle views
   if (btnTerminal && btnFile && terminalView && fileView) {
@@ -1727,6 +1736,14 @@ function setupConfigBuilder() {
     const editor = editorSelect.value;
     const protocol = protocolSelect ? protocolSelect.value : 'https';
     const isColor = colorCheckbox.checked;
+
+    // Save to localStorage
+    localStorage.setItem('cfg-username', usernameInput.value);
+    localStorage.setItem('cfg-email', emailInput.value);
+    localStorage.setItem('cfg-branch', branchInput.value);
+    localStorage.setItem('cfg-editor', editorSelect.value);
+    localStorage.setItem('cfg-protocol', protocolSelect ? protocolSelect.value : 'https');
+    localStorage.setItem('cfg-color', colorCheckbox.checked.toString());
 
     // 1. Generate commands
     let commands = '';
@@ -1801,8 +1818,31 @@ function setupConfigBuilder() {
     });
   }
 
+  // Reset to defaults
+  if (resetBtn) {
+    resetBtn.addEventListener('click', () => {
+      localStorage.removeItem('cfg-username');
+      localStorage.removeItem('cfg-email');
+      localStorage.removeItem('cfg-branch');
+      localStorage.removeItem('cfg-editor');
+      localStorage.removeItem('cfg-protocol');
+      localStorage.removeItem('cfg-color');
+
+      usernameInput.value = 'Danush K';
+      emailInput.value = 'danusu2470030@ssn.edu.in';
+      branchInput.value = 'main';
+      editorSelect.value = 'code --wait';
+      if (protocolSelect) protocolSelect.value = 'https';
+      colorCheckbox.checked = true;
+
+      updateOutputs();
+      showToast('Config reset to defaults! 🔄');
+    });
+  }
+
   // Run initial generate
   updateOutputs();
+}
 // ─────────────────────────────────────────────
 // ASSESSMENT CERTIFICATE GENERATOR
 // ─────────────────────────────────────────────
