@@ -409,7 +409,33 @@
           </div>
 
           <button id="viz-btn-reset-soft" class="btn btn-outline" style="border-color: var(--clr-accent-warm); color: var(--clr-accent-warm); margin-top: 10px;" title="Undo the last commit (keeps changes)">git reset --soft HEAD~1 ↩️</button>
-          <button id="viz-btn-reset" class="btn btn-outline" style="border-color: var(--clr-accent-warm); color: var(--clr-accent-warm); margin-top: auto;">Reset Sandbox 🔄</button>
+          
+          <!-- Staging Area Status Panel -->
+          <div class="staging-panel" style="margin-top: 16px; border-top: 1px solid var(--clr-border); padding-top: 16px;">
+            <div style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; color: var(--clr-accent); margin-bottom: 12px; letter-spacing: 0.05em;">Staging Status</div>
+            
+            <div class="stage-section" style="margin-bottom: 12px;">
+              <div style="font-size: 0.8rem; font-weight: 600; color: var(--clr-accent-warm); display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                <span>🔴 Unstaged Changes</span>
+                <button id="viz-btn-restore" class="btn btn-outline" style="padding: 2px 6px; font-size: 0.7rem; border-radius: 4px;" title="Discard unstaged changes (git restore)">restore</button>
+              </div>
+              <div id="viz-unstaged-list" style="font-family: var(--font-code); font-size: 0.8rem; background: rgba(207,34,46,0.05); border: 1px solid rgba(207,34,46,0.15); border-radius: var(--radius-sm); padding: 8px; min-height: 34px;">
+                <!-- Unstaged files -->
+              </div>
+            </div>
+
+            <div class="stage-section">
+              <div style="font-size: 0.8rem; font-weight: 600; color: var(--clr-accent-3); display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                <span>🟢 Staging Area</span>
+                <button id="viz-btn-add" class="btn btn-outline" style="padding: 2px 6px; font-size: 0.7rem; border-radius: 4px; border-color: var(--clr-accent-3); color: var(--clr-accent-3);" title="Stage all changes (git add)">git add .</button>
+              </div>
+              <div id="viz-staged-list" style="font-family: var(--font-code); font-size: 0.8rem; background: rgba(63,185,80,0.05); border: 1px solid rgba(63,185,80,0.15); border-radius: var(--radius-sm); padding: 8px; min-height: 34px;">
+                <!-- Staged files -->
+              </div>
+            </div>
+          </div>
+
+          <button id="viz-btn-reset" class="btn btn-outline" style="border-color: var(--clr-accent-warm); color: var(--clr-accent-warm); margin-top: 16px;">Reset Sandbox 🔄</button>
         </div>
 
         <div class="visualizer-canvas-wrapper">

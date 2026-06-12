@@ -1083,7 +1083,9 @@ let visualGit = {
   head: 'main',
   lanes: { main: 0 },
   nextLane: 1,
-  commitCount: 1
+  commitCount: 1,
+  unstaged: ['file.txt'],
+  staged: []
 };
 
 const initialVisualGit = JSON.stringify(visualGit);
@@ -1102,6 +1104,12 @@ function setupVisualizer() {
   const statusHead = document.getElementById('viz-status-head');
   const statusBranches = document.getElementById('viz-status-branches');
   const terminalBody = document.getElementById('viz-terminal-body');
+
+  // Staging elements selectors
+  const btnAdd = document.getElementById('viz-btn-add');
+  const btnRestore = document.getElementById('viz-btn-restore');
+  const unstagedList = document.getElementById('viz-unstaged-list');
+  const stagedList = document.getElementById('viz-staged-list');
 
   if (!btnCommit) return;
 
@@ -1151,7 +1159,36 @@ function setupVisualizer() {
     showToast('Sandbox reset! 🔄');
   }
 
+  function handleAdd() {
+    if (visualGit.unstaged.length === 0) {
+      showToast('Nothing to add! Working tree clean.');
+      return;
+    }
+    visualGit.staged = [...visualGit.staged, ...visualGit.unstaged];
+    visualGit.unstaged = [];
+    renderGraph();
+    logToTerminal('git add .', '');
+    showToast('Staged all changes ➕');
+  }
+
+  function handleRestore() {
+    if (visualGit.unstaged.length === 0) {
+      showToast('Nothing to restore!');
+      return;
+    }
+    visualGit.unstaged = [];
+    renderGraph();
+    logToTerminal('git restore .', '');
+    showToast('Discarded local changes ↩️');
+  }
+
   function handleCommit() {
+    if (visualGit.staged.length === 0) {
+      showToast('⚠️ Nothing to commit! Run git add first.');
+      logToTerminal('git commit', 'error: no changes added to commit (use "git add")');
+      return;
+    }
+
     const parentId = visualGit.branches[visualGit.head];
     const parentCommit = visualGit.commits.find(c => c.id === parentId);
     
@@ -1170,6 +1207,10 @@ function setupVisualizer() {
 
     visualGit.commits.push(newCommit);
     visualGit.branches[visualGit.head] = newId;
+
+    // Clear staging and simulate new modification
+    visualGit.staged = [];
+    visualGit.unstaged = ['file.txt'];
 
     renderGraph();
     logToTerminal(`git commit -m "${newMsg}"`, `[${visualGit.head} ${newId}] ${newMsg}\n 1 file changed, 1 insertion(+)\n create mode 100644 file.txt`);
@@ -1219,6 +1260,12 @@ function setupVisualizer() {
     const targetBranch = checkoutSelect.value;
     if (!targetBranch || targetBranch === visualGit.head) return;
 
+    if (visualGit.unstaged.length > 0 || visualGit.staged.length > 0) {
+      showToast('⚠️ Please commit or stash your changes before checking out.');
+      logToTerminal(`git checkout ${targetBranch}`, `error: Your local changes to the following files would be overwritten by checkout:\n\tfile.txt\nPlease commit your changes or stash them before you switch branches.`);
+      return;
+    }
+
     visualGit.head = targetBranch;
     renderGraph();
     logToTerminal(`git checkout ${targetBranch}`, `Switched to branch '${targetBranch}'`);
@@ -1229,6 +1276,12 @@ function setupVisualizer() {
     const sourceBranch = mergeSelect.value;
     if (!sourceBranch || sourceBranch === visualGit.head) {
       showToast('Select a different branch to merge!');
+      return;
+    }
+
+    if (visualGit.unstaged.length > 0 || visualGit.staged.length > 0) {
+      showToast('⚠️ Please commit or stash your changes before merging.');
+      logToTerminal(`git merge ${sourceBranch}`, `error: Your local changes to the following files would be overwritten by merge:\n\tfile.txt\nPlease commit your changes or stash them before you merge.`);
       return;
     }
 
@@ -1291,6 +1344,10 @@ function setupVisualizer() {
     // Remove commit from the list to update graph visually
     visualGit.commits = visualGit.commits.filter(c => c.id !== headCommitId);
     
+    // Put changes back in staging area
+    visualGit.staged = ['file.txt'];
+    visualGit.unstaged = [];
+
     renderGraph();
     logToTerminal(`git reset --soft HEAD~1`, `Unstaged changes after reset:\nM\tfile.txt`);
     showToast(`Undid last commit (soft reset) ↩️`);
@@ -1318,8 +1375,22 @@ function setupVisualizer() {
       : '<option value="">(No other branches)</option>';
   }
 
+  function updateStagingUI() {
+    if (unstagedList) {
+      unstagedList.innerHTML = visualGit.unstaged.length > 0
+        ? visualGit.unstaged.map(f => `<div style="color: var(--clr-accent-warm); padding: 2px 0;">M  ${f}</div>`).join('')
+        : `<div style="color: var(--clr-text-muted); font-style: italic;">Clean working directory</div>`;
+    }
+    if (stagedList) {
+      stagedList.innerHTML = visualGit.staged.length > 0
+        ? visualGit.staged.map(f => `<div style="color: var(--clr-accent-3); padding: 2px 0;">A  ${f}</div>`).join('')
+        : `<div style="color: var(--clr-text-muted); font-style: italic;">Nothing staged to commit</div>`;
+    }
+  }
+
   function renderGraph() {
     updateSelects();
+    updateStagingUI();
 
     // Update status
     if (statusHead) statusHead.textContent = visualGit.head;
@@ -1466,6 +1537,9 @@ function setupVisualizer() {
   btnMerge.addEventListener('click', handleMerge);
   if (btnResetSoft) btnResetSoft.addEventListener('click', handleResetSoft);
   btnReset.addEventListener('click', resetSandbox);
+
+  if (btnAdd) btnAdd.addEventListener('click', handleAdd);
+  if (btnRestore) btnRestore.addEventListener('click', handleRestore);
 
   // Initial prompt setup
   if (terminalBody) {
