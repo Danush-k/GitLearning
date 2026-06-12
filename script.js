@@ -368,8 +368,8 @@ function renderCheatsheet() {
       <div class="cheat-group-title">${group.title}</div>
       ${group.rows.map(row => `
         <div class="cheat-row" onclick="copyCommand(this, '${row.cmd.replace(/'/g, "\\'")}')" title="Click to copy command">
-          <span class="cheat-cmd">${escapeHtml(row.cmd)}</span>
-          <span class="cheat-label">${row.label}</span>
+          <span class="cheat-cmd" data-orig="${escapeHtml(row.cmd)}">${escapeHtml(row.cmd)}</span>
+          <span class="cheat-label" data-orig="${escapeHtml(row.label)}">${escapeHtml(row.label)}</span>
         </div>
       `).join('')}
     </div>
@@ -696,12 +696,31 @@ function filterCheatsheet(query) {
       const cmdSpan = row.querySelector('.cheat-cmd');
       const labelSpan = row.querySelector('.cheat-label');
       
-      const cmdText = cmdSpan ? cmdSpan.textContent.toLowerCase() : '';
-      const labelText = labelSpan ? labelSpan.textContent.toLowerCase() : '';
+      const origCmd = cmdSpan ? cmdSpan.dataset.orig : '';
+      const origLabel = labelSpan ? labelSpan.dataset.orig : '';
+
+      const cmdText = origCmd.toLowerCase();
+      const labelText = origLabel.toLowerCase();
 
       if (cmdText.includes(cleanQuery) || labelText.includes(cleanQuery)) {
         row.style.display = '';
         visibleRows++;
+
+        if (cleanQuery) {
+          // Escape regex characters in cleanQuery before creating RegExp
+          const escapedCleanQuery = escapeHtml(cleanQuery).replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+          const regex = new RegExp(`(${escapedCleanQuery})`, 'gi');
+          
+          if (cmdSpan) {
+            cmdSpan.innerHTML = escapeHtml(origCmd).replace(regex, '<mark class="search-highlight">$1</mark>');
+          }
+          if (labelSpan) {
+            labelSpan.innerHTML = escapeHtml(origLabel).replace(regex, '<mark class="search-highlight">$1</mark>');
+          }
+        } else {
+          if (cmdSpan) cmdSpan.textContent = origCmd;
+          if (labelSpan) labelSpan.textContent = origLabel;
+        }
       } else {
         row.style.display = 'none';
       }
