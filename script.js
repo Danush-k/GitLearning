@@ -1529,6 +1529,51 @@ const strategiesData = {
       </svg>
     `
   },
+  'gitlab-flow': {
+    name: "GitLab Flow",
+    tagline: "Environment-driven branching model that links code to deployment stages.",
+    desc: "Uses a master/main branch for stable staging, and environment branches (such as 'pre-production' and 'production') to track what is deployed. Perfect for SaaS and continuous deployment workflows.",
+    pros: [
+      "Explicitly defines deployment stages (e.g. staging vs production).",
+      "Less overhead than Git Flow, but more structured than GitHub Flow.",
+      "Clear visual tracking of environment states."
+    ],
+    cons: [
+      "Requires maintaining multiple long-running environment branches.",
+      "Can feel redundant for simple APIs or small projects.",
+      "Cherry-picking releases is sometimes required."
+    ],
+    diagram: `
+      <svg viewBox="0 0 400 140" style="width: 100%; height: auto;">
+        <!-- Tracks -->
+        <line x1="50" y1="30" x2="350" y2="30" stroke="var(--clr-accent-warm)" stroke-width="3" />
+        <line x1="50" y1="70" x2="350" y2="70" stroke="var(--clr-accent)" stroke-width="3" />
+        <line x1="140" y1="70" x2="180" y2="110" stroke="var(--clr-accent-2)" stroke-width="3" stroke-dasharray="3" />
+        <line x1="180" y1="110" x2="260" y2="110" stroke="var(--clr-accent-2)" stroke-width="3" />
+        <line x1="260" y1="110" x2="300" y2="70" stroke="var(--clr-accent-2)" stroke-width="3" stroke-dasharray="3" />
+        
+        <!-- Connectors from Master to Prod -->
+        <line x1="120" y1="70" x2="140" y2="30" stroke="var(--clr-accent-warm)" stroke-width="2" stroke-dasharray="3" />
+        <line x1="280" y1="70" x2="300" y2="30" stroke="var(--clr-accent-warm)" stroke-width="2" stroke-dasharray="3" />
+
+        <!-- Nodes -->
+        <circle cx="80" cy="70" r="7" fill="var(--clr-accent)" stroke="var(--clr-bg-2)" stroke-width="2" />
+        <circle cx="130" cy="70" r="7" fill="var(--clr-accent)" stroke="var(--clr-bg-2)" stroke-width="2" />
+        <circle cx="310" cy="70" r="7" fill="var(--clr-accent)" stroke="var(--clr-bg-2)" stroke-width="2" />
+        
+        <circle cx="190" cy="110" r="6" fill="var(--clr-accent-2)" stroke="var(--clr-bg-2)" stroke-width="1.5" />
+        <circle cx="250" cy="110" r="6" fill="var(--clr-accent-2)" stroke="var(--clr-bg-2)" stroke-width="1.5" />
+        
+        <circle cx="150" cy="30" r="7" fill="var(--clr-accent-warm)" stroke="var(--clr-bg-2)" stroke-width="2" />
+        <circle cx="310" cy="30" r="7" fill="var(--clr-accent-warm)" stroke="var(--clr-bg-2)" stroke-width="2" />
+
+        <!-- Labels -->
+        <text x="40" y="34" fill="var(--clr-text-muted)" font-family="monospace" font-size="10" text-anchor="end">production</text>
+        <text x="40" y="74" fill="var(--clr-text-muted)" font-family="monospace" font-size="10" text-anchor="end">master</text>
+        <text x="40" y="114" fill="var(--clr-text-muted)" font-family="monospace" font-size="10" text-anchor="end">feature</text>
+      </svg>
+    `
+  },
   'trunk': {
     name: "Trunk-Based Development",
     tagline: "High-velocity workflow focusing on frequent, small changes.",
