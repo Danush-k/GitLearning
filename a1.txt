@@ -1,2 +1,7 @@
-hi hello
-first commit change
+# Git Workflow Overview
+
+1. Clone the repository.
+2. Create a feature branch.
+3. Make changes and commit with descriptive messages.
+4. Push the branch to remote.
+5. Create a Pull Request (PR) for review.
