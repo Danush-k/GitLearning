@@ -1,2 +1,7 @@
-hhidhiud
-third commit change
+# Quick Git Commands Cheat Sheet
+
+- Check status: `git status`
+- Stage files: `git add <file>`
+- Create commit: `git commit -m "<message>"`
+- View history: `git log --oneline`
+- Pull changes: `git pull origin <branch>`
