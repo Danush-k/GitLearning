@@ -1,2 +1,6 @@
-this a3
-second commit change
+# Branch Naming Conventions
+
+- Feature branches: `feat/feature-name` or `feature/feature-name`
+- Bug fixes: `fix/bug-name` or `bugfix/bug-name`
+- Documentation: `docs/doc-name`
+- Hotfixes: `hotfix/issue-name`
