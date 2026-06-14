@@ -5,3 +5,5 @@
 - Create commit: `git commit -m "<message>"`
 - View history: `git log --oneline`
 - Pull changes: `git pull origin <branch>`
+- Push changes: `git push origin <branch>`
+
