@@ -4,6 +4,11 @@
 - Stage files: `git add <file>`
 - Create commit: `git commit -m "<message>"`
 - View history: `git log --oneline`
+- Create and switch branch: `git checkout -b <branch>` or `git switch -c <branch>`
+- Switch branch: `git checkout <branch>` or `git switch <branch>`
+- Discard local changes: `git restore <file>`
+- Undo last commit (keep changes): `git reset --soft HEAD~1`
 - Pull changes: `git pull origin <branch>`
 - Push changes: `git push origin <branch>`
+
 
