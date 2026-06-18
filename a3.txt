@@ -4,3 +4,8 @@
 - Bug fixes: `fix/bug-name` or `bugfix/bug-name`
 - Documentation: `docs/doc-name`
 - Hotfixes: `hotfix/issue-name`
+- Release branches: `release/vX.Y.Z` or `release/version-name`
+- Refactoring: `refactor/refactor-name`
+- Performance tuning: `perf/perf-name`
+- CI/CD / Chores: `ci/pipeline-name` or `chore/chore-name`
+
