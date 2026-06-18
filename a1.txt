@@ -5,3 +5,6 @@
 3. Make changes and commit with descriptive messages.
 4. Push the branch to remote.
 5. Create a Pull Request (PR) for review.
+6. Merge the Pull Request after approvals and CI checks pass.
+7. Pull the latest main branch locally and delete the merged feature branch to keep clean history.
+
