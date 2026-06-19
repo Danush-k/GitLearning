@@ -21,4 +21,9 @@ Use the structured format: `<type>: <description>`
 - `test`: Adding or correcting tests
 - `chore`: Changes to build system, tool configurations, or auxiliary libraries
 
+## Merge vs. Rebase Best Practices
+- **Use Merge:** Preserves the complete context and history of how commits were integrated chronologically. Best for shared/public branches.
+- **Use Rebase:** Creates a clean, linear commit history by rewriting commits onto the destination branch. Best for local cleanup before merging.
+
+
 
