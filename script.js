@@ -90,7 +90,9 @@ const commandsData = {
     { cmd: "git cherry-pick <commit>", desc: "Apply the changes introduced by an existing commit" },
     { cmd: "git reflog", desc: "Show a log of all reference updates (recovery tool)" },
     { cmd: "git reset --hard HEAD~1", desc: "Discard commits and local modifications permanently" },
-    { cmd: "git clean -fd", desc: "Remove untracked files and directories from the working tree" }
+    { cmd: "git clean -fd", desc: "Remove untracked files and directories from the working tree" },
+    { cmd: "git rebase <branch>", desc: "Reapply commits on top of another base tip" },
+    { cmd: "git revert <commit>", desc: "Create a new commit that undoes the changes of a previous commit" }
   ]
 };
 
