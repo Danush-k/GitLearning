@@ -1,5 +1,6 @@
-# Branch Naming Conventions
+# Branch Naming Conventions & Commit Guidelines
 
+## Branch Naming Conventions
 - Feature branches: `feat/feature-name` or `feature/feature-name`
 - Bug fixes: `fix/bug-name` or `bugfix/bug-name`
 - Documentation: `docs/doc-name`
@@ -8,4 +9,16 @@
 - Refactoring: `refactor/refactor-name`
 - Performance tuning: `perf/perf-name`
 - CI/CD / Chores: `ci/pipeline-name` or `chore/chore-name`
+
+## Commit Message Conventions (Conventional Commits)
+Use the structured format: `<type>: <description>`
+- `feat`: A new feature
+- `fix`: A bug fix
+- `docs`: Documentation changes only
+- `style`: Formatting, semi-colons, etc. (no production code changes)
+- `refactor`: Code change that neither fixes a bug nor adds a feature
+- `perf`: Code change that improves performance
+- `test`: Adding or correcting tests
+- `chore`: Changes to build system, tool configurations, or auxiliary libraries
+
 
