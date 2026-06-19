@@ -23,8 +23,15 @@ Just open `index.html` in your web browser — no build steps, node modules, or 
 - CSS3 (custom design system, dark-mode first, glassmorphism, responsive)
 - Vanilla JavaScript (dynamic DOM rendering, SVG rendering for commit history and certificates)
 
+## 🤝 Contributing & Commit Style Guide
+
+We welcome contributions to make GitLearning even better! To keep the repository clean and professional, please follow these guidelines:
+- Follow the branch naming convention (e.g., `feat/feature-name`, `fix/bug-name`).
+- Write professional commit messages following the Conventional Commits specification (e.g., `feat: add search history`, `docs: fix typo in README`).
+
 ---
 Made with ❤️ to make Git learning fun and accessible.
 
 Let's learn Git together!
+
 
