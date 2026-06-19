@@ -2252,8 +2252,10 @@ const gitProTips = [
   "A merge conflict is not a bug; it is Git stopping so you can decide which changes are correct.",
   "Create custom shortcuts in Git! Try 'git config --global alias.co checkout' to use 'git co' instead.",
   "Use 'git log --oneline --graph --all' to see a neat text representation of your complete branch structure.",
-  "Lost a commit or branch? Don't panic! Check 'git reflog' to find the SHA-1 of deleted history."
+  "Lost a commit or branch? Don't panic! Check 'git reflog' to find the SHA-1 of deleted history.",
+  "To inspect changes that have already been staged for commit, use 'git diff --cached' or 'git diff --staged'."
 ];
+
 
 function setupProTipWidget() {
   const textEl = document.getElementById('protip-text');
