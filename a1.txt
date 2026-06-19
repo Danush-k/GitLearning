@@ -3,8 +3,11 @@
 1. Clone the repository.
 2. Create a feature branch.
 3. Make changes and commit with descriptive messages.
-4. Push the branch to remote.
-5. Create a Pull Request (PR) for review.
-6. Merge the Pull Request after approvals and CI checks pass.
-7. Pull the latest main branch locally and delete the merged feature branch to keep clean history.
+4. Sync regularly by pulling the latest changes from the main branch into your feature branch to resolve conflicts early: `git pull origin main`.
+5. Push the branch to remote.
+6. Create a Pull Request (PR) for review.
+7. Address reviewer feedback and resolve any merge conflicts.
+8. Merge the Pull Request after approvals and CI checks pass.
+9. Pull the latest main branch locally and delete the merged feature branch to keep clean history.
+
 
