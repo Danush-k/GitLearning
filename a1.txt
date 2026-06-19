@@ -10,4 +10,9 @@
 8. Merge the Pull Request after approvals and CI checks pass.
 9. Pull the latest main branch locally and delete the merged feature branch to keep clean history.
 
+## Additional Workflow Tips
+- **Stash active work:** If you need to switch branches quickly without committing incomplete changes, use `git stash` to shelve them, and `git stash pop` to restore them later.
+- **Discard local changes:** If a change goes wrong, restore the file to the last committed state using `git restore <file>`.
+
+
 
