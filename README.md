@@ -23,6 +23,13 @@ Just open `index.html` in your web browser — no build steps, node modules, or 
 - CSS3 (custom design system, dark-mode first, glassmorphism, responsive)
 - Vanilla JavaScript (dynamic DOM rendering, SVG rendering for commit history and certificates)
 
+## 📖 References & Cheat Sheets
+
+The project includes several helpful quick-reference text documents:
+- [f.txt](file:///Users/danush/Desktop/GitLearning/f.txt) — Quick Git commands reference.
+- [a1.txt](file:///Users/danush/Desktop/GitLearning/a1.txt) — Standard Git workflow overview and stashing/restoring tips.
+- [a3.txt](file:///Users/danush/Desktop/GitLearning/a3.txt) — Branch naming conventions, conventional commits guide, and merge vs. rebase advice.
+
 ## 🤝 Contributing & Commit Style Guide
 
 We welcome contributions to make GitLearning even better! To keep the repository clean and professional, please follow these guidelines:
