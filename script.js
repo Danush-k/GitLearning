@@ -2255,7 +2255,10 @@ const gitProTips = [
   "Create custom shortcuts in Git! Try 'git config --global alias.co checkout' to use 'git co' instead.",
   "Use 'git log --oneline --graph --all' to see a neat text representation of your complete branch structure.",
   "Lost a commit or branch? Don't panic! Check 'git reflog' to find the SHA-1 of deleted history.",
-  "To inspect changes that have already been staged for commit, use 'git diff --cached' or 'git diff --staged'."
+  "To inspect changes that have already been staged for commit, use 'git diff --cached' or 'git diff --staged'.",
+  "Use 'git revert <commit>' instead of 'git reset' on public/shared branches to avoid rewriting history that others have pulled.",
+  "To see who changed what line in a file and when, use 'git blame <filename>'.",
+  "Want to find which commit introduced a bug? Use 'git bisect' to run a binary search through your commit history."
 ];
 
 
@@ -2356,6 +2359,10 @@ document.addEventListener('DOMContentLoaded', () => {
   setupVisualizer();
   renderCheatsheet();
   renderQuiz();
+  const heroQuizCount = document.getElementById('hero-quiz-count');
+  if (heroQuizCount) {
+    heroQuizCount.textContent = quizData.length;
+  }
   setupProTipWidget();
   setupNavbar();
   setupCommandTabs();
