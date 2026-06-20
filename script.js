@@ -915,6 +915,33 @@ const generatorActions = {
       },
       { id: 'stashMsg', label: 'Stash Message (optional, if saving)', type: 'text', placeholder: 'work in progress', dependsOn: { param: 'stashAction', values: ['save'] } }
     ]
+  },
+  tag: {
+    command: (params) => {
+      if (params.tagAction === 'list') {
+        return 'git tag';
+      } else if (params.tagAction === 'delete') {
+        return `git tag -d ${params.tagName || 'v1.0.0'}`;
+      } else {
+        const msg = params.tagMsg ? ` -m '${params.tagMsg.replace(/'/g, "'\\''")}'` : " -m 'Release version 1.0.0'";
+        return `git tag -a ${params.tagName || 'v1.0.0'}${msg}`;
+      }
+    },
+    explanation: 'Tags are reference points that mark specific commits in history (usually releases like v1.0.0). You can create annotated tags with release messages, list all tags, or delete a tag locally.',
+    params: [
+      {
+        id: 'tagAction',
+        label: 'Action',
+        type: 'select',
+        options: [
+          { value: 'create', label: 'Create an annotated release tag' },
+          { value: 'list', label: 'List all tags' },
+          { value: 'delete', label: 'Delete a tag locally' }
+        ]
+      },
+      { id: 'tagName', label: 'Tag Name', type: 'text', placeholder: 'v1.0.0', dependsOn: { param: 'tagAction', values: ['create', 'delete'] } },
+      { id: 'tagMsg', label: 'Tag Message / Release Notes', type: 'text', placeholder: 'Release version 1.0.0', dependsOn: { param: 'tagAction', values: ['create'] } }
+    ]
   }
 };
 
