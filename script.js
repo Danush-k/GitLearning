@@ -2285,8 +2285,12 @@ const gitProTips = [
   "To inspect changes that have already been staged for commit, use 'git diff --cached' or 'git diff --staged'.",
   "Use 'git revert <commit>' instead of 'git reset' on public/shared branches to avoid rewriting history that others have pulled.",
   "To see who changed what line in a file and when, use 'git blame <filename>'.",
-  "Want to find which commit introduced a bug? Use 'git bisect' to run a binary search through your commit history."
+  "Want to find which commit introduced a bug? Use 'git bisect' to run a binary search through your commit history.",
+  "Use 'git commit --amend --no-edit' to add newly staged changes to your last commit without editing the commit message.",
+  "Clean untracked files or directories from your working directory using 'git clean -fd'.",
+  "To view the commit history of a specific file and see the diffs, run 'git log -p <filename>'."
 ];
+
 
 
 function setupProTipWidget() {
