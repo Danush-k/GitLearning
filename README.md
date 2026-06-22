@@ -37,7 +37,7 @@ We welcome contributions to make GitLearning even better! To keep the repository
 - Write professional commit messages following the Conventional Commits specification (e.g., `feat: add search history`, `docs: fix typo in README`).
 
 ---
-Made with ❤️ to make Git learning fun and accessible.
+Made with ❤️ to make Git learning fun, easy, and accessible.
 
 Let's learn Git together!
 
