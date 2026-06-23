@@ -2731,6 +2731,151 @@ function setupKeyboardShortcuts() {
 }
 
 // ─────────────────────────────────────────────
+// GITCODE ARENA ENGINE
+// ─────────────────────────────────────────────
+
+let arenaState = {
+  activeProblem: null,
+  filter: 'all',
+  search: '',
+  solved: [],
+  submissions: {},
+  drafts: {}
+};
+
+function initArena() {
+  const savedSolved = localStorage.getItem('arena-solved');
+  if (savedSolved) {
+    arenaState.solved = JSON.parse(savedSolved);
+  }
+  const savedSubmissions = localStorage.getItem('arena-submissions');
+  if (savedSubmissions) {
+    arenaState.submissions = JSON.parse(savedSubmissions);
+  }
+  const savedDrafts = localStorage.getItem('arena-drafts');
+  if (savedDrafts) {
+    arenaState.drafts = JSON.parse(savedDrafts);
+  }
+
+  const searchInput = document.getElementById('arena-search');
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      arenaState.search = e.target.value;
+      renderArenaDashboard();
+    });
+  }
+
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      arenaState.filter = btn.dataset.filter;
+      renderArenaDashboard();
+    });
+  });
+
+  const backBtn = document.getElementById('arena-back-btn');
+  if (backBtn) {
+    backBtn.addEventListener('click', () => {
+      if (arenaState.activeProblem) {
+        const editor = document.getElementById('arena-code-editor');
+        if (editor) {
+          arenaState.drafts[arenaState.activeProblem.id] = editor.value;
+          localStorage.setItem('arena-drafts', JSON.stringify(arenaState.drafts));
+        }
+      }
+      arenaState.activeProblem = null;
+      document.getElementById('arena-workspace').style.display = 'none';
+      document.getElementById('arena-dashboard').style.display = 'block';
+      renderArenaDashboard();
+    });
+  }
+
+  renderArenaDashboard();
+}
+
+function renderArenaDashboard() {
+  const listBody = document.getElementById('problems-list-body');
+  if (!listBody) return;
+
+  let problems = arenaProblemsData;
+  if (arenaState.filter !== 'all') {
+    problems = problems.filter(p => p.difficulty === arenaState.filter);
+  }
+  if (arenaState.search) {
+    const q = arenaState.search.toLowerCase();
+    problems = problems.filter(p => p.title.toLowerCase().includes(q) || p.category.toLowerCase().includes(q));
+  }
+
+  updateArenaStats();
+
+  if (problems.length === 0) {
+    listBody.innerHTML = `
+      <tr>
+        <td colspan="5" style="text-align: center; color: var(--clr-text-muted); padding: 40px 0;">
+          🔍 No challenges found matching filters.
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
+  listBody.innerHTML = problems.map(p => {
+    const isSolved = arenaState.solved.includes(p.id);
+    const statusIcon = isSolved ? '<span class="problem-status-icon" style="color: var(--clr-accent-3);">✓</span>' : '<span class="problem-status-icon" style="color: var(--clr-text-muted); opacity: 0.3;">○</span>';
+    const diffLabel = p.difficulty.charAt(0).toUpperCase() + p.difficulty.slice(1);
+    
+    return `
+      <tr id="problem-row-${p.id}">
+        <td>${statusIcon}</td>
+        <td class="problem-title-cell" onclick="loadProblem(${p.id})">${p.title}</td>
+        <td><span class="problem-category-tag">${p.category}</span></td>
+        <td><span class="diff-badge ${p.difficulty}">${diffLabel}</span></td>
+        <td style="text-align: center;">
+          <button class="btn btn-sm ${isSolved ? 'btn-outline' : 'btn-primary'}" style="padding: 4px 12px; font-size: 0.8rem; border-radius: var(--radius-sm);" onclick="loadProblem(${p.id})">
+            ${isSolved ? 'Retry' : 'Solve'}
+          </button>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function updateArenaStats() {
+  const solvedCount = arenaState.solved.length;
+  const totalCount = arenaProblemsData.length;
+  
+  const solvedRatioText = document.getElementById('arena-solved-ratio');
+  if (solvedRatioText) {
+    solvedRatioText.textContent = `${solvedCount}/${totalCount} Solved`;
+  }
+
+  const difficulties = ['easy', 'medium', 'hard'];
+  difficulties.forEach(diff => {
+    const totalDiff = arenaProblemsData.filter(p => p.difficulty === diff).length;
+    const solvedDiff = arenaProblemsData.filter(p => p.difficulty === diff && arenaState.solved.includes(p.id)).length;
+    
+    const countEl = document.getElementById(`${diff}-solved`);
+    if (countEl) {
+      countEl.textContent = `${solvedDiff}/${totalDiff}`;
+    }
+
+    const ringFill = document.getElementById(`ring-${diff}`);
+    if (ringFill) {
+      const circumference = 188.4;
+      const pct = totalDiff > 0 ? (solvedDiff / totalDiff) : 0;
+      ringFill.style.strokeDashoffset = circumference * (1 - pct);
+    }
+  });
+}
+
+function loadProblem(id) {
+  // Skeleton loaded in subsequent step
+  console.log('Loading problem:', id);
+}
+
+// ─────────────────────────────────────────────
 // INIT
 // ─────────────────────────────────────────────
 
@@ -2751,6 +2896,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupVisualizer();
   renderCheatsheet();
   renderQuiz();
+  initArena();
   const heroQuizCount = document.getElementById('hero-quiz-count');
   if (heroQuizCount) {
     heroQuizCount.textContent = quizData.length;
