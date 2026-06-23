@@ -2757,6 +2757,54 @@ function initArena() {
     arenaState.drafts = JSON.parse(savedDrafts);
   }
 
+  // Setup interactive editor events
+  const editor = document.getElementById('arena-code-editor');
+  const lineNumbers = document.getElementById('editor-line-numbers');
+  if (editor) {
+    editor.addEventListener('input', () => {
+      updateLineNumbers();
+    });
+
+    editor.addEventListener('scroll', () => {
+      if (lineNumbers) {
+        lineNumbers.scrollTop = editor.scrollTop;
+      }
+    });
+
+    editor.addEventListener('keydown', (e) => {
+      const val = editor.value;
+      const start = editor.selectionStart;
+      const end = editor.selectionEnd;
+
+      // Tab Key (2 spaces)
+      if (e.key === 'Tab') {
+        e.preventDefault();
+        editor.value = val.substring(0, start) + '  ' + val.substring(end);
+        editor.selectionStart = editor.selectionEnd = start + 2;
+        updateLineNumbers();
+        return;
+      }
+
+      // Auto pairs
+      const pairs = {
+        '(': ')',
+        '{': '}',
+        '[': ']',
+        '"': '"',
+        "'": "'",
+        '`': '`'
+      };
+
+      if (pairs[e.key] !== undefined) {
+        e.preventDefault();
+        const closeChar = pairs[e.key];
+        editor.value = val.substring(0, start) + e.key + closeChar + val.substring(end);
+        editor.selectionStart = editor.selectionEnd = start + 1;
+        updateLineNumbers();
+      }
+    });
+  }
+
   const searchInput = document.getElementById('arena-search');
   if (searchInput) {
     searchInput.addEventListener('input', (e) => {
@@ -2961,6 +3009,21 @@ function renderSubmissions(problemId) {
       </div>
     `;
   }).join('');
+}
+
+function updateLineNumbers() {
+  const textarea = document.getElementById('arena-code-editor');
+  const lineNumbers = document.getElementById('editor-line-numbers');
+  if (!textarea || !lineNumbers) return;
+
+  const lines = textarea.value.split('\n');
+  const lineCount = Math.max(lines.length, 1);
+  
+  let html = '';
+  for (let i = 1; i <= lineCount; i++) {
+    html += `<div>${i}</div>`;
+  }
+  lineNumbers.innerHTML = html;
 }
 
 // ─────────────────────────────────────────────
