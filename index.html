@@ -477,6 +477,7 @@
             <div class="pane-tabs">
               <button class="pane-tab active" data-pane-tab="desc">Description</button>
               <button class="pane-tab" data-pane-tab="submissions">Submissions</button>
+              <button class="pane-tab" data-pane-tab="solution">Solution 🔒</button>
             </div>
             <div class="pane-content" id="pane-description-content">
               <!-- Description and Examples here -->
@@ -484,6 +485,27 @@
             <div class="pane-content" id="pane-submissions-content" style="display: none;">
               <div class="submissions-list" id="submissions-list">
                 <p class="no-submissions">No submissions yet. Solve the problem to see your history!</p>
+              </div>
+            </div>
+            <div class="pane-content" id="pane-solution-content" style="display: none; position: relative; min-height: 480px;">
+              <!-- Locked Solution Panel -->
+              <div id="solution-locked-overlay" class="solution-locked-overlay">
+                <div class="lock-box">
+                  <span class="lock-icon">🔒</span>
+                  <h3>Solution Locked</h3>
+                  <p>Submit an Accepted solution to unlock the optimal approach, or click below to reveal.</p>
+                  <button id="unlock-solution-btn" class="btn btn-primary btn-sm" style="margin: 0 auto;">Unlock Solution</button>
+                </div>
+              </div>
+              <div id="solution-unlocked-content" class="solution-unlocked-content" style="filter: blur(4px); pointer-events: none; user-select: none;">
+                <div class="solution-approach">
+                  <h4>Optimal Approach</h4>
+                  <p id="solution-approach-text">Loading...</p>
+                </div>
+                <div class="solution-code-box" style="margin-top: 20px;">
+                  <h4>Reference JavaScript Solution</h4>
+                  <pre style="margin: 0;"><code id="solution-code-text">Loading...</code></pre>
+                </div>
               </div>
             </div>
           </div>
