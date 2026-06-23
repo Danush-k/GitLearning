@@ -3078,6 +3078,65 @@ function renderArenaDashboard() {
     `;
   }).join('');
   renderDailyChallenge();
+  renderLeaderboard();
+}
+
+function renderLeaderboard() {
+  const container = document.getElementById('git-leaderboard-card');
+  if (!container) return;
+
+  const userSolvedCount = arenaState.solved.length;
+  const userXP = userSolvedCount * 50;
+
+  const data = [
+    { name: "git_master_99", solved: 10, xp: 500, avatar: "🥇" },
+    { name: "rebase_ninja", solved: 8, xp: 400, avatar: "🥈" },
+    { name: "cherry_picker", solved: 7, xp: 350, avatar: "🥉" },
+    { name: "conflict_guru", solved: 6, xp: 300, avatar: "👤" },
+    { name: "commit_commander", solved: 4, xp: 200, avatar: "👤" },
+    { name: "You (Developer)", solved: userSolvedCount, xp: userXP, avatar: "🚀", isUser: true }
+  ];
+
+  data.sort((a, b) => b.solved - a.solved || b.xp - a.xp);
+
+  data.forEach((item, idx) => {
+    item.rank = idx + 1;
+    if (item.rank === 1 && !item.isUser) item.avatar = "🥇";
+    else if (item.rank === 2 && !item.isUser) item.avatar = "🥈";
+    else if (item.rank === 3 && !item.isUser) item.avatar = "🥉";
+    else if (!item.isUser) item.avatar = "👤";
+  });
+
+  const listHtml = data.map(item => {
+    const isUserClass = item.isUser ? 'leaderboard-row-user' : '';
+    const rankBadgeClass = item.rank <= 3 ? `rank-badge-${item.rank}` : 'rank-badge-other';
+    return `
+      <div class="leaderboard-row ${isUserClass}">
+        <div class="leaderboard-left">
+          <span class="rank-badge ${rankBadgeClass}">${item.rank}</span>
+          <span class="leaderboard-avatar">${item.avatar}</span>
+          <span class="leaderboard-name">${item.name}</span>
+        </div>
+        <div class="leaderboard-right">
+          <span class="leaderboard-solved-count">${item.solved} solved</span>
+          <span class="leaderboard-xp">${item.xp} XP</span>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  container.innerHTML = `
+    <div class="leaderboard-header">
+      <div class="leaderboard-title-row">
+        <span class="leaderboard-icon">👑</span>
+        <h4>Global Leaderboard</h4>
+      </div>
+      <span class="leaderboard-subtitle">Live Rankings</span>
+    </div>
+    <div class="leaderboard-list">
+      ${listHtml}
+    </div>
+  `;
 }
 
 function getDailyChallenge() {
