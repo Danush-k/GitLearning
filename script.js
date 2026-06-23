@@ -2991,6 +2991,23 @@ function initArena() {
     });
   }
 
+  // Reset Progress Button listener
+  const resetProgressBtn = document.getElementById('arena-reset-progress-btn');
+  if (resetProgressBtn) {
+    resetProgressBtn.addEventListener('click', () => {
+      if (confirm('Are you sure you want to reset all your coding progress, solved challenges, and submission history? This action cannot be undone.')) {
+        localStorage.removeItem('arena-solved');
+        localStorage.removeItem('arena-submissions');
+        localStorage.removeItem('arena-drafts');
+        arenaState.solved = [];
+        arenaState.submissions = {};
+        arenaState.drafts = {};
+        renderArenaDashboard();
+        showToast('All progress reset successfully! 🔄');
+      }
+    });
+  }
+
   // Collapsible console header
   const consoleHeader = document.getElementById('console-header');
   const consoleBody = document.getElementById('console-body');

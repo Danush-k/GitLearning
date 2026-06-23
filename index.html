@@ -433,7 +433,10 @@
             <div class="arena-stats-card">
               <div class="arena-stat-header">
                 <h3>Your Coding Progress</h3>
-                <span id="arena-solved-ratio" class="stat-badge">0/10 Solved</span>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                  <button id="arena-reset-progress-btn" class="arena-reset-btn" title="Reset all progress">Reset</button>
+                  <span id="arena-solved-ratio" class="stat-badge">0/10 Solved</span>
+                </div>
               </div>
               <div class="arena-progress-rings">
                 <div class="progress-ring-container">
