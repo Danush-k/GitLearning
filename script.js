@@ -565,28 +565,28 @@ incoming changes
 }`,
     testCases: [
       {
-        input: ["Line 1
+        input: [`Line 1
 <<<<<<< HEAD
 Hello main
 =======
 Hello feature
 >>>>>>> feature-branch
-Line 3", "current"],
-        expected: "Line 1
+Line 3`, "current"],
+        expected: `Line 1
 Hello main
-Line 3"
+Line 3`
       },
       {
-        input: ["Line 1
+        input: [`Line 1
 <<<<<<< HEAD
 Hello main
 =======
 Hello feature
 >>>>>>> feature-branch
-Line 3", "incoming"],
-        expected: "Line 1
+Line 3`, "incoming"],
+        expected: `Line 1
 Hello feature
-Line 3"
+Line 3`
       }
     ],
     solutionApproach: "Use a regular expression matching multi-line blocks starting with `<<<<<<< HEAD` up to `>>>>>>> [name]`:\n- Regex: `/<<<<<<< HEAD\\n([\\s\\S]*?)\\n=======\\n([\\s\\S]*?)\\n>>>>>>> .+/`\n- Replace this matched region with either the first group (current) or the second group (incoming) based on preference.",
@@ -671,10 +671,10 @@ Line 3"
 }`,
     testCases: [
       {
-        input: ["M index.html
+        input: [`M index.html
 A style.css
 D old_file.js
-M script.js"],
+M script.js`],
         expected: { modified: ["index.html", "script.js"], added: ["style.css"], deleted: ["old_file.js"] }
       }
     ],
@@ -2969,9 +2969,6 @@ function initArena() {
     });
   }
 
-    });
-  });
-
   // Runner buttons
   const runBtn = document.getElementById('arena-run-btn');
   if (runBtn) {
@@ -3019,8 +3016,18 @@ function initArena() {
       const target = tab.dataset.consoleTab;
       document.getElementById('console-tab-result').style.display = target === 'result' ? 'block' : 'none';
       document.getElementById('console-tab-logs').style.display = target === 'logs' ? 'block' : 'none';
+      document.getElementById('console-tab-custom').style.display = target === 'custom' ? 'block' : 'none';
     });
   });
+
+  // Custom Input checkbox toggle
+  const customCheck = document.getElementById('arena-custom-input-check');
+  const customWrapper = document.getElementById('arena-custom-input-wrapper');
+  if (customCheck && customWrapper) {
+    customCheck.addEventListener('change', (e) => {
+      customWrapper.style.display = e.target.checked ? 'flex' : 'none';
+    });
+  }
 
   renderArenaDashboard();
 }
@@ -3151,6 +3158,60 @@ function loadProblem(id) {
   if (runtime) runtime.textContent = '';
   const logs = document.getElementById('console-logs-output');
   if (logs) logs.textContent = 'No console logs.';
+
+  // Auto fill custom testcase input
+  const customText = document.getElementById('arena-custom-input-text');
+  const customCheck = document.getElementById('arena-custom-input-check');
+  const customWrapper = document.getElementById('arena-custom-input-wrapper');
+  if (customText && problem.testCases[0]) {
+    customText.value = JSON.stringify(problem.testCases[0].input);
+  }
+  if (customCheck) customCheck.checked = false;
+  if (customWrapper) customWrapper.style.display = 'none';
+
+  // Solution locks update
+  const isSolved = arenaState.solved.includes(problem.id);
+  const lockOverlay = document.getElementById('solution-locked-overlay');
+  const unlockedContent = document.getElementById('solution-unlocked-content');
+  const unlockBtn = document.getElementById('unlock-solution-btn');
+  const solutionTab = document.querySelector('.pane-tab[data-pane-tab="solution"]');
+
+  if (solutionTab) {
+    solutionTab.textContent = isSolved ? 'Solution 🔓' : 'Solution 🔒';
+  }
+
+  const approachText = document.getElementById('solution-approach-text');
+  const codeText = document.getElementById('solution-code-text');
+  if (approachText) approachText.innerText = problem.solutionApproach || 'No approach details available.';
+  if (codeText) codeText.innerText = problem.solutionCode || '// No reference code available.';
+
+  function unlockSolutionView() {
+    if (lockOverlay) lockOverlay.style.display = 'none';
+    if (unlockedContent) {
+      unlockedContent.style.filter = 'none';
+      unlockedContent.style.pointerEvents = 'auto';
+      unlockedContent.style.userSelect = 'auto';
+    }
+    if (solutionTab) solutionTab.textContent = 'Solution 🔓';
+  }
+
+  if (isSolved) {
+    unlockSolutionView();
+  } else {
+    if (lockOverlay) lockOverlay.style.display = 'flex';
+    if (unlockedContent) {
+      unlockedContent.style.filter = 'blur(4px)';
+      unlockedContent.style.pointerEvents = 'none';
+      unlockedContent.style.userSelect = 'none';
+    }
+    if (unlockBtn) {
+      unlockBtn.onclick = () => {
+        if (confirm('Revealing the solution will show the optimal code before you solve it. Are you sure you want to unlock?')) {
+          unlockSolutionView();
+        }
+      };
+    }
+  }
 }
 
 function renderSubmissions(problemId) {
@@ -3254,6 +3315,11 @@ function executeArenaCode(isSubmit = false) {
     originalLog.apply(console, args);
   };
 
+  const customCheck = document.getElementById('arena-custom-input-check');
+  const useCustom = !isSubmit && customCheck ? customCheck.checked : false;
+  const customText = document.getElementById('arena-custom-input-text');
+  const customInputVal = customText ? customText.value : '';
+
   const entryPoints = {
     1: "sanitizeBranchName",
     2: "isValidCommitMessage",
@@ -3272,6 +3338,43 @@ function executeArenaCode(isSubmit = false) {
   let resultsHtml = '';
   let executionTime = 0;
 
+  let customArgs = [];
+  if (useCustom) {
+    try {
+      const parsed = JSON.parse(customInputVal);
+      customArgs = Array.isArray(parsed) ? parsed : [parsed];
+    } catch (e) {
+      if (customInputVal.trim().startsWith('[') || customInputVal.trim().startsWith('{')) {
+        allPassed = false;
+        resultsHtml = `
+          <div class="testcase-pill" style="border-color: var(--clr-accent-warm);">
+            <div class="testcase-pill-header failed">
+              <span>Custom Testcase Parsing Error</span>
+              <span style="color: var(--clr-accent-warm);">ERROR</span>
+            </div>
+            <div class="testcase-pill-body" style="display: flex;">
+              <div class="testcase-field">
+                <span class="testcase-field-label">Error Details</span>
+                <pre class="testcase-field-value error-trace">Failed to parse custom arguments array: ${escapeHtml(e.message)}</pre>
+              </div>
+            </div>
+          </div>
+        `;
+        statusBadge.className = 'status-badge error';
+        statusBadge.textContent = 'Runtime Error';
+        details.innerHTML = resultsHtml;
+        console.log = originalLog;
+        return;
+      }
+      customArgs = [customInputVal];
+    }
+  }
+
+  let tcList = problem.testCases;
+  if (useCustom) {
+    tcList = [{ input: customArgs, expected: null, isCustom: true }];
+  }
+
   try {
     // Compile code
     const compilationString = `${code}\n;if (typeof ${functionName} !== 'function') { throw new Error("Function '${functionName}' is not defined"); } return ${functionName};`;
@@ -3279,7 +3382,7 @@ function executeArenaCode(isSubmit = false) {
     const userFunction = new Function(compilationString)();
     executionTime = performance.now() - startTime;
 
-    problem.testCases.forEach((tc, idx) => {
+    tcList.forEach((tc, idx) => {
       let passed = false;
       let output = null;
       let errorMsg = '';
@@ -3287,7 +3390,7 @@ function executeArenaCode(isSubmit = false) {
       try {
         const inputsClone = JSON.parse(JSON.stringify(tc.input));
         output = userFunction.apply(null, inputsClone);
-        passed = arenaCompareOutputs(output, tc.expected);
+        passed = tc.isCustom ? true : arenaCompareOutputs(output, tc.expected);
       } catch (err) {
         passed = false;
         errorMsg = err.message + '\n' + err.stack;
@@ -3296,28 +3399,30 @@ function executeArenaCode(isSubmit = false) {
       if (!passed) allPassed = false;
 
       const headerClass = passed ? 'passed' : 'failed';
-      const statusText = passed ? 'PASSED' : 'FAILED';
+      const statusText = passed ? (tc.isCustom ? 'SUCCESS' : 'PASSED') : 'FAILED';
       const statusColor = passed ? 'var(--clr-accent-3)' : 'var(--clr-accent-warm)';
       
       const inputsStr = tc.input.map(i => typeof i === 'object' ? JSON.stringify(i) : String(i)).join(', ');
-      const expectedStr = typeof tc.expected === 'object' ? JSON.stringify(tc.expected) : String(tc.expected);
+      const expectedStr = tc.isCustom ? 'N/A (Custom Testcase)' : (typeof tc.expected === 'object' ? JSON.stringify(tc.expected) : String(tc.expected));
       const actualStr = errorMsg ? 'Runtime Error' : (typeof output === 'object' ? JSON.stringify(output) : String(output));
 
       resultsHtml += `
         <div class="testcase-pill">
           <div class="testcase-pill-header ${headerClass}" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'flex' : 'none';">
-            <span>Testcase ${idx + 1}: ${functionName}(${escapeHtml(inputsStr.substring(0, 40))}${inputsStr.length > 40 ? '...' : ''})</span>
+            <span>${tc.isCustom ? 'Custom Testcase Run' : `Testcase ${idx + 1}`}: ${functionName}(&lt;span style="color:var(--clr-accent);"&gt;${escapeHtml(inputsStr.substring(0, 40))}${inputsStr.length > 40 ? '...' : ''}&lt;/span&gt;)</span>
             <span style="color: ${statusColor};">${statusText}</span>
           </div>
-          <div class="testcase-pill-body" style="display: ${passed ? 'none' : 'flex'};">
+          <div class="testcase-pill-body" style="display: ${passed && !tc.isCustom ? 'none' : 'flex'};">
             <div class="testcase-field">
               <span class="testcase-field-label">Input</span>
               <pre class="testcase-field-value">${escapeHtml(JSON.stringify(tc.input))}</pre>
             </div>
+            ${tc.isCustom ? '' : `
             <div class="testcase-field">
               <span class="testcase-field-label">Expected Output</span>
               <pre class="testcase-field-value">${escapeHtml(expectedStr)}</pre>
             </div>
+            `}
             <div class="testcase-field">
               <span class="testcase-field-label">Your Output</span>
               <pre class="testcase-field-value ${errorMsg ? 'error-trace' : ''}">${escapeHtml(errorMsg ? errorMsg : actualStr)}</pre>
