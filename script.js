@@ -3602,11 +3602,23 @@ function executeArenaCode(isSubmit = false) {
   }
 
   if (allPassed) {
-    statusBadge.className = 'status-badge success';
+    statusBadge.className = 'status-badge success arena-success-animate';
     statusBadge.textContent = isSubmit ? 'Accepted' : 'Tests Passed';
+    if (details) details.classList.add('arena-success-animate');
+    setTimeout(() => {
+      statusBadge.classList.remove('arena-success-animate');
+      if (details) details.classList.remove('arena-success-animate');
+    }, 1000);
   } else {
     statusBadge.className = 'status-badge error';
     statusBadge.textContent = 'Wrong Answer';
+    const consoleBody = document.getElementById('console-body');
+    if (consoleBody) {
+      consoleBody.classList.add('arena-shake');
+      setTimeout(() => {
+        consoleBody.classList.remove('arena-shake');
+      }, 500);
+    }
   }
 
   runtimeDisplay.textContent = `Runtime: ${executionTime.toFixed(2)} ms`;
