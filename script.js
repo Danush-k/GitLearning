@@ -3077,6 +3077,97 @@ function renderArenaDashboard() {
       </tr>
     `;
   }).join('');
+  renderDailyChallenge();
+}
+
+function getDailyChallenge() {
+  const today = new Date();
+  const start = new Date(today.getFullYear(), 0, 0);
+  const diff = today - start;
+  const oneDay = 1000 * 60 * 60 * 24;
+  const day = Math.floor(diff / oneDay);
+  const idx = day % arenaProblemsData.length;
+  return arenaProblemsData[idx];
+}
+
+function renderDailyChallenge() {
+  const container = document.getElementById('daily-challenge-card');
+  if (!container) return;
+
+  const problem = getDailyChallenge();
+  const isSolved = arenaState.solved.includes(problem.id);
+  const diffLabel = problem.difficulty.charAt(0).toUpperCase() + problem.difficulty.slice(1);
+  
+  if (isSolved) {
+    container.classList.add('solved-challenge');
+  } else {
+    container.classList.remove('solved-challenge');
+  }
+
+  // Create a clean description snippet (remove HTML tags for display)
+  const tempDiv = document.createElement('div');
+  tempDiv.innerHTML = problem.desc;
+  let textDesc = tempDiv.textContent || tempDiv.innerText || "";
+  if (textDesc.length > 150) {
+    textDesc = textDesc.substring(0, 150).trim() + "...";
+  }
+
+  container.innerHTML = `
+    <div class="daily-challenge-header">
+      <div class="daily-title-row">
+        <span class="daily-icon">${isSolved ? '✅' : '🔥'}</span>
+        <span class="daily-label">${isSolved ? 'DAILY CHALLENGE COMPLETED' : 'DAILY CODING CHALLENGE'}</span>
+      </div>
+      <div class="daily-timer-wrapper">
+        <span>Resets in:</span>
+        <span id="daily-challenge-timer" class="daily-timer">00:00:00</span>
+      </div>
+    </div>
+    <div class="daily-challenge-body">
+      <div class="daily-problem-details">
+        <h4 class="daily-problem-title">${problem.title}</h4>
+        <div class="daily-problem-meta">
+          <span class="diff-badge ${problem.difficulty}">${diffLabel}</span>
+          <span class="category-badge">${problem.category}</span>
+          <span class="reward-badge">✨ +50 XP</span>
+        </div>
+        <p class="daily-problem-desc">${textDesc}</p>
+      </div>
+      <button id="daily-solve-btn" class="btn ${isSolved ? 'btn-outline' : 'btn-primary'} daily-solve-btn">
+        ${isSolved ? 'Review Solution' : 'Solve Challenge'}
+      </button>
+    </div>
+  `;
+
+  const solveBtn = document.getElementById('daily-solve-btn');
+  if (solveBtn) {
+    solveBtn.onclick = () => {
+      document.getElementById('arena-dashboard').style.display = 'none';
+      document.getElementById('arena-workspace').style.display = 'block';
+      loadProblem(problem.id);
+    };
+  }
+
+  // Start real-time countdown timer to midnight
+  updateDailyChallengeTimer();
+  if (window.dailyTimerInterval) clearInterval(window.dailyTimerInterval);
+  window.dailyTimerInterval = setInterval(updateDailyChallengeTimer, 1000);
+}
+
+function updateDailyChallengeTimer() {
+  const timerElement = document.getElementById('daily-challenge-timer');
+  if (!timerElement) return;
+
+  const now = new Date();
+  const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+  tomorrow.setHours(0, 0, 0, 0); // exact midnight tomorrow
+  const diffMs = tomorrow - now;
+
+  const hours = String(Math.floor(diffMs / (1000 * 60 * 60))).padStart(2, '0');
+  const minutes = String(Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
+  const seconds = String(Math.floor((diffMs % (1000 * 60)) / 1000)).padStart(2, '0');
+
+  timerElement.textContent = `${hours}:${minutes}:${seconds}`;
 }
 
 function updateArenaStats() {

@@ -387,75 +387,93 @@
 
       <!-- Dashboard View (Problem List) -->
       <div id="arena-dashboard" class="arena-dashboard">
-        <!-- Progress stats widget -->
-        <div class="arena-stats-card">
-          <div class="arena-stat-header">
-            <h3>Your Coding Progress</h3>
-            <span id="arena-solved-ratio" class="stat-badge">0/10 Solved</span>
-          </div>
-          <div class="arena-progress-rings">
-            <div class="progress-ring-container">
-              <svg class="ring-svg" width="70" height="70">
-                <circle class="ring-bg" cx="35" cy="35" r="30"></circle>
-                <circle id="ring-easy" class="ring-fill easy" cx="35" cy="35" r="30"></circle>
-              </svg>
-              <div class="ring-text">
-                <span id="easy-solved">0/3</span>
-                <span class="ring-label">Easy</span>
-              </div>
+        <div class="arena-dashboard-layout">
+          <!-- Left Column (Main content) -->
+          <div class="arena-main-column">
+            <!-- Daily Challenge Hero Card -->
+            <div class="daily-challenge-card" id="daily-challenge-card">
+              <!-- Rendered dynamically via JS -->
             </div>
-            <div class="progress-ring-container">
-              <svg class="ring-svg" width="70" height="70">
-                <circle class="ring-bg" cx="35" cy="35" r="30"></circle>
-                <circle id="ring-medium" class="ring-fill medium" cx="35" cy="35" r="30"></circle>
-              </svg>
-              <div class="ring-text">
-                <span id="medium-solved">0/6</span>
-                <span class="ring-label">Medium</span>
-              </div>
-            </div>
-            <div class="progress-ring-container">
-              <svg class="ring-svg" width="70" height="70">
-                <circle class="ring-bg" cx="35" cy="35" r="30"></circle>
-                <circle id="ring-hard" class="ring-fill hard" cx="35" cy="35" r="30"></circle>
-              </svg>
-              <div class="ring-text">
-                <span id="hard-solved">0/1</span>
-                <span class="ring-label">Hard</span>
-              </div>
-            </div>
-          </div>
-        </div>
 
-        <!-- Problem list filter & list container -->
-        <div class="arena-controls">
-          <div class="filter-group">
-            <button class="filter-btn active" data-filter="all">All</button>
-            <button class="filter-btn" data-filter="easy">Easy</button>
-            <button class="filter-btn" data-filter="medium">Medium</button>
-            <button class="filter-btn" data-filter="hard">Hard</button>
-          </div>
-          <div class="arena-search-wrapper">
-            <span class="search-icon">🔍</span>
-            <input type="text" id="arena-search" placeholder="Search problems..." aria-label="Search problems" />
-          </div>
-        </div>
+            <!-- Problem list filter & list container -->
+            <div class="arena-controls">
+              <div class="filter-group">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="easy">Easy</button>
+                <button class="filter-btn" data-filter="medium">Medium</button>
+                <button class="filter-btn" data-filter="hard">Hard</button>
+              </div>
+              <div class="arena-search-wrapper">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="arena-search" placeholder="Search problems..." aria-label="Search problems" />
+              </div>
+            </div>
 
-        <div class="problems-table-wrapper">
-          <table class="problems-table">
-            <thead>
-              <tr>
-                <th style="width: 80px;">Status</th>
-                <th>Title</th>
-                <th>Category</th>
-                <th>Difficulty</th>
-                <th style="width: 120px; text-align: center;">Action</th>
-              </tr>
-            </thead>
-            <tbody id="problems-list-body">
-              <!-- Dynamically rendered -->
-            </tbody>
-          </table>
+            <div class="problems-table-wrapper">
+              <table class="problems-table">
+                <thead>
+                  <tr>
+                    <th style="width: 80px;">Status</th>
+                    <th>Title</th>
+                    <th>Category</th>
+                    <th>Difficulty</th>
+                    <th style="width: 120px; text-align: center;">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="problems-list-body">
+                  <!-- Dynamically rendered -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Right Column (Sidebar) -->
+          <div class="arena-sidebar-column">
+            <!-- Progress stats widget -->
+            <div class="arena-stats-card">
+              <div class="arena-stat-header">
+                <h3>Your Coding Progress</h3>
+                <span id="arena-solved-ratio" class="stat-badge">0/10 Solved</span>
+              </div>
+              <div class="arena-progress-rings">
+                <div class="progress-ring-container">
+                  <svg class="ring-svg" width="70" height="70">
+                    <circle class="ring-bg" cx="35" cy="35" r="30"></circle>
+                    <circle id="ring-easy" class="ring-fill easy" cx="35" cy="35" r="30"></circle>
+                  </svg>
+                  <div class="ring-text">
+                    <span id="easy-solved">0/3</span>
+                    <span class="ring-label">Easy</span>
+                  </div>
+                </div>
+                <div class="progress-ring-container">
+                  <svg class="ring-svg" width="70" height="70">
+                    <circle class="ring-bg" cx="35" cy="35" r="30"></circle>
+                    <circle id="ring-medium" class="ring-fill medium" cx="35" cy="35" r="30"></circle>
+                  </svg>
+                  <div class="ring-text">
+                    <span id="medium-solved">0/6</span>
+                    <span class="ring-label">Medium</span>
+                  </div>
+                </div>
+                <div class="progress-ring-container">
+                  <svg class="ring-svg" width="70" height="70">
+                    <circle class="ring-bg" cx="35" cy="35" r="30"></circle>
+                    <circle id="ring-hard" class="ring-fill hard" cx="35" cy="35" r="30"></circle>
+                  </svg>
+                  <div class="ring-text">
+                    <span id="hard-solved">0/1</span>
+                    <span class="ring-label">Hard</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Global Git Leaderboard -->
+            <div class="leaderboard-card" id="git-leaderboard-card">
+              <!-- Rendered dynamically in Commit 6 -->
+            </div>
+          </div>
         </div>
       </div>
 
