@@ -328,7 +328,17 @@ const arenaProblemsData = [
       { input: ["feature/Add login screen!"], expected: "feature/add-login-screen" },
       { input: ["Fix_Bug#102--now"], expected: "fixbug102-now" },
       { input: ["  main-branch--name  "], expected: "main-branch-name" }
-    ]
+    ],
+    solutionApproach: "To sanitize the branch name, use regex replacements sequentially:\n1. Convert the string to lowercase.\n2. Replace spaces with single hyphens (`-`).\n3. Remove characters that are not letters, digits, hyphens, or forward slashes.\n4. Replace multiple hyphens `---+` with a single hyphen `-`.\n5. Remove leading/trailing hyphens.",
+    solutionCode: `function sanitizeBranchName(name) {
+  return name
+    .toLowerCase()
+    .trim()
+    .replace(/\\s+/g, '-')
+    .replace(/[^a-z0-9\\-\\/]/g, '')
+    .replace(/-+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}`
   },
   {
     id: 2,
@@ -371,7 +381,14 @@ const arenaProblemsData = [
       { input: ["fix bug"], expected: false },
       { input: ["chore: update dependencies"], expected: true },
       { input: ["docs: a"], expected: false }
-    ]
+    ],
+    solutionApproach: "Use a regular expression to match the structured type, optional scope, and description:\n- Regex: `/^(feat|fix|docs|style|refactor|test|chore)(\\([a-zA-Z0-9-]+\\))?: (.+)$/`\n- If matched, check if the description group length is at least 3 characters.",
+    solutionCode: `function isValidCommitMessage(msg) {
+  const regex = /^(feat|fix|docs|style|refactor|test|chore)(\\([a-zA-Z0-9-]+\\))?: (.+)$/;
+  const match = msg.match(regex);
+  if (!match) return false;
+  return match[3].length >= 3;
+}`
   },
   {
     id: 3,
@@ -404,7 +421,11 @@ const arenaProblemsData = [
     testCases: [
       { input: ["main"], expected: ["git init", "git branch -M main"] },
       { input: ["dev"], expected: ["git init", "git branch -M dev"] }
-    ]
+    ],
+    solutionApproach: "Return a static string array mapping the required commands: `['git init', 'git branch -M ' + defaultBranch]`. This initializes the repository and creates/renames the primary pointer.",
+    solutionCode: `function getGitInitCommands(defaultBranch) {
+  return ["git init", "git branch -M " + defaultBranch];
+}`
   },
   {
     id: 4,
@@ -444,7 +465,22 @@ const arenaProblemsData = [
         ]
       },
       { input: [""], expected: [] }
-    ]
+    ],
+    solutionApproach: "1. Split the inputs by newline `\\n`.\n2. Filter out empty lines.\n3. Map lines by splitting on ` | ` (space-pipe-space).\n4. Return objects with trimmed values: `{ hash, author, message }`.",
+    solutionCode: `function parseGitLog(logString) {
+  if (!logString.trim()) return [];
+  return logString.split('\\n')
+    .map(line => line.trim())
+    .filter(line => line.length > 0)
+    .map(line => {
+      const parts = line.split(' | ');
+      return {
+        hash: parts[0] ? parts[0].trim() : '',
+        author: parts[1] ? parts[1].trim() : '',
+        message: parts[2] ? parts[2].trim() : ''
+      };
+    });
+}`
   },
   {
     id: 5,
@@ -481,7 +517,19 @@ const arenaProblemsData = [
       { input: ["1.4.12-alpha.1"], expected: { major: 1, minor: 4, patch: 12, prerelease: "alpha.1" } },
       { input: ["2.0.0"], expected: { major: 2, minor: 0, patch: 0, prerelease: null } },
       { input: ["invalid-version"], expected: null }
-    ]
+    ],
+    solutionApproach: "Use regex with capture groups matching digits and optional trailing hyphenated letters:\n- Regex: `/^(\\d+)\\.(\\d+)\\.(\\d+)(?:-([a-zA-Z0-9.]+))?$/`\n- Check match; parse integers for major, minor, patch and return object.",
+    solutionCode: `function parseSemVer(version) {
+  const regex = /^(\\d+)\\.(\\d+)\\.(\\d+)(?:-([a-zA-Z0-9.]+))?$/;
+  const match = version.match(regex);
+  if (!match) return null;
+  return {
+    major: parseInt(match[1], 10),
+    minor: parseInt(match[2], 10),
+    patch: parseInt(match[3], 10),
+    prerelease: match[4] || null
+  };
+}`
   },
   {
     id: 6,
@@ -501,9 +549,9 @@ incoming changes
 <h4>Example 1</h4>
 <div class="example-block">
   <strong>Input:</strong><br/>
-  conflictText = "Line 1\\n&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD\\nHello main\\n=======\\nHello feature\\n&gt;&gt;&gt;&gt;&gt;&gt;&gt; feature-branch\\nLine 3"<br/>
+  conflictText = "Line 1\n&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD\nHello main\n=======\nHello feature\n&gt;&gt;&gt;&gt;&gt;&gt;&gt; feature-branch\nLine 3"<br/>
   preference = "current"<br/>
-  <strong>Output:</strong> "Line 1\\nHello main\\nLine 3"
+  <strong>Output:</strong> "Line 1\nHello main\nLine 3"
 </div>
 
 <h4>Constraints</h4>
@@ -517,14 +565,37 @@ incoming changes
 }`,
     testCases: [
       {
-        input: ["Line 1\n<<<<<<< HEAD\nHello main\n=======\nHello feature\n>>>>>>> feature-branch\nLine 3", "current"],
-        expected: "Line 1\nHello main\nLine 3"
+        input: ["Line 1
+<<<<<<< HEAD
+Hello main
+=======
+Hello feature
+>>>>>>> feature-branch
+Line 3", "current"],
+        expected: "Line 1
+Hello main
+Line 3"
       },
       {
-        input: ["Line 1\n<<<<<<< HEAD\nHello main\n=======\nHello feature\n>>>>>>> feature-branch\nLine 3", "incoming"],
-        expected: "Line 1\nHello feature\nLine 3"
+        input: ["Line 1
+<<<<<<< HEAD
+Hello main
+=======
+Hello feature
+>>>>>>> feature-branch
+Line 3", "incoming"],
+        expected: "Line 1
+Hello feature
+Line 3"
       }
-    ]
+    ],
+    solutionApproach: "Use a regular expression matching multi-line blocks starting with `<<<<<<< HEAD` up to `>>>>>>> [name]`:\n- Regex: `/<<<<<<< HEAD\\n([\\s\\S]*?)\\n=======\\n([\\s\\S]*?)\\n>>>>>>> .+/`\n- Replace this matched region with either the first group (current) or the second group (incoming) based on preference.",
+    solutionCode: `function resolveConflict(conflictText, preference) {
+  const regex = /<<<<<<< HEAD\\n([\\s\\S]*?)\\n=======\\n([\\s\\S]*?)\\n>>>>>>> .+/;
+  return conflictText.replace(regex, (match, current, incoming) => {
+    return preference === 'current' ? current : incoming;
+  });
+}`
   },
   {
     id: 7,
@@ -565,7 +636,13 @@ incoming changes
         ],
         expected: ["feat/login"]
       }
-    ]
+    ],
+    solutionApproach: "Use array filtering. Check if `b.lastCommitDaysAgo > thresholdDays`, and filter out any branches whose name is `'main'` or `'master'`. Map the resulting array to their names.",
+    solutionCode: `function findStaleBranches(branches, thresholdDays) {
+  return branches
+    .filter(b => b.lastCommitDaysAgo > thresholdDays && b.name !== 'main' && b.name !== 'master')
+    .map(b => b.name);
+}`
   },
   {
     id: 8,
@@ -578,12 +655,13 @@ incoming changes
 <ul>
   <li><code>M</code> - Modified (add file to <code>modified</code> array)</li>
   <li><code>A</code> - Added (add file to <code>added</code> array)</li>
+  <li><code>D</code> - Deleted (add file to <code>deleted</code> array)</li>
 </ul>
 <p>Return an object formatted as: <code>{ modified: string[], added: string[], deleted: string[] }</code>. File lists should be in the order they appear.</p>
 
 <h4>Example 1</h4>
 <div class="example-block">
-  <strong>Input:</strong> statusOutput = "M index.html\\nA style.css\\nD old_file.js\\nM script.js"<br/>
+  <strong>Input:</strong> statusOutput = "M index.html\nA style.css\nD old_file.js\nM script.js"<br/>
   <strong>Output:</strong> { modified: ["index.html", "script.js"], added: ["style.css"], deleted: ["old_file.js"] }
 </div>
 </div>`,
@@ -593,10 +671,30 @@ incoming changes
 }`,
     testCases: [
       {
-        input: ["M index.html\nA style.css\nD old_file.js\nM script.js"],
+        input: ["M index.html
+A style.css
+D old_file.js
+M script.js"],
         expected: { modified: ["index.html", "script.js"], added: ["style.css"], deleted: ["old_file.js"] }
       }
-    ]
+    ],
+    solutionApproach: "Split output by lines, trim boundaries, split lines on spaces to isolate the state character and file path, and group files into arrays: modified (state `M`), added (state `A`), and deleted (state `D`).",
+    solutionCode: `function parseGitStatus(statusOutput) {
+  const result = { modified: [], added: [], deleted: [] };
+  if (!statusOutput) return result;
+  statusOutput.split('\\n').forEach(line => {
+    const clean = line.trim();
+    if (!clean) return;
+    const spaceIndex = clean.indexOf(' ');
+    if (spaceIndex === -1) return;
+    const state = clean.substring(0, spaceIndex);
+    const file = clean.substring(spaceIndex + 1).trim();
+    if (state === 'M') result.modified.push(file);
+    else if (state === 'A') result.added.push(file);
+    else if (state === 'D') result.deleted.push(file);
+  });
+  return result;
+}`
   },
   {
     id: 9,
@@ -620,7 +718,19 @@ incoming changes
     testCases: [
       { input: [[2, 7, 11, 15], 9], expected: [0, 1] },
       { input: [[3, 2, 4], 6], expected: [1, 2] }
-    ]
+    ],
+    solutionApproach: "Use a hash map to search elements in $O(N)$ runtime. Maintain a map storing values to indices. For each element `commitSizes[i]`, verify if `targetSize - commitSizes[i]` exists in the map.",
+    solutionCode: `function twoSum(commitSizes, targetSize) {
+  const map = new Map();
+  for (let i = 0; i < commitSizes.length; i++) {
+    const diff = targetSize - commitSizes[i];
+    if (map.has(diff)) {
+      return [map.get(diff), i];
+    }
+    map.set(commitSizes[i], i);
+  }
+  return [];
+}`
   },
   {
     id: 10,
@@ -644,10 +754,25 @@ incoming changes
     testCases: [
       { input: [[[1, 3], [2, 6], [8, 10], [15, 18]]], expected: [[1, 6], [8, 10], [15, 18]] },
       { input: [[[1, 4], [4, 5]]], expected: [[1, 5]] }
-    ]
+    ],
+    solutionApproach: "1. Sort the intervals by start time.\n2. Iterate through sorting, checking if the current interval overlaps with the last added interval in our results array.\n3. If it overlaps (`current[0] <= last[1]`), merge them by extending `last[1] = max(last[1], current[1])`.\n4. Otherwise, push the interval as non-overlapping.",
+    solutionCode: `function mergeIntervals(intervals) {
+  if (intervals.length <= 1) return intervals;
+  intervals.sort((a, b) => a[0] - b[0]);
+  const result = [intervals[0]];
+  for (let i = 1; i < intervals.length; i++) {
+    const current = intervals[i];
+    const last = result[result.length - 1];
+    if (current[0] <= last[1]) {
+      last[1] = Math.max(last[1], current[1]);
+    } else {
+      result.push(current);
+    }
+  }
+  return result;
+}`
   }
 ];
-
 
 // ─────────────────────────────────────────────
 // RENDER FUNCTIONS
