@@ -2840,17 +2840,30 @@ function initArena() {
     });
   }
 
-  const paneTabs = document.querySelectorAll('.pane-tab');
-  paneTabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      paneTabs.forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-      
-      const target = tab.dataset.paneTab;
-      document.getElementById('pane-description-content').style.display = target === 'desc' ? 'block' : 'none';
-      document.getElementById('pane-submissions-content').style.display = target === 'submissions' ? 'block' : 'none';
     });
   });
+
+  // Runner buttons
+  const runBtn = document.getElementById('arena-run-btn');
+  if (runBtn) {
+    runBtn.addEventListener('click', () => executeArenaCode(false));
+  }
+  const submitBtn = document.getElementById('arena-submit-btn');
+  if (submitBtn) {
+    submitBtn.addEventListener('click', () => executeArenaCode(true));
+  }
+  const resetBtn = document.getElementById('arena-reset-code-btn');
+  if (resetBtn) {
+    resetBtn.addEventListener('click', () => {
+      if (arenaState.activeProblem && confirm('Are you sure you want to reset the editor to the template?')) {
+        const editor = document.getElementById('arena-code-editor');
+        if (editor) {
+          editor.value = arenaState.activeProblem.template;
+          updateLineNumbers();
+        }
+      }
+    });
+  }
 
   renderArenaDashboard();
 }
@@ -3024,6 +3037,206 @@ function updateLineNumbers() {
     html += `<div>${i}</div>`;
   }
   lineNumbers.innerHTML = html;
+}
+
+function executeArenaCode(isSubmit = false) {
+  const problem = arenaState.activeProblem;
+  if (!problem) return;
+
+  const langSelect = document.getElementById('arena-lang-select');
+  const lang = langSelect ? langSelect.value : 'javascript';
+  const editor = document.getElementById('arena-code-editor');
+  const code = editor ? editor.value : '';
+
+  const statusBadge = document.getElementById('compiler-status-badge');
+  const runtimeDisplay = document.getElementById('runtime-display');
+  const details = document.getElementById('testcases-result-details');
+  const logsOutput = document.getElementById('console-logs-output');
+
+  // Open console body if collapsed
+  const consoleBody = document.getElementById('console-body');
+  const consoleArrow = document.querySelector('.console-arrow');
+  if (consoleBody && consoleBody.style.display === 'none') {
+    consoleBody.style.display = 'block';
+    if (consoleArrow) consoleArrow.classList.remove('collapsed');
+  }
+
+  // Switch to "Result" tab in console
+  const resultTab = document.querySelector('.console-tab[data-console-tab="result"]');
+  if (resultTab) resultTab.click();
+
+  if (lang !== 'javascript') {
+    // Simulated Python execution
+    statusBadge.className = 'status-badge success';
+    statusBadge.textContent = 'Accepted (Simulated)';
+    runtimeDisplay.textContent = 'Runtime: ~12ms';
+    logsOutput.textContent = 'Python engine loaded (Mock environment).\nStdout: All tests passed.';
+    details.innerHTML = `
+      <div class="testcase-pill">
+        <div class="testcase-pill-header passed">
+          <span>Testcase 1 (Python Mock)</span>
+          <span style="color: var(--clr-accent-3);">PASSED</span>
+        </div>
+      </div>
+    `;
+    if (isSubmit) {
+      if (!arenaState.solved.includes(problem.id)) {
+        arenaState.solved.push(problem.id);
+        localStorage.setItem('arena-solved', JSON.stringify(arenaState.solved));
+      }
+      showToast('Solved with Python (Mock)! 🎉');
+    }
+    return;
+  }
+
+  // Live JavaScript execution
+  const originalLog = console.log;
+  let logsCaptured = [];
+  console.log = function(...args) {
+    logsCaptured.push(args.map(a => typeof a === 'object' ? JSON.stringify(a) : String(a)).join(' '));
+    originalLog.apply(console, args);
+  };
+
+  const entryPoints = {
+    1: "sanitizeBranchName",
+    2: "isValidCommitMessage",
+    3: "getGitInitCommands",
+    4: "parseGitLog",
+    5: "parseSemVer",
+    6: "resolveConflict",
+    7: "findStaleBranches",
+    8: "parseGitStatus",
+    9: "twoSum",
+    10: "mergeIntervals"
+  };
+
+  const functionName = entryPoints[problem.id];
+  let allPassed = true;
+  let resultsHtml = '';
+  let executionTime = 0;
+
+  try {
+    // Compile code
+    const compilationString = `${code}\n;if (typeof ${functionName} !== 'function') { throw new Error("Function '${functionName}' is not defined"); } return ${functionName};`;
+    const startTime = performance.now();
+    const userFunction = new Function(compilationString)();
+    executionTime = performance.now() - startTime;
+
+    problem.testCases.forEach((tc, idx) => {
+      let passed = false;
+      let output = null;
+      let errorMsg = '';
+      
+      try {
+        const inputsClone = JSON.parse(JSON.stringify(tc.input));
+        output = userFunction.apply(null, inputsClone);
+        passed = arenaCompareOutputs(output, tc.expected);
+      } catch (err) {
+        passed = false;
+        errorMsg = err.message + '\n' + err.stack;
+      }
+
+      if (!passed) allPassed = false;
+
+      const headerClass = passed ? 'passed' : 'failed';
+      const statusText = passed ? 'PASSED' : 'FAILED';
+      const statusColor = passed ? 'var(--clr-accent-3)' : 'var(--clr-accent-warm)';
+      
+      const inputsStr = tc.input.map(i => typeof i === 'object' ? JSON.stringify(i) : String(i)).join(', ');
+      const expectedStr = typeof tc.expected === 'object' ? JSON.stringify(tc.expected) : String(tc.expected);
+      const actualStr = errorMsg ? 'Runtime Error' : (typeof output === 'object' ? JSON.stringify(output) : String(output));
+
+      resultsHtml += `
+        <div class="testcase-pill">
+          <div class="testcase-pill-header ${headerClass}" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'flex' : 'none';">
+            <span>Testcase ${idx + 1}: ${functionName}(${escapeHtml(inputsStr.substring(0, 40))}${inputsStr.length > 40 ? '...' : ''})</span>
+            <span style="color: ${statusColor};">${statusText}</span>
+          </div>
+          <div class="testcase-pill-body" style="display: ${passed ? 'none' : 'flex'};">
+            <div class="testcase-field">
+              <span class="testcase-field-label">Input</span>
+              <pre class="testcase-field-value">${escapeHtml(JSON.stringify(tc.input))}</pre>
+            </div>
+            <div class="testcase-field">
+              <span class="testcase-field-label">Expected Output</span>
+              <pre class="testcase-field-value">${escapeHtml(expectedStr)}</pre>
+            </div>
+            <div class="testcase-field">
+              <span class="testcase-field-label">Your Output</span>
+              <pre class="testcase-field-value ${errorMsg ? 'error-trace' : ''}">${escapeHtml(errorMsg ? errorMsg : actualStr)}</pre>
+            </div>
+          </div>
+        </div>
+      `;
+    });
+  } catch (err) {
+    allPassed = false;
+    resultsHtml = `
+      <div class="testcase-pill" style="border-color: var(--clr-accent-warm);">
+        <div class="testcase-pill-header failed">
+          <span>Compilation / Parsing Error</span>
+          <span style="color: var(--clr-accent-warm);">ERROR</span>
+        </div>
+        <div class="testcase-pill-body" style="display: flex;">
+          <div class="testcase-field">
+            <span class="testcase-field-label">Error Details</span>
+            <pre class="testcase-field-value error-trace">${escapeHtml(err.message)}</pre>
+          </div>
+        </div>
+      </div>
+    `;
+  } finally {
+    console.log = originalLog;
+  }
+
+  if (allPassed) {
+    statusBadge.className = 'status-badge success';
+    statusBadge.textContent = isSubmit ? 'Accepted' : 'Tests Passed';
+  } else {
+    statusBadge.className = 'status-badge error';
+    statusBadge.textContent = 'Wrong Answer';
+  }
+
+  runtimeDisplay.textContent = `Runtime: ${executionTime.toFixed(2)} ms`;
+  details.innerHTML = resultsHtml;
+  logsOutput.textContent = logsCaptured.length > 0 ? logsCaptured.join('\n') : 'No console logs.';
+
+  if (isSubmit) {
+    const subRecord = {
+      status: allPassed ? 'passed' : 'failed',
+      time: Date.now(),
+      runtime: `${executionTime.toFixed(2)} ms`,
+      logs: logsCaptured.join('\n')
+    };
+
+    if (!arenaState.submissions[problem.id]) {
+      arenaState.submissions[problem.id] = [];
+    }
+    arenaState.submissions[problem.id].unshift(subRecord);
+    localStorage.setItem('arena-submissions', JSON.stringify(arenaState.submissions));
+
+    if (allPassed && !arenaState.solved.includes(problem.id)) {
+      arenaState.solved.push(problem.id);
+      localStorage.setItem('arena-solved', JSON.stringify(arenaState.solved));
+      updateArenaStats();
+      showToast('Problem solved successfully! 🎉');
+    } else if (allPassed) {
+      showToast('All tests passed! 🚀');
+    } else {
+      showToast('Some test cases failed. Keep trying!');
+    }
+
+    renderSubmissions(problem.id);
+  }
+}
+
+function arenaCompareOutputs(a, b) {
+  if (a === b) return true;
+  try {
+    return JSON.stringify(a) === JSON.stringify(b);
+  } catch (e) {
+    return false;
+  }
 }
 
 // ─────────────────────────────────────────────
