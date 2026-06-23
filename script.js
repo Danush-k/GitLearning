@@ -2792,6 +2792,18 @@ function initArena() {
     });
   }
 
+  const paneTabs = document.querySelectorAll('.pane-tab');
+  paneTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      paneTabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      
+      const target = tab.dataset.paneTab;
+      document.getElementById('pane-description-content').style.display = target === 'desc' ? 'block' : 'none';
+      document.getElementById('pane-submissions-content').style.display = target === 'submissions' ? 'block' : 'none';
+    });
+  });
+
   renderArenaDashboard();
 }
 
@@ -2871,8 +2883,84 @@ function updateArenaStats() {
 }
 
 function loadProblem(id) {
-  // Skeleton loaded in subsequent step
-  console.log('Loading problem:', id);
+  const problem = arenaProblemsData.find(p => p.id === id);
+  if (!problem) return;
+
+  arenaState.activeProblem = problem;
+
+  // Toggle views
+  document.getElementById('arena-dashboard').style.display = 'none';
+  document.getElementById('arena-workspace').style.display = 'block';
+
+  // Set header info
+  document.getElementById('active-problem-title').textContent = problem.title;
+  const diffBadge = document.getElementById('active-problem-difficulty');
+  diffBadge.textContent = problem.difficulty.charAt(0).toUpperCase() + problem.difficulty.slice(1);
+  diffBadge.className = `diff-badge ${problem.difficulty}`;
+
+  // Render details
+  document.getElementById('pane-description-content').innerHTML = problem.desc;
+  
+  // Set active tab to description
+  const descTab = document.querySelector('.pane-tab[data-pane-tab="desc"]');
+  if (descTab) descTab.click();
+
+  // Render submissions
+  renderSubmissions(problem.id);
+
+  // Load editor content
+  const editor = document.getElementById('arena-code-editor');
+  if (editor) {
+    editor.value = arenaState.drafts[problem.id] || problem.template;
+    
+    // Trigger line numbers update if function is defined
+    if (typeof updateLineNumbers === 'function') {
+      updateLineNumbers();
+    }
+
+    setTimeout(() => editor.focus(), 100);
+  }
+
+  // Reset Console
+  const statusBadge = document.getElementById('compiler-status-badge');
+  if (statusBadge) {
+    statusBadge.className = 'status-badge neutral';
+    statusBadge.textContent = 'Run Code first';
+  }
+  const details = document.getElementById('testcases-result-details');
+  if (details) details.innerHTML = '';
+  const runtime = document.getElementById('runtime-display');
+  if (runtime) runtime.textContent = '';
+  const logs = document.getElementById('console-logs-output');
+  if (logs) logs.textContent = 'No console logs.';
+}
+
+function renderSubmissions(problemId) {
+  const container = document.getElementById('submissions-list');
+  if (!container) return;
+
+  const history = arenaState.submissions[problemId] || [];
+  if (history.length === 0) {
+    container.innerHTML = `<p class="no-submissions">No submissions yet. Solve the problem to see your history!</p>`;
+    return;
+  }
+
+  container.innerHTML = history.map(sub => {
+    const statusClass = sub.status === 'passed' ? 'passed' : 'failed';
+    const statusLabel = sub.status === 'passed' ? 'Accepted' : 'Wrong Answer';
+    const dateStr = new Date(sub.time).toLocaleString();
+    return `
+      <div class="submission-history-item">
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <span class="sub-status ${statusClass}">${statusLabel}</span>
+          <span class="sub-time">${dateStr}</span>
+        </div>
+        <div style="font-size: 0.85rem; color: var(--clr-text-muted);">
+          <span>Runtime: ${sub.runtime}</span>
+        </div>
+      </div>
+    `;
+  }).join('');
 }
 
 // ─────────────────────────────────────────────
