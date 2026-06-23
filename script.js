@@ -2865,6 +2865,34 @@ function initArena() {
     });
   }
 
+  // Collapsible console header
+  const consoleHeader = document.getElementById('console-header');
+  const consoleBody = document.getElementById('console-body');
+  const consoleArrow = consoleHeader ? consoleHeader.querySelector('.console-arrow') : null;
+  if (consoleHeader && consoleBody) {
+    consoleHeader.addEventListener('click', () => {
+      const isHidden = consoleBody.style.display === 'none';
+      consoleBody.style.display = isHidden ? 'block' : 'none';
+      if (consoleArrow) {
+        consoleArrow.classList.toggle('collapsed', !isHidden);
+      }
+    });
+  }
+
+  // Console Tab switcher
+  const consoleTabs = document.querySelectorAll('.console-tab');
+  consoleTabs.forEach(tab => {
+    tab.addEventListener('click', (e) => {
+      e.stopPropagation(); // Avoid toggling collapse when clicking a tab
+      consoleTabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+
+      const target = tab.dataset.consoleTab;
+      document.getElementById('console-tab-result').style.display = target === 'result' ? 'block' : 'none';
+      document.getElementById('console-tab-logs').style.display = target === 'logs' ? 'block' : 'none';
+    });
+  });
+
   renderArenaDashboard();
 }
 
