@@ -12,6 +12,8 @@ A beautifully designed, interactive website to help beginners learn Git & GitHub
 - **Git Commit Visualizer** — Interactive sandbox to simulate commits, switches, branches, merges, and soft resets on a real-time graph.
 - **Git Cheatsheet** — Quick-reference lookup tables for basic commands, branching, remotes, undoing, and extras.
 - **Mini Quiz & Certificate** — Test your Git knowledge with 16 comprehensive questions and receive a downloadable / printable Certificate of Completion when you score 8/10 or higher.
+- **GitCode Arena (NEW!)** — A premium, LeetCode-style interactive coding playground containing 10 curated programmatic Git & version-control challenges. Features a split-pane layout, auto-pairing text editor with live line numbering, real-time client-side JS code execution engine, detailed testcase verification tabs, console output logging, and localStorage-backed progress persistence.
+
 
 ## 🚀 Getting Started
 
