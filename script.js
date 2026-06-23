@@ -287,6 +287,367 @@ const quizData = [
   }
 ];
 
+const arenaProblemsData = [
+  {
+    id: 1,
+    title: "Sanitize Branch Name",
+    category: "Git Basics",
+    difficulty: "easy",
+    desc: `<div class="problem-desc-rich">
+<p>You are building a tool to automate branch creation from task titles. Sanitize a user-provided branch name string using the following rules:</p>
+<ul>
+  <li>Convert the entire string to lowercase.</li>
+  <li>Replace all spaces with a single hyphen (<code>-</code>).</li>
+  <li>Remove any characters that are NOT lowercase letters, numbers, hyphens (<code>-</code>), or forward slashes (<code>/</code>).</li>
+  <li>Ensure there are no consecutive hyphens (e.g. <code>--</code> becomes <code>-</code>).</li>
+  <li>Trim any leading or trailing hyphens from the final string.</li>
+</ul>
+
+<h4>Example 1</h4>
+<div class="example-block">
+  <strong>Input:</strong> name = "feature/Add login screen!"<br/>
+  <strong>Output:</strong> "feature/add-login-screen"
+</div>
+
+<h4>Example 2</h4>
+<div class="example-block">
+  <strong>Input:</strong> name = "Fix_Bug#102--now"<br/>
+  <strong>Output:</strong> "fixbug102-now"
+</div>
+
+<h4>Constraints</h4>
+<ul class="constraint-list">
+  <li><code>1 &lt;= name.length &lt;= 100</code></li>
+</ul>
+</div>`,
+    template: `function sanitizeBranchName(name) {
+  // Write your code here
+  
+}`,
+    testCases: [
+      { input: ["feature/Add login screen!"], expected: "feature/add-login-screen" },
+      { input: ["Fix_Bug#102--now"], expected: "fixbug102-now" },
+      { input: ["  main-branch--name  "], expected: "main-branch-name" }
+    ]
+  },
+  {
+    id: 2,
+    title: "Commit Message Validator",
+    category: "Git Basics",
+    difficulty: "easy",
+    desc: `<div class="problem-desc-rich">
+<p>Write a function to check if a commit message complies with the Conventional Commits specification.</p>
+<p>A message is valid if it matches the format: <code>type(scope): description</code> or <code>type: description</code> where:</p>
+<ul>
+  <li><code>type</code> must be one of: <code>feat</code>, <code>fix</code>, <code>docs</code>, <code>style</code>, <code>refactor</code>, <code>test</code>, <code>chore</code>.</li>
+  <li>The optional <code>(scope)</code> can contain only letters, numbers, and hyphens.</li>
+  <li>The type (and optional scope) must be followed by a colon and a space (<code>: </code>).</li>
+  <li>The <code>description</code> must be at least 3 characters long.</li>
+</ul>
+
+<h4>Example 1</h4>
+<div class="example-block">
+  <strong>Input:</strong> msg = "feat(auth): add google sign-in"<br/>
+  <strong>Output:</strong> true
+</div>
+
+<h4>Example 2</h4>
+<div class="example-block">
+  <strong>Input:</strong> msg = "fix bug"<br/>
+  <strong>Output:</strong> false
+</div>
+
+<h4>Constraints</h4>
+<ul class="constraint-list">
+  <li><code>1 &lt;= msg.length &lt;= 200</code></li>
+</ul>
+</div>`,
+    template: `function isValidCommitMessage(msg) {
+  // Write your code here
+  
+}`,
+    testCases: [
+      { input: ["feat(auth): add google sign-in"], expected: true },
+      { input: ["fix bug"], expected: false },
+      { input: ["chore: update dependencies"], expected: true },
+      { input: ["docs: a"], expected: false }
+    ]
+  },
+  {
+    id: 3,
+    title: "Git Init Commands Generator",
+    category: "Git Basics",
+    difficulty: "easy",
+    desc: `<div class="problem-desc-rich">
+<p>Generate the shell commands required to initialize a local Git repository and set its default branch name to the given parameter.</p>
+<p>Return the commands as an array of strings in order. The sequence of commands should be:</p>
+<ol>
+  <li>Initialize a repository (<code>git init</code>).</li>
+  <li>Rename the default branch tip to the provided name (<code>git branch -M &lt;branch-name&gt;</code>).</li>
+</ol>
+
+<h4>Example 1</h4>
+<div class="example-block">
+  <strong>Input:</strong> defaultBranch = "main"<br/>
+  <strong>Output:</strong> ["git init", "git branch -M main"]
+</div>
+
+<h4>Constraints</h4>
+<ul class="constraint-list">
+  <li><code>defaultBranch</code> is a non-empty alphanumeric string.</li>
+</ul>
+</div>`,
+    template: `function getGitInitCommands(defaultBranch) {
+  // Write your code here
+  
+}`,
+    testCases: [
+      { input: ["main"], expected: ["git init", "git branch -M main"] },
+      { input: ["dev"], expected: ["git init", "git branch -M dev"] }
+    ]
+  },
+  {
+    id: 4,
+    title: "Git Log Parser",
+    category: "JSON Parsing",
+    difficulty: "medium",
+    desc: `<div class="problem-desc-rich">
+<p>Parse a simple git log history string. Each commit record in the log is on its own line, formatted as:</p>
+<pre>commit_hash | author_name | commit_message</pre>
+<p>Parse this log string and return an array of parsed commit objects. Each object should have keys <code>hash</code>, <code>author</code>, and <code>message</code>.</p>
+<p>Skip any empty or whitespace-only lines.</p>
+
+<h4>Example 1</h4>
+<div class="example-block">
+  <strong>Input:</strong> logString = "a1b2c3d | Danush K | feat: add sso\\ne5f6g7h | Alex | fix: typo"<br/>
+  <strong>Output:</strong> [<br/>
+  &nbsp;&nbsp;{ hash: "a1b2c3d", author: "Danush K", message: "feat: add sso" },<br/>
+  &nbsp;&nbsp;{ hash: "e5f6g7h", author: "Alex", message: "fix: typo" }<br/>
+  ]
+</div>
+
+<h4>Constraints</h4>
+<ul class="constraint-list">
+  <li>Input log string can contain up to 50 lines.</li>
+</ul>
+</div>`,
+    template: `function parseGitLog(logString) {
+  // Write your code here
+  
+}`,
+    testCases: [
+      {
+        input: ["a1b2c3d | Danush K | feat: add sso\ne5f6g7h | Alex | fix: typo"],
+        expected: [
+          { hash: "a1b2c3d", author: "Danush K", message: "feat: add sso" },
+          { hash: "e5f6g7h", author: "Alex", message: "fix: typo" }
+        ]
+      },
+      { input: [""], expected: [] }
+    ]
+  },
+  {
+    id: 5,
+    title: "Semantic Version Parser",
+    category: "SemVer",
+    difficulty: "medium",
+    desc: `<div class="problem-desc-rich">
+<p>Parse a Semantic Version (SemVer) string in the format <code>major.minor.patch[-prerelease]</code>.</p>
+<p>Return an object with the integer values for <code>major</code>, <code>minor</code>, and <code>patch</code>, and a string for <code>prerelease</code> (or <code>null</code> if there is no prerelease tag).</p>
+<p>If the version string does not conform to the digits format (e.g. is missing numbers or contains non-alphanumeric pre-releases), return <code>null</code>.</p>
+
+<h4>Example 1</h4>
+<div class="example-block">
+  <strong>Input:</strong> version = "1.4.12-alpha.1"<br/>
+  <strong>Output:</strong> { major: 1, minor: 4, patch: 12, prerelease: "alpha.1" }
+</div>
+
+<h4>Example 2</h4>
+<div class="example-block">
+  <strong>Input:</strong> version = "2.0.0"<br/>
+  <strong>Output:</strong> { major: 2, minor: 0, patch: 0, prerelease: null }
+</div>
+
+<h4>Constraints</h4>
+<ul class="constraint-list">
+  <li>Version string fits <code>major.minor.patch</code> pattern, optionally ending with a hyphen and tag.</li>
+</ul>
+</div>`,
+    template: `function parseSemVer(version) {
+  // Write your code here
+  
+}`,
+    testCases: [
+      { input: ["1.4.12-alpha.1"], expected: { major: 1, minor: 4, patch: 12, prerelease: "alpha.1" } },
+      { input: ["2.0.0"], expected: { major: 2, minor: 0, patch: 0, prerelease: null } },
+      { input: ["invalid-version"], expected: null }
+    ]
+  },
+  {
+    id: 6,
+    title: "Merge Conflict Resolver",
+    category: "Git Basics",
+    difficulty: "medium",
+    desc: `<div class="problem-desc-rich">
+<p>Resolve a standard git merge conflict block inside a text file.</p>
+<p>The conflict block is enclosed as follows:</p>
+<pre>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+current changes
+=======
+incoming changes
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; branch-name</pre>
+<p>Given the full file content string <code>conflictText</code> and a <code>preference</code> string (either <code>"current"</code> or <code>"incoming"</code>), return the resolved content with the conflict markers and the un-preferred side removed.</p>
+
+<h4>Example 1</h4>
+<div class="example-block">
+  <strong>Input:</strong><br/>
+  conflictText = "Line 1\\n&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD\\nHello main\\n=======\\nHello feature\\n&gt;&gt;&gt;&gt;&gt;&gt;&gt; feature-branch\\nLine 3"<br/>
+  preference = "current"<br/>
+  <strong>Output:</strong> "Line 1\\nHello main\\nLine 3"
+</div>
+
+<h4>Constraints</h4>
+<ul class="constraint-list">
+  <li>Assume there is exactly one conflict block in the text.</li>
+</ul>
+</div>`,
+    template: `function resolveConflict(conflictText, preference) {
+  // Write your code here
+  
+}`,
+    testCases: [
+      {
+        input: ["Line 1\n<<<<<<< HEAD\nHello main\n=======\nHello feature\n>>>>>>> feature-branch\nLine 3", "current"],
+        expected: "Line 1\nHello main\nLine 3"
+      },
+      {
+        input: ["Line 1\n<<<<<<< HEAD\nHello main\n=======\nHello feature\n>>>>>>> feature-branch\nLine 3", "incoming"],
+        expected: "Line 1\nHello feature\nLine 3"
+      }
+    ]
+  },
+  {
+    id: 7,
+    title: "Find Stale Branches",
+    category: "Git Basics",
+    difficulty: "medium",
+    desc: `<div class="problem-desc-rich">
+<p>Identify stale local branches in a git repository to help developers clean up local storage.</p>
+<p>You are given an array of branch objects: <code>{ name: string, lastCommitDaysAgo: number }</code> and a threshold limit in days <code>thresholdDays</code>.</p>
+<p>Return an array of the names of stale branches. A branch is stale if its <code>lastCommitDaysAgo</code> is strictly greater than <code>thresholdDays</code>.</p>
+<p><strong>Note:</strong> Primary branches (named exactly <code>"main"</code> or <code>"master"</code>) are critical and can never be considered stale, regardless of age.</p>
+
+<h4>Example 1</h4>
+<div class="example-block">
+  <strong>Input:</strong><br/>
+  branches = [<br/>
+  &nbsp;&nbsp;{ name: "main", lastCommitDaysAgo: 45 },<br/>
+  &nbsp;&nbsp;{ name: "feat/login", lastCommitDaysAgo: 40 },<br/>
+  &nbsp;&nbsp;{ name: "bug/typo", lastCommitDaysAgo: 10 }<br/>
+  ]<br/>
+  thresholdDays = 30<br/>
+  <strong>Output:</strong> ["feat/login"]
+</div>
+</div>`,
+    template: `function findStaleBranches(branches, thresholdDays) {
+  // Write your code here
+  
+}`,
+    testCases: [
+      {
+        input: [
+          [
+            { name: "main", lastCommitDaysAgo: 45 },
+            { name: "feat/login", lastCommitDaysAgo: 40 },
+            { name: "bug/typo", lastCommitDaysAgo: 10 }
+          ],
+          30
+        ],
+        expected: ["feat/login"]
+      }
+    ]
+  },
+  {
+    id: 8,
+    title: "Git Status Diff Parser",
+    category: "Git Basics",
+    difficulty: "medium",
+    desc: `<div class="problem-desc-rich">
+<p>Parse a simulated output from a short git status command (<code>git status -s</code>).</p>
+<p>Each line in the input starts with a two-character code indicating state, followed by a space, and the filename. We only care about:</p>
+<ul>
+  <li><code>M</code> - Modified (add file to <code>modified</code> array)</li>
+  <li><code>A</code> - Added (add file to <code>added</code> array)</li>
+</ul>
+<p>Return an object formatted as: <code>{ modified: string[], added: string[], deleted: string[] }</code>. File lists should be in the order they appear.</p>
+
+<h4>Example 1</h4>
+<div class="example-block">
+  <strong>Input:</strong> statusOutput = "M index.html\\nA style.css\\nD old_file.js\\nM script.js"<br/>
+  <strong>Output:</strong> { modified: ["index.html", "script.js"], added: ["style.css"], deleted: ["old_file.js"] }
+</div>
+</div>`,
+    template: `function parseGitStatus(statusOutput) {
+  // Write your code here
+  
+}`,
+    testCases: [
+      {
+        input: ["M index.html\nA style.css\nD old_file.js\nM script.js"],
+        expected: { modified: ["index.html", "script.js"], added: ["style.css"], deleted: ["old_file.js"] }
+      }
+    ]
+  },
+  {
+    id: 9,
+    title: "Two Sum: Git Version",
+    category: "Algorithmic",
+    difficulty: "easy",
+    desc: `<div class="problem-desc-rich">
+<p>Verify your JavaScript execution runtime. Given an array of integers <code>commitSizes</code> representing the memory size of commits in MB, and a target memory size <code>targetSize</code>, return the indices of the two commits that add up to the target.</p>
+<p>Assume exactly one solution exists, and you cannot use the same element twice. Return the indices sorted in ascending order.</p>
+
+<h4>Example 1</h4>
+<div class="example-block">
+  <strong>Input:</strong> commitSizes = [2, 7, 11, 15], targetSize = 9<br/>
+  <strong>Output:</strong> [0, 1]
+</div>
+</div>`,
+    template: `function twoSum(commitSizes, targetSize) {
+  // Write your code here
+  
+}`,
+    testCases: [
+      { input: [[2, 7, 11, 15], 9], expected: [0, 1] },
+      { input: [[3, 2, 4], 6], expected: [1, 2] }
+    ]
+  },
+  {
+    id: 10,
+    title: "Merge Dev Intervals",
+    category: "Algorithmic",
+    difficulty: "hard",
+    desc: `<div class="problem-desc-rich">
+<p>Merge overlapping sprint development windows. Given an array of interval pairs <code>intervals</code> where <code>intervals[i] = [start_i, end_i]</code> represent time slots in hours, merge all overlapping intervals.</p>
+<p>Return an array of the non-overlapping intervals, sorted in ascending order by their start time.</p>
+
+<h4>Example 1</h4>
+<div class="example-block">
+  <strong>Input:</strong> intervals = [[1, 3], [2, 6], [8, 10], [15, 18]]<br/>
+  <strong>Output:</strong> [[1, 6], [8, 10], [15, 18]]
+</div>
+</div>`,
+    template: `function mergeIntervals(intervals) {
+  // Write your code here
+  
+}`,
+    testCases: [
+      { input: [[[1, 3], [2, 6], [8, 10], [15, 18]]], expected: [[1, 6], [8, 10], [15, 18]] },
+      { input: [[[1, 4], [4, 5]]], expected: [[1, 5]] }
+    ]
+  }
+];
+
 
 // ─────────────────────────────────────────────
 // RENDER FUNCTIONS
