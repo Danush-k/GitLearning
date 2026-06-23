@@ -2763,6 +2763,10 @@ function initArena() {
   if (editor) {
     editor.addEventListener('input', () => {
       updateLineNumbers();
+      if (arenaState.activeProblem) {
+        arenaState.drafts[arenaState.activeProblem.id] = editor.value;
+        localStorage.setItem('arena-drafts', JSON.stringify(arenaState.drafts));
+      }
     });
 
     editor.addEventListener('scroll', () => {
