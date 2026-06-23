@@ -12,7 +12,15 @@ A beautifully designed, interactive website to help beginners learn Git & GitHub
 - **Git Commit Visualizer** — Interactive sandbox to simulate commits, switches, branches, merges, and soft resets on a real-time graph.
 - **Git Cheatsheet** — Quick-reference lookup tables for basic commands, branching, remotes, undoing, and extras.
 - **Mini Quiz & Certificate** — Test your Git knowledge with 16 comprehensive questions and receive a downloadable / printable Certificate of Completion when you score 8/10 or higher.
-- **GitCode Arena (NEW!)** — A premium, LeetCode-style interactive coding playground containing 10 curated programmatic Git & version-control challenges. Features a split-pane layout, auto-pairing text editor with live line numbering, real-time client-side JS code execution engine, detailed testcase verification tabs, console output logging, and localStorage-backed progress persistence.
+- **GitCode Arena (NEW!)** — A premium, LeetCode-style interactive coding playground containing 10 curated programmatic Git & version-control challenges.
+  - **Phase 1 Core**: Split-pane layout, auto-pairing text editor with live line numbering, real-time client-side JS code execution engine, detailed testcase verification tabs, console output logging, and localStorage-backed progress persistence.
+  - **Phase 2 Professional Enhancements**:
+    - **Locked Solution Reference**: Explains the optimal logic and includes reference code, protected by a lock screen overlay that prompts users with an unlock warning.
+    - **Custom Testcase Runner**: A checkbox and custom textarea enabling developers to input custom arguments and execute them against the live compiler runtime.
+    - **Daily Challenge Hero Widget**: A prominent hero widget displaying the active "Daily Challenge" problem with its difficulty, category, XP reward, and a real-time countdown timer to midnight.
+    - **Global Git Leaderboard**: An interactive ranking sidebar containing top Git learners, with the user's rank, solved challenges, and XP dynamically updated.
+    - **Premium Micro-animations**: Sleek visual feedback including pop animations on compilation success and container shake effects on wrong answers.
+    - **Reset Progress Utility**: A one-click utility to wipe solved problems, drafts, and submission logs clean from the browser's local storage.
 
 
 ## 🚀 Getting Started
