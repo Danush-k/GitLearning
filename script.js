@@ -977,6 +977,59 @@ function setupBasicsFilter() {
   });
 }
 
+function renderConceptDetail(concept) {
+  const body = document.getElementById('basics-modal-body');
+  if (!body) return;
+  body.innerHTML = `<h3>${escapeHtml(concept.title)}</h3><p>${escapeHtml(concept.desc)}</p>`;
+}
+
+function setupBasicsModal() {
+  const grid = document.getElementById('concepts-grid');
+  const modal = document.getElementById('basics-modal');
+  const closeBtn = document.getElementById('close-basics-modal-btn');
+  const overlay = document.getElementById('basics-modal-overlay');
+
+  if (!grid || !modal) return;
+
+  function openModal(title) {
+    const concept = conceptsData.find(c => c.title === title);
+    if (!concept) return;
+
+    renderConceptDetail(concept);
+    modal.classList.add('active');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    modal.classList.remove('active');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  grid.addEventListener('click', (e) => {
+    const card = e.target.closest('.concept-card');
+    if (card) {
+      const title = card.dataset.conceptTitle;
+      openModal(title);
+    }
+  });
+
+  grid.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      const card = e.target.closest('.concept-card');
+      if (card) {
+        e.preventDefault();
+        const title = card.dataset.conceptTitle;
+        openModal(title);
+      }
+    }
+  });
+
+  if (closeBtn) closeBtn.addEventListener('click', closeModal);
+  if (overlay) overlay.addEventListener('click', closeModal);
+}
+
 function renderCommands(tab = 'setup', filterQuery = '') {
   const grid = document.getElementById('commands-grid');
   let cmds = commandsData[tab] || [];
@@ -3898,6 +3951,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupCommandTabs();
   setupSearch();
   setupBasicsFilter();
+  setupBasicsModal();
   setupKeyboardShortcuts();
   setupBackToTop();
 
