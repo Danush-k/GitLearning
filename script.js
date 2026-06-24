@@ -980,7 +980,67 @@ function setupBasicsFilter() {
 function renderConceptDetail(concept) {
   const body = document.getElementById('basics-modal-body');
   if (!body) return;
-  body.innerHTML = `<h3>${escapeHtml(concept.title)}</h3><p>${escapeHtml(concept.desc)}</p>`;
+
+  const categoryLabel = concept.category === 'local' ? 'Local Core 💻' : 'Remote & Collaboration ☁️';
+  const categoryClass = concept.category === 'local' ? 'cat-local' : 'cat-remote';
+
+  body.innerHTML = `
+    <div class="basics-modal-header">
+      <div style="display: flex; align-items: center; gap: 14px;">
+        <span class="basics-modal-icon">${escapeHtml(concept.icon)}</span>
+        <div>
+          <h2 class="basics-modal-title">${escapeHtml(concept.title)}</h2>
+          <span class="basics-modal-badge ${categoryClass}">${categoryLabel}</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="basics-modal-scroll-content">
+      <div class="basics-modal-section desc-section">
+        <h4 class="section-subtitle">What is it?</h4>
+        <p class="basics-modal-desc">${escapeHtml(concept.desc)}</p>
+      </div>
+
+      <div class="basics-modal-section analogy-section">
+        <h4 class="section-subtitle">💡 Real-World Analogy</h4>
+        <div class="analogy-card">
+          <p>${escapeHtml(concept.analogy || 'No analogy available.')}</p>
+        </div>
+      </div>
+
+      <div class="basics-modal-section example-section">
+        <h4 class="section-subtitle">💻 Command Example</h4>
+        <div class="basics-modal-code-wrapper">
+          <code class="basics-modal-code">${escapeHtml(concept.example)}</code>
+          <button class="basics-copy-code-btn btn btn-sm btn-outline" data-code="${escapeHtml(concept.example)}">Copy 📋</button>
+        </div>
+      </div>
+
+      <!-- Sandbox section placeholder (Commit 7) -->
+      <div id="basics-modal-sandbox-placeholder"></div>
+
+      <!-- Checkpoint section placeholder (Commit 8) -->
+      <div id="basics-modal-checkpoint-placeholder"></div>
+    </div>
+  `;
+
+  // Attach copy button handler inside modal
+  const copyBtn = body.querySelector('.basics-copy-code-btn');
+  if (copyBtn) {
+    copyBtn.addEventListener('click', () => {
+      const code = copyBtn.dataset.code;
+      navigator.clipboard.writeText(code).then(() => {
+        copyBtn.textContent = 'Copied! ✓';
+        copyBtn.style.borderColor = 'var(--clr-accent-3)';
+        copyBtn.style.color = 'var(--clr-accent-3)';
+        setTimeout(() => {
+          copyBtn.textContent = 'Copy 📋';
+          copyBtn.style.borderColor = '';
+          copyBtn.style.color = '';
+        }, 1500);
+      });
+    });
+  }
 }
 
 function setupBasicsModal() {
