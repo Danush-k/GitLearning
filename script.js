@@ -882,16 +882,99 @@ M script.js`],
 // RENDER FUNCTIONS
 // ─────────────────────────────────────────────
 
-function renderConcepts() {
+function renderConcepts(tab = 'all', filterQuery = '') {
   const grid = document.getElementById('concepts-grid');
-  grid.innerHTML = conceptsData.map(c => `
-    <div class="concept-card">
-      <span class="card-icon">${c.icon}</span>
-      <div class="card-title">${c.title}</div>
-      <div class="card-desc">${c.desc}</div>
-      <div class="card-example">${c.example}</div>
-    </div>
-  `).join('');
+  if (!grid) return;
+  let concepts = conceptsData;
+
+  // Filter by category tab
+  if (tab !== 'all') {
+    concepts = concepts.filter(c => c.category === tab);
+  }
+
+  // Filter by search query
+  if (filterQuery) {
+    const query = filterQuery.toLowerCase().trim();
+    concepts = concepts.filter(c => 
+      c.title.toLowerCase().includes(query) || 
+      c.desc.toLowerCase().includes(query) || 
+      (c.analogy && c.analogy.toLowerCase().includes(query)) ||
+      c.example.toLowerCase().includes(query)
+    );
+  }
+
+  if (concepts.length === 0) {
+    grid.innerHTML = `
+      <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--clr-text-muted);">
+        🔍 No basic concepts found matching "${escapeHtml(filterQuery)}"
+      </div>
+    `;
+    return;
+  }
+
+  grid.innerHTML = concepts.map(c => {
+    let titleDisplay = escapeHtml(c.title);
+    let descDisplay = escapeHtml(c.desc);
+    let exampleDisplay = escapeHtml(c.example);
+
+    if (filterQuery) {
+      const regex = new RegExp(`(${escapeHtml(filterQuery)})`, 'gi');
+      titleDisplay = titleDisplay.replace(regex, '<mark class="search-highlight">$1</mark>');
+      descDisplay = descDisplay.replace(regex, '<mark class="search-highlight">$1</mark>');
+      exampleDisplay = exampleDisplay.replace(regex, '<mark class="search-highlight">$1</mark>');
+    }
+
+    return `
+      <div class="concept-card" data-concept-title="${escapeHtml(c.title)}" role="button" tabindex="0">
+        <span class="card-icon">${escapeHtml(c.icon)}</span>
+        <div class="card-title">${titleDisplay}</div>
+        <div class="card-desc">${descDisplay}</div>
+        <div class="card-example">${exampleDisplay}</div>
+        <div class="card-action-hint">Click to learn more & practice ➔</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function setupBasicsFilter() {
+  const searchInput = document.getElementById('basics-search');
+  const clearBtn = document.getElementById('basics-clear-search-btn');
+  const tabBtns = document.querySelectorAll('.basics-tab-btn');
+
+  let activeTab = 'all';
+  let searchQuery = '';
+
+  if (!searchInput) return;
+
+  function updateBasicsUI() {
+    renderConcepts(activeTab, searchQuery);
+    if (clearBtn) {
+      clearBtn.style.display = searchQuery ? 'flex' : 'none';
+    }
+  }
+
+  searchInput.addEventListener('input', (e) => {
+    searchQuery = e.target.value;
+    updateBasicsUI();
+  });
+
+  if (clearBtn) {
+    clearBtn.addEventListener('click', () => {
+      searchInput.value = '';
+      searchQuery = '';
+      updateBasicsUI();
+      searchInput.focus();
+    });
+  }
+
+  tabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      tabBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeTab = btn.dataset.basicsTab || 'all';
+      updateBasicsUI();
+    });
+  });
 }
 
 function renderCommands(tab = 'setup', filterQuery = '') {
@@ -3814,6 +3897,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupNavbar();
   setupCommandTabs();
   setupSearch();
+  setupBasicsFilter();
   setupKeyboardShortcuts();
   setupBackToTop();
 
