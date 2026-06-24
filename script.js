@@ -1177,21 +1177,33 @@ function setupBasicsModal() {
   const overlay = document.getElementById('basics-modal-overlay');
 
   if (!grid || !modal) return;
+  let lastFocusedElement = null;
 
   function openModal(title) {
     const concept = conceptsData.find(c => c.title === title);
     if (!concept) return;
 
+    lastFocusedElement = document.activeElement;
     renderConceptDetail(concept);
     modal.classList.add('active');
     modal.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
+
+    // Shift focus to close button for keyboard navigation accessibility
+    setTimeout(() => {
+      if (closeBtn) closeBtn.focus();
+    }, 50);
   }
 
   function closeModal() {
     modal.classList.remove('active');
     modal.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
+
+    // Restore focus
+    if (lastFocusedElement) {
+      lastFocusedElement.focus();
+    }
   }
 
   grid.addEventListener('click', (e) => {
@@ -1215,6 +1227,13 @@ function setupBasicsModal() {
 
   if (closeBtn) closeBtn.addEventListener('click', closeModal);
   if (overlay) overlay.addEventListener('click', closeModal);
+
+  // Close on Escape keypress
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal.classList.contains('active')) {
+      closeModal();
+    }
+  });
 }
 
 function renderCommands(tab = 'setup', filterQuery = '') {
