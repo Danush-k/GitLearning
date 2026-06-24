@@ -11,37 +11,141 @@ const conceptsData = [
     icon: "📦",
     title: "Repository (Repo)",
     desc: "A repository is like a project folder that Git tracks. It stores all your files and their entire revision history.",
-    example: "git init my-project"
+    example: "git init my-project",
+    category: "local",
+    analogy: "Think of a repository as a secure, digital vault for your project. Unlike a normal folder, it remembers every single file change, who made it, and when, allowing you to travel back in time to any previous state.",
+    checkpoint: {
+      q: "Which file or directory marks a folder as a local Git repository?",
+      options: [".gitconfig", ".gitignore", ".git folder", "README.md"],
+      answer: 2,
+      explanation: "The hidden `.git` folder contains all the metadata, object databases, and revision history that power the repository. Never delete it!"
+    }
+  },
+  {
+    icon: "📋",
+    title: "Staging Area (Index)",
+    desc: "The staging area is a prep zone where you choose which changes to include in your next commit.",
+    example: "git add index.html",
+    category: "local",
+    analogy: "Think of the staging area as a shipping box. Before sealing the box and shipping it (committing), you selectively place items inside it. This allows you to choose exactly which changes are ready to be saved together, leaving others as drafts.",
+    checkpoint: {
+      q: "What command stages all modified and new files in the current folder?",
+      options: ["git commit -a", "git stage-all", "git add .", "git push --all"],
+      answer: 2,
+      explanation: "Running `git add .` stages all modifications, additions, and deletions in the current directory and its subdirectories."
+    }
   },
   {
     icon: "📸",
     title: "Commit",
     desc: "A commit is a snapshot of your changes. Every commit has a unique ID and a message describing what changed.",
-    example: "git commit -m 'Add login page'"
+    example: "git commit -m 'Add login page'",
+    category: "local",
+    analogy: "A commit is a permanent snapshot of your staging area box. It's like taking a photo and stamping it with a unique barcode (hash), an author name, and a note describing what changed. Once committed, it becomes a permanent part of your project history.",
+    checkpoint: {
+      q: "What does the -m flag in 'git commit -m' represent?",
+      options: ["modification", "message", "main branch", "merge"],
+      answer: 1,
+      explanation: "The `-m` flag stands for 'message', allowing you to provide a short, description inline without opening a terminal text editor."
+    }
   },
   {
     icon: "🌿",
     title: "Branch",
     desc: "A branch is an independent line of development. You can create branches to work on features without affecting the main code.",
-    example: "git checkout -b feature/login"
+    example: "git branch feature/login",
+    category: "local",
+    analogy: "A branch is a parallel universe for your code. If you want to experiment with a new feature or fix a bug without breaking the stable project, you split off on a branch. You can work freely, and later merge it back or discard it.",
+    checkpoint: {
+      q: "Which command lists all local branches in the current repository?",
+      options: ["git branch", "git list-branches", "git show-branch", "git status"],
+      answer: 0,
+      explanation: "Running `git branch` (with no arguments) lists all local branches and puts an asterisk (*) next to the one you are currently on."
+    }
   },
   {
     icon: "🔀",
+    title: "Checkout / Switch",
+    desc: "Checking out allows you to navigate between different branches or view specific commits in history.",
+    example: "git checkout -b feature/login",
+    category: "local",
+    analogy: "Checking out is like teleporting between parallel universes (branches). When you checkout a branch, Git swaps the files in your directory to match that branch's latest state instantly, letting you jump between tasks.",
+    checkpoint: {
+      q: "How do you create AND switch to a new branch in a single command?",
+      options: ["git branch -n <name>", "git checkout -b <name>", "git switch-to <name>", "git checkout <name>"],
+      answer: 1,
+      explanation: "The `-b` flag tells checkout to create the branch first, then switch your working directory to it immediately."
+    }
+  },
+  {
+    icon: "🤝",
     title: "Merge",
     desc: "Merging combines changes from one branch into another. This is how features get integrated into the main codebase.",
-    example: "git merge feature/login"
+    example: "git merge feature/login",
+    category: "local",
+    analogy: "Merging is combining two parallel universes back together. When your feature branch is tested and ready, you merge it back into the main branch, integrating all your additions seamlessly.",
+    checkpoint: {
+      q: "If two branches modify the same line of a file, what does Git produce?",
+      options: ["Auto-merge success", "Delete branch warning", "Merge conflict", "A new commit error"],
+      answer: 2,
+      explanation: "When Git cannot automatically merge conflicting changes, it creates a Merge Conflict and asks you to manually choose which code to keep."
+    }
   },
   {
     icon: "☁️",
-    title: "Remote",
-    desc: "A remote is a version of your repo hosted on the internet (like GitHub). It lets you share code with teammates.",
-    example: "git remote add origin <url>"
+    title: "Remote (Origin)",
+    desc: "A remote is a version of your repo hosted on the internet (like GitHub). It lets you share code and collaborate.",
+    example: "git remote add origin <url>",
+    category: "remote",
+    analogy: "A remote is a copy of your vault stored in the cloud (like GitHub or GitLab). It acts as a central hub. Instead of copying files on USB drives, everyone pushes to and pulls from this cloud origin to keep in sync.",
+    checkpoint: {
+      q: "What is the standard default name given to the primary remote repository URL?",
+      options: ["source", "main", "origin", "cloud"],
+      answer: 2,
+      explanation: "Git conventionally names the primary upstream remote repository 'origin' when cloning or manually linking a remote URL."
+    }
   },
   {
     icon: "⬇️",
     title: "Pull & Push",
     desc: "Push sends your local commits to the remote. Pull downloads remote changes and merges them into your local branch.",
-    example: "git push origin main"
+    example: "git push origin main",
+    category: "remote",
+    analogy: "Push is shipping your local snapshots up to the cloud vault. Pull is downloading the latest cloud snapshots and merging them into your local vault. They are the breathing in and out of collaborative coding.",
+    checkpoint: {
+      q: "What does 'git pull' actually do under the hood?",
+      options: ["git push + git fetch", "git fetch + git merge", "git init + git clone", "git status + git checkout"],
+      answer: 1,
+      explanation: "Running `git pull` is a shortcut that performs a `git fetch` (downloads changes) followed immediately by a `git merge` (integrates them)."
+    }
+  },
+  {
+    icon: "📥",
+    title: "Fetch",
+    desc: "Fetching downloads new data from a remote repository without merging or modifying your local working files.",
+    example: "git fetch",
+    category: "remote",
+    analogy: "Fetching is checking the mailbox without opening the letters. It downloads all the latest branch updates from the remote repo so you can see what your teammates did, but it does NOT touch or merge with your local working code.",
+    checkpoint: {
+      q: "How does 'git fetch' differ from 'git pull'?",
+      options: ["It uploads changes instead of downloading", "It deletes local branches", "It doesn't automatically merge changes", "It resets the staging area"],
+      answer: 2,
+      explanation: "Fetch only downloads the remote updates/metadata into remote-tracking branches. It does not touch your active branch or modify files in your working directory."
+    }
+  },
+  {
+    icon: "📢",
+    title: "Pull Request (PR)",
+    desc: "A Pull Request is a collaborative review process on platforms like GitHub to propose and merge branch changes.",
+    example: "PR on GitHub UI",
+    category: "remote",
+    analogy: "A Pull Request (PR) is a formal request to merge your changes into the main project. It's like submitting a paper for peer review. Teammates inspect your code diffs, run automated tests, comment, request edits, and finally approve and merge it.",
+    checkpoint: {
+      q: "Where do you create and manage a Pull Request (PR)?",
+      options: ["In your local terminal", "On a hosting service like GitHub", "Inside the .gitconfig file", "In a local text editor"],
+      answer: 1,
+      explanation: "Pull Requests are a collaborative platform feature (GitHub, GitLab, Bitbucket) rather than a built-in feature of core Git itself."
+    }
   }
 ];
 
