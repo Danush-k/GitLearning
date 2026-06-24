@@ -4,7 +4,7 @@ A beautifully designed, interactive website to help beginners learn Git & GitHub
 
 ## 📚 What's Inside
 
-- **Git Basics** — Core concepts explained simply with illustrative examples.
+- **Git Basics (Interactive!)** — Core concepts explained simply with illustrative examples, now featuring 10 expanded topics. Filter by local core vs remote collaboration, search in real-time, click any card to view a premium glassmorphic modal with real-world analogies, direct sandbox/command generator integration, and custom check-your-understanding checkpoints with micro-animations.
 - **Common Commands** — Interactive command reference cards organized by category (Setup, Basic, Branching, Remote, and Advanced) with search functionality.
 - **Branching Strategies** — Visual tabbed section explaining GitHub Flow, Git Flow, and Trunk-Based Development.
 - **Git Command Generator** — Choose actions (including stashing and undoing) and configure parameters to generate exact Git terminal command syntax.
