@@ -2977,3 +2977,51 @@ code {
   border: none;
   padding: 0;
 }
+
+/* Basics checkpoint styles */
+.basics-cp-option-btn {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--clr-border);
+  background: var(--clr-bg-3);
+  border-radius: var(--radius-sm);
+  color: var(--clr-text);
+  font-family: var(--font-main);
+  font-size: 0.9rem;
+  text-align: left;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.basics-cp-option-btn:hover:not(:disabled) {
+  border-color: var(--clr-accent);
+  background: rgba(88, 166, 255, 0.05);
+}
+.basics-cp-option-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+.basics-cp-option-btn.correct {
+  border-color: var(--clr-accent-3);
+  background: rgba(63, 185, 80, 0.1);
+  color: var(--clr-accent-3);
+  opacity: 1 !important;
+  font-weight: 600;
+}
+.basics-cp-option-btn.wrong {
+  border-color: var(--clr-accent-warm);
+  background: rgba(247, 129, 102, 0.1);
+  color: var(--clr-accent-warm);
+  opacity: 1 !important;
+  font-weight: 600;
+}
+.basics-cp-feedback.correct-feedback {
+  background: rgba(63, 185, 80, 0.1);
+  border: 1px solid var(--clr-accent-3);
+  color: var(--clr-accent-3);
+}
+.basics-cp-feedback.wrong-feedback {
+  background: rgba(247, 129, 102, 0.1);
+  border: 1px solid var(--clr-accent-warm);
+  color: var(--clr-accent-warm);
+}
+

@@ -1093,6 +1093,54 @@ function renderConceptDetail(concept) {
       });
     }
   }
+
+  // Populate Checkpoint Quiz Section
+  const checkpointPlaceholder = body.querySelector('#basics-modal-checkpoint-placeholder');
+  if (checkpointPlaceholder && concept.checkpoint) {
+    const cp = concept.checkpoint;
+    checkpointPlaceholder.innerHTML = `
+      <div class="basics-modal-section checkpoint-section" style="border-top: 1px solid var(--clr-border); padding-top: 24px; margin-top: 8px;">
+        <h4 class="section-subtitle">🎯 Quick Check-in</h4>
+        <p class="basics-cp-question" style="font-weight: 600; font-size: 0.95rem; margin-bottom: 12px; color: #fff;">${escapeHtml(cp.q)}</p>
+        <div class="basics-cp-options" style="display: flex; flex-direction: column; gap: 8px;">
+          ${cp.options.map((opt, idx) => `
+            <button class="basics-cp-option-btn" data-index="${idx}">${escapeHtml(opt)}</button>
+          `).join('')}
+        </div>
+        <div class="basics-cp-feedback" style="display: none; margin-top: 12px; padding: 12px; border-radius: var(--radius-sm); font-size: 0.88rem; line-height: 1.5;"></div>
+      </div>
+    `;
+
+    const optionBtns = checkpointPlaceholder.querySelectorAll('.basics-cp-option-btn');
+    const feedbackDiv = checkpointPlaceholder.querySelector('.basics-cp-feedback');
+
+    optionBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const selectedIdx = parseInt(btn.dataset.index, 10);
+        
+        optionBtns.forEach(b => {
+          b.disabled = true;
+          const idx = parseInt(b.dataset.index, 10);
+          if (idx === cp.answer) {
+            b.classList.add('correct');
+          } else if (idx === selectedIdx) {
+            b.classList.add('wrong');
+          }
+        });
+
+        feedbackDiv.style.display = 'block';
+        if (selectedIdx === cp.answer) {
+          feedbackDiv.className = 'basics-cp-feedback correct-feedback';
+          feedbackDiv.innerHTML = `<strong>🎉 Correct!</strong> ${escapeHtml(cp.explanation)}`;
+          feedbackDiv.classList.add('arena-success-animate');
+        } else {
+          feedbackDiv.className = 'basics-cp-feedback wrong-feedback';
+          feedbackDiv.innerHTML = `<strong>❌ Incorrect.</strong> ${escapeHtml(cp.explanation)}`;
+          feedbackDiv.classList.add('arena-shake');
+        }
+      });
+    });
+  }
 }
 
 function handleSandboxRedirect(tool, action = '') {
