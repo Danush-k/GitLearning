@@ -85,6 +85,18 @@
         <h2 class="section-title">Git Basics</h2>
         <p class="section-desc">Understand the core concepts that power version control.</p>
       </div>
+      <div class="basics-controls">
+        <div class="basics-tabs">
+          <button class="basics-tab-btn active" data-basics-tab="all" id="basics-tab-all">All Concepts</button>
+          <button class="basics-tab-btn" data-basics-tab="local" id="basics-tab-local">Git Local Core 💻</button>
+          <button class="basics-tab-btn" data-basics-tab="remote" id="basics-tab-remote">Remote & GitHub ☁️</button>
+        </div>
+        <div class="basics-search-wrapper">
+          <span class="basics-search-icon">🔍</span>
+          <input type="text" id="basics-search" placeholder="Search basic concepts (e.g. branch, commit)..." aria-label="Search Git concepts" />
+          <button id="basics-clear-search-btn" class="basics-clear-search-btn" aria-label="Clear search" style="display: none;">&times;</button>
+        </div>
+      </div>
       <div class="concepts-grid" id="concepts-grid">
         <!-- Cards injected by JS -->
       </div>
