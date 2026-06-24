@@ -1041,6 +1041,85 @@ function renderConceptDetail(concept) {
       });
     });
   }
+
+  // Populate Sandbox Action Section
+  const sandboxPlaceholder = body.querySelector('#basics-modal-sandbox-placeholder');
+  if (sandboxPlaceholder) {
+    let toolTarget = 'visualizer';
+    let actionTarget = '';
+    let btnText = 'Try in Sandbox Visualizer 🎨';
+    let btnClass = 'btn-primary';
+
+    if (concept.title === 'Repository (Repo)') {
+      toolTarget = 'generator';
+      actionTarget = 'init';
+      btnText = 'Open Command Generator ⚙️';
+      btnClass = 'btn-outline';
+    } else if (concept.title === 'Remote (Origin)') {
+      toolTarget = 'generator';
+      actionTarget = 'remote-add';
+      btnText = 'Open Command Generator ⚙️';
+      btnClass = 'btn-outline';
+    } else if (concept.title === 'Pull & Push') {
+      toolTarget = 'generator';
+      actionTarget = 'push';
+      btnText = 'Open Command Generator ⚙️';
+      btnClass = 'btn-outline';
+    } else if (concept.title === 'Fetch') {
+      toolTarget = 'generator';
+      actionTarget = 'pull';
+      btnText = 'Open Command Generator ⚙️';
+      btnClass = 'btn-outline';
+    } else if (concept.title === 'Pull Request (PR)') {
+      toolTarget = 'generator';
+      actionTarget = 'remote-add';
+      btnText = 'Open Command Generator ⚙️';
+      btnClass = 'btn-outline';
+    }
+
+    sandboxPlaceholder.innerHTML = `
+      <div class="basics-modal-section sandbox-section">
+        <h4 class="section-subtitle">Hands-on Practice</h4>
+        <button class="basics-sandbox-btn btn ${btnClass}" style="width: 100%; justify-content: center;" data-tool="${toolTarget}" data-action="${actionTarget}">
+          ${btnText}
+        </button>
+      </div>
+    `;
+
+    const sandboxBtn = sandboxPlaceholder.querySelector('.basics-sandbox-btn');
+    if (sandboxBtn) {
+      sandboxBtn.addEventListener('click', () => {
+        handleSandboxRedirect(sandboxBtn.dataset.tool, sandboxBtn.dataset.action);
+      });
+    }
+  }
+}
+
+function handleSandboxRedirect(tool, action = '') {
+  // Close modal
+  const modal = document.getElementById('basics-modal');
+  if (modal) {
+    modal.classList.remove('active');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  if (tool === 'generator') {
+    const generatorSection = document.getElementById('generator');
+    if (generatorSection) {
+      generatorSection.scrollIntoView({ behavior: 'smooth' });
+      const actionSelect = document.getElementById('generator-action');
+      if (actionSelect && action) {
+        actionSelect.value = action;
+        actionSelect.dispatchEvent(new Event('change'));
+      }
+    }
+  } else if (tool === 'visualizer') {
+    const visualizerSection = document.getElementById('visualizer');
+    if (visualizerSection) {
+      visualizerSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
 }
 
 function setupBasicsModal() {
