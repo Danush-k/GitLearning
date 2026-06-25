@@ -776,7 +776,78 @@
 
           <!-- Collaboration Lab Panel -->
           <div class="github-panel" id="panel-gh-collab">
-            <!-- Collab content placeholder -->
+            <div class="collab-lab-layout">
+              <!-- Stepper Header -->
+              <div class="collab-stepper">
+                <div class="collab-step active" data-collab-step="1">1. Fork</div>
+                <div class="collab-step" data-collab-step="2">2. Clone</div>
+                <div class="collab-step" data-collab-step="3">3. Upstream</div>
+                <div class="collab-step" data-collab-step="4">4. Commit</div>
+                <div class="collab-step" data-collab-step="5">5. PR</div>
+                <div class="collab-step" data-collab-step="6">6. Sync</div>
+              </div>
+
+              <!-- Main Work Area -->
+              <div class="collab-workspace">
+                <!-- Left: Diagram & Simulation -->
+                <div class="collab-visual-area">
+                  <div class="collab-diagram">
+                    <!-- Upstream Node -->
+                    <div class="collab-node upstream" id="node-upstream">
+                      <span class="node-icon">🏢</span>
+                      <div class="node-label">Upstream (Original)</div>
+                      <div class="node-state" id="state-upstream">Commits: C1</div>
+                    </div>
+
+                    <!-- Origin Fork Node -->
+                    <div class="collab-node origin-fork dimmed" id="node-origin">
+                      <span class="node-icon">🍴</span>
+                      <div class="node-label">Origin (Your Fork)</div>
+                      <div class="node-state" id="state-origin">Not Forked</div>
+                    </div>
+
+                    <!-- Local Repo Node -->
+                    <div class="collab-node local-repo dimmed" id="node-local">
+                      <span class="node-icon">💻</span>
+                      <div class="node-label">Local Clone</div>
+                      <div class="node-state" id="state-local">Not Cloned</div>
+                    </div>
+
+                    <!-- Arrow overlays (styled via CSS absolute positioning) -->
+                    <div class="collab-arrow-line arrow-fork" id="arrow-fork"></div>
+                    <div class="collab-arrow-line arrow-clone" id="arrow-clone"></div>
+                    <div class="collab-arrow-line arrow-upstream" id="arrow-upstream"></div>
+                  </div>
+
+                  <div class="collab-simulator-status" id="collab-status-text">
+                    Select a step to begin the collaboration simulation.
+                  </div>
+                </div>
+
+                <!-- Right: Action panel -->
+                <div class="collab-instruction-area">
+                  <h3 id="collab-step-title">Step 1: Fork the Repository</h3>
+                  <p id="collab-step-desc">To contribute to an open-source project, first create a copy of it on your own GitHub account. This copy is called a fork.</p>
+                  
+                  <div id="collab-interactive-widget" class="collab-widget">
+                    <!-- Interactive elements (e.g. Fork button) -->
+                  </div>
+
+                  <div id="collab-command-block" class="collab-command-block" style="display: none;">
+                    <label style="font-size: 0.8rem; font-weight: 700; color: var(--clr-accent-2); text-transform: uppercase;">Terminal Command</label>
+                    <div class="collab-cmd-box" style="display: flex; align-items: center; justify-content: space-between; background: var(--clr-bg); border: 1px solid var(--clr-border); padding: 12px; border-radius: var(--radius-sm); font-family: var(--font-code); color: var(--clr-accent-3); font-size: 0.85rem; margin-top: 6px;">
+                      <pre style="margin:0;"><code id="collab-cmd-text">git clone https://github.com/...</code></pre>
+                      <button id="btn-collab-cmd-copy" class="auth-copy-btn">Copy 📋</button>
+                    </div>
+                  </div>
+
+                  <div class="collab-navigation-buttons">
+                    <button id="btn-collab-prev" class="btn btn-outline btn-sm" disabled>← Previous Step</button>
+                    <button id="btn-collab-next" class="btn btn-primary btn-sm">Next Step →</button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           <!-- GitHub Actions Builder Panel -->
