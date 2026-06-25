@@ -739,7 +739,39 @@
         <div class="github-panels">
           <!-- Auth Wizard Panel -->
           <div class="github-panel active" id="panel-gh-auth">
-            <!-- Auth content placeholder -->
+            <div class="auth-wizard-layout">
+              <!-- Left Sidebar: Controls -->
+              <div class="auth-wizard-sidebar">
+                <h3>Connection Method</h3>
+                <p style="font-size: 0.85rem; color: var(--clr-text-muted); margin-bottom: 16px;">Choose how you want to authenticate your local machine with GitHub.</p>
+                <div class="auth-toggle-buttons">
+                  <button class="auth-method-btn active" data-auth-method="ssh" id="btn-method-ssh">🔑 SSH Key (Recommended)</button>
+                  <button class="auth-method-btn" data-auth-method="https" id="btn-method-https">🌐 HTTPS (PAT Token)</button>
+                </div>
+                
+                <div class="auth-inputs-card">
+                  <h4>Configure Variables</h4>
+                  <div class="form-group">
+                    <label for="gh-auth-email" class="form-label">GitHub Email</label>
+                    <input type="email" id="gh-auth-email" class="form-input" placeholder="e.g. danusu2470030@ssn.edu.in" value="danusu2470030@ssn.edu.in" />
+                  </div>
+                  <div class="form-group">
+                    <label for="gh-auth-username" class="form-label">GitHub Username</label>
+                    <input type="text" id="gh-auth-username" class="form-input" placeholder="e.g. Danush-k" value="Danush-k" />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right Area: Step-by-Step Instructions -->
+              <div class="auth-wizard-instructions">
+                <div id="auth-ssh-steps" class="auth-steps-container">
+                  <!-- Steps injected by script.js -->
+                </div>
+                <div id="auth-https-steps" class="auth-steps-container" style="display: none;">
+                  <!-- Steps injected by script.js -->
+                </div>
+              </div>
+            </div>
           </div>
 
           <!-- Collaboration Lab Panel -->
