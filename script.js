@@ -4359,7 +4359,7 @@ function initGithubCollab() {
     // Fork Node
     if (collabState.forked) {
       nodeOrigin.classList.remove('dimmed');
-      stateOrigin.textContent = "origin/project (C1)";
+      stateOrigin.textContent = collabState.pushed ? "origin: C2 (feat)" : "origin: C1 (main)";
       arrowFork.classList.add('arrow-active');
     } else {
       nodeOrigin.classList.add('dimmed');
@@ -4370,7 +4370,13 @@ function initGithubCollab() {
     // Local Node
     if (collabState.cloned) {
       nodeLocal.classList.remove('dimmed');
-      stateLocal.textContent = "Local (C1)";
+      if (collabState.synced) {
+        stateLocal.textContent = "Local: C3 (main)";
+      } else if (collabState.committed) {
+        stateLocal.textContent = "Local: C2 (feat)";
+      } else {
+        stateLocal.textContent = "Local: C1 (main)";
+      }
       arrowClone.classList.add('arrow-active');
     } else {
       nodeLocal.classList.add('dimmed');
@@ -4489,36 +4495,93 @@ function initGithubCollab() {
   });
 
   function renderStep3() {
-    stepTitle.textContent = "Step 3: Setup Upstream Remote";
-    stepDesc.textContent = "Track the original repository so you can sync upstream changes later. (Implementation details in next commit).";
-    widgetArea.innerHTML = `<button class="btn btn-outline" id="btn-collab-step3-act">Complete Step 3 (Mock)</button>`;
-    document.getElementById('btn-collab-step3-act').addEventListener('click', () => {
-      collabState.upstreamAdded = true;
-      renderStep();
-      updateDiagramVisuals();
-    });
+    stepTitle.textContent = "Step 3: Setup Upstream Remote URL";
+    stepDesc.textContent = "Link your local repository to the original, central repository (named 'upstream'). This lets you fetch and integrate modifications made by other developers.";
+    
+    const upstreamCmd = `git remote add upstream https://github.com/original-owner/awesome-project.git`;
+    commandBlock.style.display = 'block';
+    commandText.textContent = upstreamCmd;
+    btnCopyCmd.dataset.copyText = upstreamCmd;
+
+    if (collabState.upstreamAdded) {
+      widgetArea.innerHTML = `<span style="color: var(--clr-accent-3); font-weight: 600; display: flex; align-items: center; gap: 8px;">✅ Upstream remote added!</span>`;
+      statusText.textContent = "Success: Upstream link configured. Run 'git remote -v' to confirm your remotes.";
+    } else {
+      widgetArea.innerHTML = `<button class="btn btn-primary" id="btn-collab-upstream-act" style="box-shadow: 0 4px 15px rgba(88, 166, 255, 0.25);">⚡ Connect Upstream</button>`;
+      document.getElementById('btn-collab-upstream-act').addEventListener('click', () => {
+        collabState.upstreamAdded = true;
+        showToast('Upstream remote added! ⚡');
+        renderStep();
+        updateDiagramVisuals();
+      });
+      statusText.textContent = "Action: Click the button above to configure your local clone to track the original project repository.";
+    }
   }
 
   function renderStep4() {
-    stepTitle.textContent = "Step 4: Create Commit";
-    stepDesc.textContent = "Create local commits for your changes. (Implementation details in next commit).";
-    widgetArea.innerHTML = `<button class="btn btn-outline" id="btn-collab-step4-act">Complete Step 4 (Mock)</button>`;
-    document.getElementById('btn-collab-step4-act').addEventListener('click', () => {
-      collabState.committed = true;
-      renderStep();
-      updateDiagramVisuals();
-    });
+    stepTitle.textContent = "Step 4: Create a Feature Branch and Commit";
+    stepDesc.textContent = "Never work directly on your 'main' branch! Create a dedicated feature branch, make modifications, and commit them.";
+    
+    const commitCmd = `git checkout -b feat/landing\n# Make edits to files...\ngit add .\ngit commit -m "feat: add landing page"`;
+    commandBlock.style.display = 'block';
+    commandText.textContent = commitCmd;
+    btnCopyCmd.dataset.copyText = commitCmd;
+
+    if (collabState.committed) {
+      widgetArea.innerHTML = `<span style="color: var(--clr-accent-3); font-weight: 600; display: flex; align-items: center; gap: 8px;">✅ Local commit C2 created!</span>`;
+      statusText.textContent = "Success: Your local branch 'feat/landing' has 1 new commit (C2) ahead of main.";
+    } else {
+      widgetArea.innerHTML = `<button class="btn btn-primary" id="btn-collab-commit-act" style="box-shadow: 0 4px 15px rgba(88, 166, 255, 0.25);">📸 Save Commit C2</button>`;
+      document.getElementById('btn-collab-commit-act').addEventListener('click', () => {
+        collabState.committed = true;
+        showToast('Commit created successfully! 📸');
+        renderStep();
+        updateDiagramVisuals();
+      });
+      statusText.textContent = "Action: Click the button to simulate creating and committing changes to 'feat/landing'.";
+    }
   }
 
   function renderStep5() {
-    stepTitle.textContent = "Step 5: Push and Open Pull Request";
-    stepDesc.textContent = "Push changes to your fork and submit a PR to the original repository. (Implementation details in next commit).";
-    widgetArea.innerHTML = `<button class="btn btn-outline" id="btn-collab-step5-act">Complete Step 5 (Mock)</button>`;
-    document.getElementById('btn-collab-step5-act').addEventListener('click', () => {
-      collabState.prOpened = true;
-      renderStep();
-      updateDiagramVisuals();
-    });
+    stepTitle.textContent = "Step 5: Push and Open a Pull Request";
+    stepDesc.textContent = "First, push your feature branch to your fork on GitHub. Then open a Pull Request to request merging your code into the original upstream repository.";
+    
+    const pushCmd = `git push -u origin feat/landing`;
+    commandBlock.style.display = 'block';
+    commandText.textContent = pushCmd;
+    btnCopyCmd.dataset.copyText = pushCmd;
+
+    if (collabState.prOpened) {
+      widgetArea.innerHTML = `<span style="color: var(--clr-accent-3); font-weight: 600; display: flex; align-items: center; gap: 8px;">✅ Pull Request opened on GitHub!</span>`;
+      statusText.textContent = "Success: PR submitted. It is now awaiting review and CI tests.";
+    } else if (collabState.pushed) {
+      widgetArea.innerHTML = `
+        <div style="background: var(--clr-bg-3); border: 1px solid var(--clr-border); padding: 16px; border-radius: var(--radius-md); width: 100%;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <strong style="color: #fff;">🐙 GitHub Pull Request</strong>
+            <span style="font-size: 0.8rem; background: rgba(88,166,255,0.15); color: var(--clr-accent); padding: 2px 8px; border-radius: 100px;">Compare & Review</span>
+          </div>
+          <p style="font-size: 0.8rem; color: var(--clr-text-muted); margin-bottom: 12px;">Merge <strong>your-username:feat/landing</strong> into <strong>original-owner:main</strong></p>
+          <button class="btn btn-primary btn-sm" id="btn-collab-pr-act" style="width: 100%; justify-content: center; background: var(--gradient-green); box-shadow: none;">Create Pull Request 🚀</button>
+        </div>
+      `;
+      document.getElementById('btn-collab-pr-act').addEventListener('click', () => {
+        collabState.prOpened = true;
+        showToast('Pull Request opened on GitHub! 🚀');
+        renderStep();
+        updateDiagramVisuals();
+      });
+      statusText.textContent = "Action: Click 'Create Pull Request' on the mock GitHub UI to submit your changes for review.";
+    } else {
+      widgetArea.innerHTML = `<button class="btn btn-primary" id="btn-collab-push-act" style="box-shadow: 0 4px 15px rgba(88, 166, 255, 0.25);">🚀 Push Branch to origin</button>`;
+      document.getElementById('btn-collab-push-act').addEventListener('click', () => {
+        collabState.pushed = true;
+        showToast('Branch pushed to origin fork! 🚀');
+        renderStep();
+        updateDiagramVisuals();
+      });
+      statusText.textContent = "Action: Push your local feature branch up to GitHub first before submitting a PR.";
+    }
   }
 
   function renderStep6() {
