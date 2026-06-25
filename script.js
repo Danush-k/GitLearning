@@ -4635,7 +4635,137 @@ function initGithubCollab() {
   updateDiagramVisuals();
   renderStep();
 }
-function initGithubActions() {}
+function initGithubActions() {
+  const wfNameInput = document.getElementById('actions-wf-name');
+  const triggerPush = document.getElementById('actions-trigger-push');
+  const triggerPr = document.getElementById('actions-trigger-pr');
+  const branchesInput = document.getElementById('actions-branches');
+  const runnerSelect = document.getElementById('actions-runner');
+
+  // Steps
+  const stepNode = document.getElementById('actions-step-node');
+  const stepInstall = document.getElementById('actions-step-install');
+  const stepTest = document.getElementById('actions-step-test');
+  const stepDeploy = document.getElementById('actions-step-deploy');
+
+  const yamlTextContainer = document.getElementById('actions-yaml-text');
+  const btnCopyYaml = document.getElementById('btn-actions-yaml-copy');
+
+  if (!wfNameInput || !yamlTextContainer || !btnCopyYaml) return;
+
+  function generateYaml() {
+    const wfName = wfNameInput.value.trim() || 'GitHub CI';
+    const hasPush = triggerPush.checked;
+    const hasPr = triggerPr.checked;
+    const branches = branchesInput.value.trim() || 'main';
+    const runner = runnerSelect.value || 'ubuntu-latest';
+
+    const branchList = branches.split(',').map(b => b.trim()).filter(b => b.length > 0);
+    const branchArrayStr = branchList.length > 0 ? `[ ${branchList.join(', ')} ]` : '[ main ]';
+
+    let yaml = `# CI/CD Workflow configuration generated for GitHub Actions\n`;
+    yaml += `name: ${wfName}\n\n`;
+
+    yaml += `on:\n`;
+    if (hasPush) {
+      yaml += `  push:\n`;
+      yaml += `    branches: ${branchArrayStr}\n`;
+    }
+    if (hasPr) {
+      yaml += `  pull_request:\n`;
+      yaml += `    branches: ${branchArrayStr}\n`;
+    }
+    if (!hasPush && !hasPr) {
+      yaml += `  # No events configured. Trigger manually\n`;
+      yaml += `  workflow_dispatch:\n`;
+    }
+    yaml += `\n`;
+
+    yaml += `jobs:\n`;
+    yaml += `  build-and-test:\n`;
+    yaml += `    name: Build, Lint, and Test\n`;
+    yaml += `    runs-on: ${runner}\n\n`;
+    yaml += `    steps:\n`;
+    yaml += `      - name: Checkout repository 📥\n`;
+    yaml += `        uses: actions/checkout@v4\n\n`;
+
+    if (stepNode && stepNode.checked) {
+      yaml += `      - name: Setup Node.js Environment 🟢\n`;
+      yaml += `        uses: actions/setup-node@v4\n`;
+      yaml += `        with:\n`;
+      yaml += `          node-version: '20'\n`;
+      yaml += `          cache: 'npm'\n\n`;
+    }
+
+    if (stepInstall && stepInstall.checked) {
+      yaml += `      - name: Install Project Dependencies 📦\n`;
+      yaml += `        run: npm ci\n\n`;
+    }
+
+    if (stepTest && stepTest.checked) {
+      yaml += `      - name: Run Unit Tests 🧪\n`;
+      yaml += `        run: npm test\n\n`;
+    }
+
+    if (stepDeploy && stepDeploy.checked) {
+      yaml += `      - name: Deploy static assets to GitHub Pages 🚀\n`;
+      yaml += `        uses: peaceiris/actions-gh-pages@v3\n`;
+      yaml += `        with:\n`;
+      yaml += `          github_token: \${{ secrets.GITHUB_TOKEN }}\n`;
+      yaml += `          publish_dir: ./dist\n`;
+    }
+
+    yamlTextContainer.innerHTML = highlightYaml(yaml);
+    btnCopyYaml.dataset.copyText = yaml;
+  }
+
+  function highlightYaml(rawYaml) {
+    return rawYaml
+      .split('\n')
+      .map(line => {
+        if (line.trim().startsWith('#')) {
+          return `<span class="yaml-comment">${escapeHtml(line)}</span>`;
+        }
+        const match = line.match(/^(\s*)([\w-]+):(.*)$/);
+        if (match) {
+          const space = match[1];
+          const key = match[2];
+          const val = match[3];
+
+          let highlightedVal = escapeHtml(val);
+          if (val.trim()) {
+            const isString = val.includes('"') || val.includes("'") || val.includes('${{');
+            const cls = isString ? 'yaml-string' : 'yaml-value';
+            highlightedVal = ` <span class="${cls}">${escapeHtml(val.trim())}</span>`;
+          }
+          return `${space}<span class="yaml-key">${key}</span>:${highlightedVal}`;
+        }
+        return escapeHtml(line);
+      })
+      .join('\n');
+  }
+
+  [wfNameInput, triggerPush, triggerPr, branchesInput, runnerSelect, stepNode, stepInstall, stepTest, stepDeploy].forEach(el => {
+    if (el) el.addEventListener('change', generateYaml);
+    if (el && el.tagName === 'INPUT') el.addEventListener('input', generateYaml);
+  });
+
+  btnCopyYaml.addEventListener('click', () => {
+    const text = btnCopyYaml.dataset.copyText;
+    navigator.clipboard.writeText(text).then(() => {
+      btnCopyYaml.textContent = 'Copied! ✓';
+      btnCopyYaml.style.borderColor = 'var(--clr-accent-3)';
+      btnCopyYaml.style.color = 'var(--clr-accent-3)';
+      setTimeout(() => {
+        btnCopyYaml.textContent = 'Copy YAML 📋';
+        btnCopyYaml.style.borderColor = '';
+        btnCopyYaml.style.color = '';
+      }, 1500);
+    });
+  });
+
+  generateYaml();
+}
 
 // ─────────────────────────────────────────────
 // INIT
