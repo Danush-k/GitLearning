@@ -4647,6 +4647,11 @@ function initGithubActions() {
   const stepInstall = document.getElementById('actions-step-install');
   const stepTest = document.getElementById('actions-step-test');
   const stepDeploy = document.getElementById('actions-step-deploy');
+  
+  // Custom config elements
+  const secretWrapper = document.getElementById('actions-secret-wrapper');
+  const useSecretCheckbox = document.getElementById('actions-use-secret');
+  const triggerWarning = document.getElementById('actions-trigger-warning');
 
   const yamlTextContainer = document.getElementById('actions-yaml-text');
   const btnCopyYaml = document.getElementById('btn-actions-yaml-copy');
@@ -4659,6 +4664,14 @@ function initGithubActions() {
     const hasPr = triggerPr.checked;
     const branches = branchesInput.value.trim() || 'main';
     const runner = runnerSelect.value || 'ubuntu-latest';
+
+    if (triggerWarning) {
+      triggerWarning.style.display = (!hasPush && !hasPr) ? 'block' : 'none';
+    }
+
+    if (stepDeploy && secretWrapper) {
+      secretWrapper.style.display = stepDeploy.checked ? 'flex' : 'none';
+    }
 
     const branchList = branches.split(',').map(b => b.trim()).filter(b => b.length > 0);
     const branchArrayStr = branchList.length > 0 ? `[ ${branchList.join(', ')} ]` : '[ main ]';
@@ -4708,10 +4721,11 @@ function initGithubActions() {
     }
 
     if (stepDeploy && stepDeploy.checked) {
+      const tokenVar = (useSecretCheckbox && useSecretCheckbox.checked) ? 'secrets.GH_DEPLOY_PAT' : 'secrets.GITHUB_TOKEN';
       yaml += `      - name: Deploy static assets to GitHub Pages 🚀\n`;
       yaml += `        uses: peaceiris/actions-gh-pages@v3\n`;
       yaml += `        with:\n`;
-      yaml += `          github_token: \${{ secrets.GITHUB_TOKEN }}\n`;
+      yaml += `          github_token: \${{ ${tokenVar} }}\n`;
       yaml += `          publish_dir: ./dist\n`;
     }
 
@@ -4745,7 +4759,10 @@ function initGithubActions() {
       .join('\n');
   }
 
-  [wfNameInput, triggerPush, triggerPr, branchesInput, runnerSelect, stepNode, stepInstall, stepTest, stepDeploy].forEach(el => {
+  [
+    wfNameInput, triggerPush, triggerPr, branchesInput, runnerSelect, 
+    stepNode, stepInstall, stepTest, stepDeploy, useSecretCheckbox
+  ].forEach(el => {
     if (el) el.addEventListener('change', generateYaml);
     if (el && el.tagName === 'INPUT') el.addEventListener('input', generateYaml);
   });
