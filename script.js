@@ -4154,7 +4154,171 @@ function setupGithubBasics() {
   initGithubActions();
 }
 
-function initGithubAuth() {}
+function initGithubAuth() {
+  const btnSsh = document.getElementById('btn-method-ssh');
+  const btnHttps = document.getElementById('btn-method-https');
+  const panelSsh = document.getElementById('auth-ssh-steps');
+  const panelHttps = document.getElementById('auth-https-steps');
+  const inputEmail = document.getElementById('gh-auth-email');
+  const inputUsername = document.getElementById('gh-auth-username');
+
+  if (!btnSsh || !btnHttps || !panelSsh || !panelHttps || !inputEmail || !inputUsername) return;
+
+  let activeMethod = 'ssh';
+
+  function renderSshSteps() {
+    const email = inputEmail.value || 'your-email@example.com';
+    const username = inputUsername.value || 'your-username';
+
+    panelSsh.innerHTML = [
+      {
+        num: 1,
+        title: "Generate a new SSH keypair",
+        desc: "Run this command in your terminal to create a secure key associated with your GitHub email. Press <code>Enter</code> to accept all default locations and enter a secure passphrase if desired.",
+        cmd: `ssh-keygen -t ed25519 -C "${email}"`,
+        tip: "💡 Ed25519 is the modern standard for SSH keys. It is faster and more secure than older RSA keys."
+      },
+      {
+        num: 2,
+        title: "Start the SSH Agent in the background",
+        desc: "The SSH agent keeps track of your private keys and manages authentication credentials automatically.",
+        cmd: `eval "$(ssh-agent -s)"`,
+        tip: "💡 This command runs the agent process and configures your terminal environment variables to talk to it."
+      },
+      {
+        num: 3,
+        title: "Add your private key to the SSH Agent",
+        desc: "Register your newly created private key file with the active SSH agent so Git can use it during push/pull.",
+        cmd: `ssh-add ~/.ssh/id_ed25519`,
+        tip: "💡 If you used a custom path when generating your key, replace <code>~/.ssh/id_ed25519</code> with that path."
+      },
+      {
+        num: 4,
+        title: "Copy the public SSH key to your clipboard",
+        desc: "Read the public key file and copy its contents. Then go to GitHub settings, click <strong>New SSH Key</strong>, and paste it.",
+        cmd: `pbcopy < ~/.ssh/id_ed25519.pub`,
+        tip: "💡 Since you are on macOS, <code>pbcopy</code> sends the key contents directly to your clipboard. If you are on Linux, use <code>cat ~/.ssh/id_ed25519.pub</code> and copy it manually."
+      },
+      {
+        num: 5,
+        title: "Test your connection to GitHub",
+        desc: "Verify that everything is linked up correctly by attempting to connect to GitHub via SSH.",
+        cmd: `ssh -T git@github.com`,
+        tip: `💡 You should see a greeting: <em>"Hi ${username}! You've successfully authenticated, but GitHub does not provide shell access."</em>`
+      }
+    ].map(step => `
+      <div class="auth-step-card">
+        <div class="auth-step-header">
+          <span class="auth-step-number">${step.num}</span>
+          <h4 class="auth-step-title">${step.title}</h4>
+        </div>
+        <p class="auth-step-desc">${step.desc}</p>
+        <div class="auth-step-command-box">
+          <pre><code>${escapeHtml(step.cmd)}</code></pre>
+          <button class="auth-copy-btn" data-copy-text="${escapeHtml(step.cmd)}">Copy 📋</button>
+        </div>
+        <div class="auth-step-tip">${step.tip}</div>
+      </div>
+    `).join('');
+
+    attachCopyListeners(panelSsh);
+  }
+
+  function renderHttpsSteps() {
+    const username = inputUsername.value || 'your-username';
+
+    panelHttps.innerHTML = [
+      {
+        num: 1,
+        title: "Generate a Personal Access Token (PAT) on GitHub",
+        desc: "Go to your GitHub Account -> <strong>Settings</strong> -> <strong>Developer Settings</strong> -> <strong>Personal Access Tokens</strong> -> <strong>Tokens (classic)</strong>. Click <strong>Generate new token</strong>, give it a name, select the <code>repo</code> scope, and copy the token.",
+        cmd: "# No terminal command. Generate via GitHub website UI.",
+        tip: "⚠️ GitHub no longer accepts account passwords for Git commands. You MUST use a Personal Access Token (PAT)."
+      },
+      {
+        num: 2,
+        title: "Configure Git Credential Helper to save token",
+        desc: "Tell Git to store your credentials in macOS Keychain so you only have to enter your token once.",
+        cmd: `git config --global credential.helper osxkeychain`,
+        tip: "💡 The credential helper safely stores your token in OS-level password management."
+      },
+      {
+        num: 3,
+        title: "Authenticate on first repository action",
+        desc: "Clone a repository or push changes. When Git asks for your password in the terminal, paste your copied Personal Access Token (PAT) instead.",
+        cmd: `git clone https://github.com/${username}/my-repo.git`,
+        tip: "💡 In modern terminals, pasting passwords does not show any typing characters for security. Just paste and press Enter."
+      }
+    ].map(step => `
+      <div class="auth-step-card">
+        <div class="auth-step-header">
+          <span class="auth-step-number">${step.num}</span>
+          <h4 class="auth-step-title">${step.title}</h4>
+        </div>
+        <p class="auth-step-desc">${step.desc}</p>
+        ${step.cmd.startsWith('#') ? '' : `
+        <div class="auth-step-command-box">
+          <pre><code>${escapeHtml(step.cmd)}</code></pre>
+          <button class="auth-copy-btn" data-copy-text="${escapeHtml(step.cmd)}">Copy 📋</button>
+        </div>
+        `}
+        <div class="auth-step-tip">${step.tip}</div>
+      </div>
+    `).join('');
+
+    attachCopyListeners(panelHttps);
+  }
+
+  function attachCopyListeners(container) {
+    const btns = container.querySelectorAll('.auth-copy-btn');
+    btns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const text = btn.dataset.copyText;
+        navigator.clipboard.writeText(text).then(() => {
+          btn.textContent = 'Copied! ✓';
+          btn.style.borderColor = 'var(--clr-accent-3)';
+          btn.style.color = 'var(--clr-accent-3)';
+          setTimeout(() => {
+            btn.textContent = 'Copy 📋';
+            btn.style.borderColor = '';
+            btn.style.color = '';
+          }, 1500);
+        });
+      });
+    });
+  }
+
+  function updateWizard() {
+    if (activeMethod === 'ssh') {
+      panelSsh.style.display = 'flex';
+      panelHttps.style.display = 'none';
+      renderSshSteps();
+    } else {
+      panelSsh.style.display = 'none';
+      panelHttps.style.display = 'flex';
+      renderHttpsSteps();
+    }
+  }
+
+  btnSsh.addEventListener('click', () => {
+    btnSsh.classList.add('active');
+    btnHttps.classList.remove('active');
+    activeMethod = 'ssh';
+    updateWizard();
+  });
+
+  btnHttps.addEventListener('click', () => {
+    btnHttps.classList.add('active');
+    btnSsh.classList.remove('active');
+    activeMethod = 'https';
+    updateWizard();
+  });
+
+  inputEmail.addEventListener('input', updateWizard);
+  inputUsername.addEventListener('input', updateWizard);
+
+  updateWizard();
+}
 function initGithubCollab() {}
 function initGithubActions() {}
 
