@@ -4319,7 +4319,238 @@ function initGithubAuth() {
 
   updateWizard();
 }
-function initGithubCollab() {}
+function initGithubCollab() {
+  const stepperSteps = document.querySelectorAll('.collab-step');
+  const btnPrev = document.getElementById('btn-collab-prev');
+  const btnNext = document.getElementById('btn-collab-next');
+  const stepTitle = document.getElementById('collab-step-title');
+  const stepDesc = document.getElementById('collab-step-desc');
+  const widgetArea = document.getElementById('collab-interactive-widget');
+  const commandBlock = document.getElementById('collab-command-block');
+  const commandText = document.getElementById('collab-cmd-text');
+  const btnCopyCmd = document.getElementById('btn-collab-cmd-copy');
+  const statusText = document.getElementById('collab-status-text');
+
+  // Nodes
+  const nodeOrigin = document.getElementById('node-origin');
+  const nodeLocal = document.getElementById('node-local');
+  const stateOrigin = document.getElementById('state-origin');
+  const stateLocal = document.getElementById('state-local');
+
+  // Arrows
+  const arrowFork = document.getElementById('arrow-fork');
+  const arrowClone = document.getElementById('arrow-clone');
+  const arrowUpstream = document.getElementById('arrow-upstream');
+
+  if (!stepperSteps.length || !btnPrev || !btnNext || !stepTitle || !stepDesc || !widgetArea) return;
+
+  const collabState = {
+    step: 1,
+    forked: false,
+    cloned: false,
+    upstreamAdded: false,
+    committed: false,
+    pushed: false,
+    prOpened: false,
+    synced: false
+  };
+
+  function updateDiagramVisuals() {
+    // Fork Node
+    if (collabState.forked) {
+      nodeOrigin.classList.remove('dimmed');
+      stateOrigin.textContent = "origin/project (C1)";
+      arrowFork.classList.add('arrow-active');
+    } else {
+      nodeOrigin.classList.add('dimmed');
+      stateOrigin.textContent = "Not Forked";
+      arrowFork.classList.remove('arrow-active');
+    }
+
+    // Local Node
+    if (collabState.cloned) {
+      nodeLocal.classList.remove('dimmed');
+      stateLocal.textContent = "Local (C1)";
+      arrowClone.classList.add('arrow-active');
+    } else {
+      nodeLocal.classList.add('dimmed');
+      stateLocal.textContent = "Not Cloned";
+      arrowClone.classList.remove('arrow-active');
+    }
+
+    // Upstream Arrow
+    if (collabState.upstreamAdded) {
+      arrowUpstream.classList.add('arrow-active');
+    } else {
+      arrowUpstream.classList.remove('arrow-active');
+    }
+  }
+
+  function renderStep() {
+    stepperSteps.forEach((s, idx) => {
+      s.classList.remove('active', 'completed');
+      const stepNum = idx + 1;
+      if (stepNum === collabState.step) {
+        s.classList.add('active');
+      } else if (stepNum < collabState.step) {
+        s.classList.add('completed');
+      }
+    });
+
+    btnPrev.disabled = collabState.step === 1;
+    btnNext.disabled = !isStepReady(collabState.step);
+    commandBlock.style.display = 'none';
+
+    switch (collabState.step) {
+      case 1:
+        stepTitle.textContent = "Step 1: Fork the Repository on GitHub";
+        stepDesc.textContent = "Forking creates your own personal copy of someone else's repository on GitHub. This gives you write access so you can push your changes.";
+        
+        if (collabState.forked) {
+          widgetArea.innerHTML = `<span style="color: var(--clr-accent-3); font-weight: 600; display: flex; align-items: center; gap: 8px;">✅ Repository successfully forked!</span>`;
+          statusText.textContent = "Success: Repository copy created. Your remote is origin/awesome-project.";
+        } else {
+          widgetArea.innerHTML = `<button class="btn btn-primary" id="btn-collab-fork-act" style="box-shadow: 0 4px 15px rgba(88, 166, 255, 0.25);">🍴 Click to Fork Repository</button>`;
+          document.getElementById('btn-collab-fork-act').addEventListener('click', () => {
+            collabState.forked = true;
+            showToast('Repository forked successfully! 🍴');
+            renderStep();
+            updateDiagramVisuals();
+          });
+          statusText.textContent = "Action: Click the button above to copy upstream/awesome-project to your GitHub account.";
+        }
+        break;
+
+      case 2:
+        stepTitle.textContent = "Step 2: Clone the Fork Locally";
+        stepDesc.textContent = "Copy the files from your GitHub remote fork down to your computer so you can edit them locally.";
+        
+        const cloneCmd = `git clone https://github.com/your-username/awesome-project.git`;
+        commandBlock.style.display = 'block';
+        commandText.textContent = cloneCmd;
+        btnCopyCmd.dataset.copyText = cloneCmd;
+
+        if (collabState.cloned) {
+          widgetArea.innerHTML = `<span style="color: var(--clr-accent-3); font-weight: 600; display: flex; align-items: center; gap: 8px;">✅ Repository cloned locally!</span>`;
+          statusText.textContent = "Success: Local repository setup complete. Ready to code!";
+        } else {
+          widgetArea.innerHTML = `<button class="btn btn-primary" id="btn-collab-clone-act" style="box-shadow: 0 4px 15px rgba(88, 166, 255, 0.25);">💻 Run git clone</button>`;
+          document.getElementById('btn-collab-clone-act').addEventListener('click', () => {
+            if (!collabState.forked) {
+              showToast('Error: You must fork the repository first!');
+              return;
+            }
+            collabState.cloned = true;
+            showToast('Cloned repository to local machine! 💻');
+            renderStep();
+            updateDiagramVisuals();
+          });
+          statusText.textContent = "Action: Click the button above to execute the clone command and setup the local workspace.";
+        }
+        break;
+
+      case 3:
+        renderStep3();
+        break;
+      case 4:
+        renderStep4();
+        break;
+      case 5:
+        renderStep5();
+        break;
+      case 6:
+        renderStep6();
+        break;
+    }
+  }
+
+  function isStepReady(step) {
+    if (step === 1) return collabState.forked;
+    if (step === 2) return collabState.cloned;
+    if (step === 3) return collabState.upstreamAdded;
+    if (step === 4) return collabState.committed;
+    if (step === 5) return collabState.prOpened;
+    if (step === 6) return collabState.synced;
+    return false;
+  }
+
+  btnPrev.addEventListener('click', () => {
+    if (collabState.step > 1) {
+      collabState.step--;
+      renderStep();
+    }
+  });
+
+  btnNext.addEventListener('click', () => {
+    if (collabState.step < 6 && isStepReady(collabState.step)) {
+      collabState.step++;
+      renderStep();
+    }
+  });
+
+  function renderStep3() {
+    stepTitle.textContent = "Step 3: Setup Upstream Remote";
+    stepDesc.textContent = "Track the original repository so you can sync upstream changes later. (Implementation details in next commit).";
+    widgetArea.innerHTML = `<button class="btn btn-outline" id="btn-collab-step3-act">Complete Step 3 (Mock)</button>`;
+    document.getElementById('btn-collab-step3-act').addEventListener('click', () => {
+      collabState.upstreamAdded = true;
+      renderStep();
+      updateDiagramVisuals();
+    });
+  }
+
+  function renderStep4() {
+    stepTitle.textContent = "Step 4: Create Commit";
+    stepDesc.textContent = "Create local commits for your changes. (Implementation details in next commit).";
+    widgetArea.innerHTML = `<button class="btn btn-outline" id="btn-collab-step4-act">Complete Step 4 (Mock)</button>`;
+    document.getElementById('btn-collab-step4-act').addEventListener('click', () => {
+      collabState.committed = true;
+      renderStep();
+      updateDiagramVisuals();
+    });
+  }
+
+  function renderStep5() {
+    stepTitle.textContent = "Step 5: Push and Open Pull Request";
+    stepDesc.textContent = "Push changes to your fork and submit a PR to the original repository. (Implementation details in next commit).";
+    widgetArea.innerHTML = `<button class="btn btn-outline" id="btn-collab-step5-act">Complete Step 5 (Mock)</button>`;
+    document.getElementById('btn-collab-step5-act').addEventListener('click', () => {
+      collabState.prOpened = true;
+      renderStep();
+      updateDiagramVisuals();
+    });
+  }
+
+  function renderStep6() {
+    stepTitle.textContent = "Step 6: Sync Upstream Changes";
+    stepDesc.textContent = "Pull the latest code from upstream to prevent conflicts. (Implementation details in Commit 11).";
+    widgetArea.innerHTML = `<button class="btn btn-outline" id="btn-collab-step6-act">Complete Step 6 (Mock)</button>`;
+    document.getElementById('btn-collab-step6-act').addEventListener('click', () => {
+      collabState.synced = true;
+      renderStep();
+      updateDiagramVisuals();
+    });
+  }
+
+  // Copy command button listener
+  btnCopyCmd.addEventListener('click', () => {
+    const text = btnCopyCmd.dataset.copyText;
+    navigator.clipboard.writeText(text).then(() => {
+      btnCopyCmd.textContent = 'Copied! ✓';
+      btnCopyCmd.style.borderColor = 'var(--clr-accent-3)';
+      btnCopyCmd.style.color = 'var(--clr-accent-3)';
+      setTimeout(() => {
+        btnCopyCmd.textContent = 'Copy 📋';
+        btnCopyCmd.style.borderColor = '';
+        btnCopyCmd.style.color = '';
+      }, 1500);
+    });
+  });
+
+  // Initial setup
+  updateDiagramVisuals();
+  renderStep();
+}
 function initGithubActions() {}
 
 // ─────────────────────────────────────────────
