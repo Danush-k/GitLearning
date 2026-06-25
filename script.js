@@ -4127,6 +4127,38 @@ function arenaCompareOutputs(a, b) {
 }
 
 // ─────────────────────────────────────────────
+// GITHUB BASICS
+// ─────────────────────────────────────────────
+
+function setupGithubBasics() {
+  const tabBtns = document.querySelectorAll('.github-tab-btn');
+  const panels = document.querySelectorAll('.github-panel');
+
+  tabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      tabBtns.forEach(b => b.classList.remove('active'));
+      panels.forEach(p => p.classList.remove('active'));
+
+      btn.classList.add('active');
+      const targetPanelId = `panel-gh-${btn.dataset.githubTab}`;
+      const targetPanel = document.getElementById(targetPanelId);
+      if (targetPanel) {
+        targetPanel.classList.add('active');
+      }
+    });
+  });
+
+  // Stubs for upcoming commits
+  initGithubAuth();
+  initGithubCollab();
+  initGithubActions();
+}
+
+function initGithubAuth() {}
+function initGithubCollab() {}
+function initGithubActions() {}
+
+// ─────────────────────────────────────────────
 // INIT
 // ─────────────────────────────────────────────
 
@@ -4148,6 +4180,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderCheatsheet();
   renderQuiz();
   initArena();
+  setupGithubBasics();
   const heroQuizCount = document.getElementById('hero-quiz-count');
   if (heroQuizCount) {
     heroQuizCount.textContent = quizData.length;
