@@ -852,7 +852,88 @@
 
           <!-- GitHub Actions Builder Panel -->
           <div class="github-panel" id="panel-gh-actions">
-            <!-- Actions content placeholder -->
+            <div class="actions-builder-layout">
+              <!-- Left: Controls -->
+              <div class="actions-builder-controls">
+                <h3>Workflow Configurator</h3>
+                <p style="font-size: 0.85rem; color: var(--clr-text-muted); margin-bottom: 20px;">Toggle options to customize your automated build & deploy pipelines.</p>
+                
+                <div class="form-group">
+                  <label for="actions-wf-name" class="form-label">Workflow Name</label>
+                  <input type="text" id="actions-wf-name" class="form-input" value="GitHub CI" placeholder="e.g. Node CI" />
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Trigger Events</label>
+                  <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 4px;">
+                    <label style="display: flex; align-items: center; gap: 8px; font-weight: normal; font-size: 0.9rem; cursor: pointer;">
+                      <input type="checkbox" id="actions-trigger-push" checked style="width: 16px; height: 16px; cursor: pointer;" />
+                      <span>on: push</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; font-weight: normal; font-size: 0.9rem; cursor: pointer;">
+                      <input type="checkbox" id="actions-trigger-pr" checked style="width: 16px; height: 16px; cursor: pointer;" />
+                      <span>on: pull_request</span>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="actions-branches" class="form-label">Target Branch</label>
+                  <input type="text" id="actions-branches" class="form-input" value="main" placeholder="e.g. main, dev" />
+                </div>
+
+                <div class="form-group">
+                  <label for="actions-runner" class="form-label">Runner Operating System</label>
+                  <select id="actions-runner" class="form-select">
+                    <option value="ubuntu-latest">Linux (ubuntu-latest)</option>
+                    <option value="macos-latest">macOS (macos-latest)</option>
+                    <option value="windows-latest">Windows (windows-latest)</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Workflow Steps</label>
+                  <div class="actions-steps-list" style="display: flex; flex-direction: column; gap: 10px; margin-top: 6px;">
+                    <label class="action-step-item checked-disabled" style="display: flex; align-items: center; gap: 8px; font-size: 0.9rem; color: var(--clr-text-muted);">
+                      <input type="checkbox" checked disabled style="width: 16px; height: 16px;" />
+                      <span>1. Checkout Code 📥</span>
+                    </label>
+                    
+                    <label class="action-step-item" style="display: flex; align-items: center; gap: 8px; font-size: 0.9rem; cursor: pointer;">
+                      <input type="checkbox" id="actions-step-node" checked style="width: 16px; height: 16px; cursor: pointer;" />
+                      <span>2. Setup Node.js Environment 🟢</span>
+                    </label>
+
+                    <label class="action-step-item" style="display: flex; align-items: center; gap: 8px; font-size: 0.9rem; cursor: pointer;">
+                      <input type="checkbox" id="actions-step-install" checked style="width: 16px; height: 16px; cursor: pointer;" />
+                      <span>3. Install Dependencies 📦</span>
+                    </label>
+
+                    <label class="action-step-item" style="display: flex; align-items: center; gap: 8px; font-size: 0.9rem; cursor: pointer;">
+                      <input type="checkbox" id="actions-step-test" checked style="width: 16px; height: 16px; cursor: pointer;" />
+                      <span>4. Run Test Suite 🧪</span>
+                    </label>
+
+                    <label class="action-step-item" style="display: flex; align-items: center; gap: 8px; font-size: 0.9rem; cursor: pointer;">
+                      <input type="checkbox" id="actions-step-deploy" style="width: 16px; height: 16px; cursor: pointer;" />
+                      <span>5. Deploy to GitHub Pages 🚀</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right: Preview panel -->
+              <div class="actions-builder-preview" style="position: relative;">
+                <div class="editor-header">
+                  <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+                  <span class="editor-filename">.github/workflows/main.yml</span>
+                </div>
+                <div class="code-container file-code-container actions-code-container" style="background: var(--clr-bg); border: 1px solid var(--clr-border); padding: 20px; border-radius: 0 0 var(--radius-md) var(--radius-md); font-family: var(--font-code); font-size: 0.85rem; color: #fff; line-height: 1.6; height: 480px; overflow: auto; text-align: left;">
+                  <pre style="margin: 0;"><code id="actions-yaml-text"># YAML will generate here</code></pre>
+                </div>
+                <button id="btn-actions-yaml-copy" class="btn btn-sm btn-outline copy-overlay-btn">Copy YAML 📋</button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
