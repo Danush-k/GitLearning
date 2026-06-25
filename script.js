@@ -4585,14 +4585,35 @@ function initGithubCollab() {
   }
 
   function renderStep6() {
-    stepTitle.textContent = "Step 6: Sync Upstream Changes";
-    stepDesc.textContent = "Pull the latest code from upstream to prevent conflicts. (Implementation details in Commit 11).";
-    widgetArea.innerHTML = `<button class="btn btn-outline" id="btn-collab-step6-act">Complete Step 6 (Mock)</button>`;
-    document.getElementById('btn-collab-step6-act').addEventListener('click', () => {
-      collabState.synced = true;
-      renderStep();
-      updateDiagramVisuals();
-    });
+    stepTitle.textContent = "Step 6: Fetch and Merge Upstream Changes";
+    stepDesc.textContent = "In collaborative development, teammates merge changes to the original repo (upstream/main). To keep your local repository up to date and prevent merge conflicts, you must regularly switch to your main branch, fetch upstream commits, and merge them.";
+
+    const syncCmd = `git checkout main\ngit fetch upstream\ngit merge upstream/main\ngit push origin main`;
+    commandBlock.style.display = 'block';
+    commandText.textContent = syncCmd;
+    btnCopyCmd.dataset.copyText = syncCmd;
+
+    if (collabState.synced) {
+      widgetArea.innerHTML = `<span style="color: var(--clr-accent-3); font-weight: 600; display: flex; align-items: center; gap: 8px;">✅ Synchronized successfully! Local & origin main are up-to-date with upstream.</span>`;
+      statusText.textContent = "Success: Synchronization complete. Local and origin/main branches are updated to C3.";
+      const stateUpstream = document.getElementById('state-upstream');
+      if (stateUpstream) stateUpstream.textContent = "upstream: C3 (main)";
+    } else {
+      widgetArea.innerHTML = `
+        <div style="background: rgba(227, 179, 65, 0.05); border: 1px solid rgba(227, 179, 65, 0.2); padding: 12px; border-radius: var(--radius-sm); width: 100%; margin-bottom: 12px;">
+          <span style="color: var(--clr-accent-yellow); font-weight: 700; font-size: 0.85rem;">📢 Upstream Update Alert</span>
+          <p style="font-size: 0.8rem; color: var(--clr-text-muted); margin-top: 4px;">Another developer merged a Pull Request. Upstream is now at commit <strong>C3</strong>. Your local clone is at <strong>C1/C2</strong>.</p>
+        </div>
+        <button class="btn btn-primary" id="btn-collab-sync-act" style="width: 100%; justify-content: center; box-shadow: 0 4px 15px rgba(88, 166, 255, 0.25);">🔄 Fetch & Merge Upstream</button>
+      `;
+      document.getElementById('btn-collab-sync-act').addEventListener('click', () => {
+        collabState.synced = true;
+        showToast('Local branch merged and synced with upstream/main! 🔄');
+        renderStep();
+        updateDiagramVisuals();
+      });
+      statusText.textContent = "Action: Fetch and merge C3 from upstream, then push to origin to complete sync.";
+    }
   }
 
   // Copy command button listener
