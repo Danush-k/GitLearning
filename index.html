@@ -875,6 +875,9 @@
                       <span>on: pull_request</span>
                     </label>
                   </div>
+                  <div id="actions-trigger-warning" style="display: none; font-size: 0.78rem; color: var(--clr-accent-warm); margin-top: 6px;">
+                    ⚠️ Warning: No triggers selected. This workflow will default to manual triggering (workflow_dispatch).
+                  </div>
                 </div>
 
                 <div class="form-group">
@@ -917,6 +920,10 @@
                     <label class="action-step-item" style="display: flex; align-items: center; gap: 8px; font-size: 0.9rem; cursor: pointer;">
                       <input type="checkbox" id="actions-step-deploy" style="width: 16px; height: 16px; cursor: pointer;" />
                       <span>5. Deploy to GitHub Pages 🚀</span>
+                    </label>
+                    <label id="actions-secret-wrapper" class="action-step-item" style="display: none; align-items: center; gap: 8px; font-size: 0.85rem; margin-left: 20px; cursor: pointer; border-color: rgba(163, 113, 247, 0.3); background: rgba(163, 113, 247, 0.02);">
+                      <input type="checkbox" id="actions-use-secret" style="width: 14px; height: 14px; cursor: pointer;" />
+                      <span>🔑 Use custom GH_DEPLOY_PAT secret</span>
                     </label>
                   </div>
                 </div>

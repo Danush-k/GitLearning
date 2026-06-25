@@ -21,6 +21,10 @@ A beautifully designed, interactive website to help beginners learn Git & GitHub
     - **Global Git Leaderboard**: An interactive ranking sidebar containing top Git learners, with the user's rank, solved challenges, and XP dynamically updated.
     - **Premium Micro-animations**: Sleek visual feedback including pop animations on compilation success and container shake effects on wrong answers.
     - **Reset Progress Utility**: A one-click utility to wipe solved problems, drafts, and submission logs clean from the browser's local storage.
+- **GitHub Basics Suite (NEW!)** — An interactive educational toolset dedicated specifically to GitHub collaboration workflows:
+  - **Auth & SSH Setup Wizard**: Interactively choose SSH or HTTPS connection methods, customize configuration parameters (email, username), and generate dynamic, copyable CLI commands.
+  - **Fork & PR Collaboration Lab**: Simulate the exact steps of Forking, Cloning, setting up Upstream tracking remotes, Committing, Pushing, opening Pull Requests, and Syncing Upstream updates via a real-time repository state graph and terminal simulator.
+  - **GitHub Actions (CI/CD) Workflow Builder**: Configurator tool to build custom GitHub Action workflows (.github/workflows/main.yml) with toggleable events, branch filters, build/test/deploy runners, and custom secrets security parameters.
 
 
 ## 🚀 Getting Started
