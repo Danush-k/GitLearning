@@ -3253,8 +3253,45 @@ function setupProTipWidget() {
   }
 }
 
+function setupShortcutsModal() {
+  const modal = document.getElementById('shortcuts-modal');
+  const toggleBtn = document.getElementById('shortcuts-toggle-btn');
+  const closeBtn = document.getElementById('close-shortcuts-modal-btn');
+  const overlay = document.getElementById('shortcuts-modal-overlay');
+
+  if (!modal) return;
+
+  window.toggleShortcutsModal = function() {
+    if (modal.classList.contains('active')) {
+      closeShortcutsModal();
+    } else {
+      modal.classList.add('active');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      if (closeBtn) closeBtn.focus();
+    }
+  };
+
+  window.closeShortcutsModal = function() {
+    modal.classList.remove('active');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  };
+
+  if (toggleBtn) toggleBtn.addEventListener('click', toggleShortcutsModal);
+  if (closeBtn) closeBtn.addEventListener('click', closeShortcutsModal);
+  if (overlay) overlay.addEventListener('click', closeShortcutsModal);
+}
+
 function setupKeyboardShortcuts() {
   document.addEventListener('keydown', (e) => {
+    const activeEl = document.activeElement;
+    const isEditing = activeEl && (
+      activeEl.tagName === 'INPUT' ||
+      activeEl.tagName === 'TEXTAREA' ||
+      activeEl.isContentEditable
+    );
+
     // 1. Focus command search with Ctrl+/ or Cmd+/
     if ((e.ctrlKey || e.metaKey) && e.key === '/') {
       const searchInput = document.getElementById('commands-search');
@@ -3265,12 +3302,22 @@ function setupKeyboardShortcuts() {
       }
     }
 
-    // 2. Escape to close Certificate Modal
+    // 2. Escape to close Certificate Modal and Shortcuts Modal
     if (e.key === 'Escape') {
       const certModal = document.getElementById('cert-modal');
       if (certModal && certModal.classList.contains('show')) {
         certModal.classList.remove('show');
       }
+      const shortcutsModal = document.getElementById('shortcuts-modal');
+      if (shortcutsModal && shortcutsModal.classList.contains('active')) {
+        closeShortcutsModal();
+      }
+    }
+
+    // 2.5 Toggle shortcuts help overlay with '?'
+    if (e.key === '?' && !isEditing) {
+      e.preventDefault();
+      toggleShortcutsModal();
     }
 
     // 3. Quiz keyboard shortcuts (1, 2, 3, 4 for options, Enter for next)
@@ -3288,7 +3335,7 @@ function setupKeyboardShortcuts() {
           }
         }
 
-        if (!quizState.answered && ['1', '2', '3', '4'].includes(e.key)) {
+        if (!quizState.answered && ['1', '2', '3', '4'].includes(e.key) && !isEditing) {
           const optIndex = parseInt(e.key, 10) - 1;
           const optBtn = document.getElementById(`quiz-opt-${optIndex}`);
           if (optBtn && !optBtn.disabled) {
@@ -4817,6 +4864,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupSearch();
   setupBasicsFilter();
   setupBasicsModal();
+  setupShortcutsModal();
   setupKeyboardShortcuts();
   setupBackToTop();
 

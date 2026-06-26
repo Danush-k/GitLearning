@@ -960,6 +960,50 @@
   </footer>
 
   <button id="back-to-top" class="back-to-top" aria-label="Back to top">↑</button>
+  <button id="shortcuts-toggle-btn" class="shortcuts-toggle-btn" aria-label="Keyboard Shortcuts" title="Keyboard Shortcuts (Press ?)">⌨️</button>
+
+  <!-- Keyboard Shortcuts Modal -->
+  <div id="shortcuts-modal" class="basics-modal" aria-hidden="true" role="dialog">
+    <div class="basics-modal-overlay" id="shortcuts-modal-overlay"></div>
+    <div class="basics-modal-content" style="max-width: 500px;">
+      <button id="close-shortcuts-modal-btn" class="close-basics-modal-btn" aria-label="Close modal">&times;</button>
+      <div class="basics-modal-body">
+        <div class="basics-modal-header">
+          <div style="display: flex; align-items: center; gap: 14px;">
+            <span class="basics-modal-icon" style="font-size: 2rem;">⌨️</span>
+            <div>
+              <h2 class="basics-modal-title">Keyboard Shortcuts</h2>
+              <span class="basics-modal-badge cat-local">Navigation & Control</span>
+            </div>
+          </div>
+        </div>
+        <div class="basics-modal-scroll-content" style="margin-top: 20px;">
+          <div style="display: flex; flex-direction: column; gap: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--clr-border); padding-bottom: 10px;">
+              <span style="font-weight: 600; color: #fff;">Focus Commands Search</span>
+              <kbd style="background: var(--clr-bg-2); border: 1px solid var(--clr-border); border-radius: 4px; padding: 4px 8px; font-family: var(--font-code); font-size: 0.85rem; color: var(--clr-accent);">Ctrl + /</kbd>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--clr-border); padding-bottom: 10px;">
+              <span style="font-weight: 600; color: #fff;">Open Shortcuts Help</span>
+              <kbd style="background: var(--clr-bg-2); border: 1px solid var(--clr-border); border-radius: 4px; padding: 4px 8px; font-family: var(--font-code); font-size: 0.85rem; color: var(--clr-accent);">?</kbd>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--clr-border); padding-bottom: 10px;">
+              <span style="font-weight: 600; color: #fff;">Quiz Option Selection</span>
+              <kbd style="background: var(--clr-bg-2); border: 1px solid var(--clr-border); border-radius: 4px; padding: 4px 8px; font-family: var(--font-code); font-size: 0.85rem; color: var(--clr-accent);">1, 2, 3, 4</kbd>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--clr-border); padding-bottom: 10px;">
+              <span style="font-weight: 600; color: #fff;">Next Quiz Question</span>
+              <kbd style="background: var(--clr-bg-2); border: 1px solid var(--clr-border); border-radius: 4px; padding: 4px 8px; font-family: var(--font-code); font-size: 0.85rem; color: var(--clr-accent);">Enter</kbd>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--clr-border); padding-bottom: 10px;">
+              <span style="font-weight: 600; color: #fff;">Close Any Modal</span>
+              <kbd style="background: var(--clr-bg-2); border: 1px solid var(--clr-border); border-radius: 4px; padding: 4px 8px; font-family: var(--font-code); font-size: 0.85rem; color: var(--clr-accent);">Esc</kbd>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Basics Concept Detail Modal -->
   <div id="basics-modal" class="basics-modal" aria-hidden="true" role="dialog">
