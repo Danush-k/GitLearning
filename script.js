@@ -3520,6 +3520,30 @@ function initArena() {
     });
   }
 
+  // Copy Solution button listener
+  const copySolutionBtn = document.getElementById('arena-copy-solution-btn');
+  if (copySolutionBtn) {
+    copySolutionBtn.addEventListener('click', () => {
+      const codeText = document.getElementById('solution-code-text');
+      if (codeText) {
+        const textToCopy = codeText.innerText || codeText.textContent;
+        navigator.clipboard.writeText(textToCopy).then(() => {
+          copySolutionBtn.textContent = 'Copied! ✓';
+          copySolutionBtn.style.borderColor = 'var(--clr-accent-3)';
+          copySolutionBtn.style.color = 'var(--clr-accent-3)';
+          showToast('Reference solution copied! 📋');
+          setTimeout(() => {
+            copySolutionBtn.textContent = 'Copy Solution 📋';
+            copySolutionBtn.style.borderColor = '';
+            copySolutionBtn.style.color = '';
+          }, 1500);
+        }).catch(() => {
+          showToast('Copy failed — try manually.');
+        });
+      }
+    });
+  }
+
   // Collapsible console header
   const consoleHeader = document.getElementById('console-header');
   const consoleBody = document.getElementById('console-body');
