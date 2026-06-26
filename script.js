@@ -1315,10 +1315,35 @@ function renderCheatsheet() {
 // QUIZ ENGINE
 // ─────────────────────────────────────────────
 
-let quizState = { current: 0, score: 0, answered: false };
+let quizState = { current: 0, score: 0, answered: false, selectedAnswer: undefined };
+
+function saveQuizState() {
+  localStorage.setItem('quiz-state', JSON.stringify(quizState));
+}
+
+function loadQuizState() {
+  const saved = localStorage.getItem('quiz-state');
+  if (saved) {
+    try {
+      quizState = JSON.parse(saved);
+    } catch (e) {
+      console.error('Failed to parse quiz state', e);
+    }
+  }
+}
+
+function clearQuizState() {
+  localStorage.removeItem('quiz-state');
+}
 
 function renderQuiz() {
   const container = document.getElementById('quiz-container');
+
+  // Try to load saved state on first render
+  if (quizState.current === 0 && quizState.score === 0 && !quizState.answered) {
+    loadQuizState();
+  }
+
   const { current } = quizState;
 
   if (current >= quizData.length) {
@@ -1348,12 +1373,33 @@ function renderQuiz() {
       </button>
     </div>
   `;
-  quizState.answered = false;
+
+  // If already answered (loaded from localStorage), restore visual state
+  if (quizState.answered) {
+    const nextBtn = document.getElementById('quiz-next');
+    const options = document.querySelectorAll('.quiz-option');
+    const feedback = document.getElementById('quiz-feedback');
+    
+    options.forEach(btn => btn.disabled = true);
+    options[q.answer].classList.add('correct');
+    
+    const index = quizState.selectedAnswer;
+    if (index === q.answer) {
+      feedback.textContent = q.explanation;
+      feedback.className = 'quiz-feedback show correct-fb';
+    } else if (index !== undefined) {
+      if (options[index]) options[index].classList.add('wrong');
+      feedback.textContent = '❌ Not quite. ' + q.explanation.replace('✅ ', '');
+      feedback.className = 'quiz-feedback show wrong-fb';
+    }
+    if (nextBtn) nextBtn.classList.add('show');
+  }
 }
 
 function selectAnswer(index) {
   if (quizState.answered) return;
   quizState.answered = true;
+  quizState.selectedAnswer = index;
 
   const q = quizData[quizState.current];
   const options = document.querySelectorAll('.quiz-option');
@@ -1374,14 +1420,19 @@ function selectAnswer(index) {
   }
 
   nextBtn.classList.add('show');
+  saveQuizState();
 }
 
 function nextQuestion() {
   quizState.current++;
+  quizState.answered = false;
+  quizState.selectedAnswer = undefined;
+  saveQuizState();
   renderQuiz();
 }
 
 function renderQuizResult(container) {
+  clearQuizState();
   const { score } = quizState;
   const total = quizData.length;
   const pct = Math.round((score / total) * 100);
@@ -1473,7 +1524,8 @@ function cancelResetHighScore() {
 }
 
 function restartQuiz() {
-  quizState = { current: 0, score: 0, answered: false };
+  quizState = { current: 0, score: 0, answered: false, selectedAnswer: undefined };
+  clearQuizState();
   renderQuiz();
 }
 
