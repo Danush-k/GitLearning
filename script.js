@@ -2523,13 +2523,15 @@ function setupVisualizer() {
       nodeEl.addEventListener('mouseenter', () => {
         if (!tooltipEl) return;
         const parentIds = commit.parents && commit.parents.length > 0 ? commit.parents.join(', ') : 'None';
+        const authorName = escapeHtml(localStorage.getItem('cfg-username') || 'Danush K');
+        const authorEmail = escapeHtml(localStorage.getItem('cfg-email') || 'danusu2470030@ssn.edu.in');
         tooltipEl.innerHTML = `
           <div class="viz-tooltip-hash">Commit: ${commit.id}</div>
-          <div class="viz-tooltip-msg">${commit.message}</div>
+          <div class="viz-tooltip-msg">${escapeHtml(commit.message)}</div>
           <div class="viz-tooltip-meta">
-            <span><strong>Branch:</strong> ${commit.branch}</span>
+            <span><strong>Branch:</strong> ${escapeHtml(commit.branch)}</span>
             <span><strong>Parents:</strong> ${parentIds}</span>
-            <span><strong>Author:</strong> Danush K</span>
+            <span><strong>Author:</strong> ${authorName} &lt;${authorEmail}&gt;</span>
           </div>
         `;
         tooltipEl.style.display = 'block';
