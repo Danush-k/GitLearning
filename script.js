@@ -2198,11 +2198,28 @@ function setupVisualizer() {
       return;
     }
 
+    const randomMsgs = [
+      "feat: implement landing page hero graphics",
+      "fix: correct bounds check crash in compiler",
+      "docs: update installation requirements instructions",
+      "style: format config options and buttons",
+      "refactor: simplify Git visualizer node drawing",
+      "test: add tests for SSH configuration wizard"
+    ];
+    const suggestedMsg = randomMsgs[Math.floor(Math.random() * randomMsgs.length)];
+    const userInput = prompt("Enter commit message (Conventional Commit style recommended):", suggestedMsg);
+    
+    if (userInput === null) {
+      logToTerminal('git commit', 'commit aborted by user');
+      return;
+    }
+    
+    const newMsg = userInput.trim() || `Commit ${visualGit.commitCount}`;
+
     const parentId = visualGit.branches[visualGit.head];
     const parentCommit = visualGit.commits.find(c => c.id === parentId);
     
     const newId = `c${visualGit.commitCount}`;
-    const newMsg = `Commit ${visualGit.commitCount}`;
     visualGit.commitCount++;
 
     const newCommit = {
