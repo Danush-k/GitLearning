@@ -3746,6 +3746,82 @@ function renderArenaDashboard() {
   }).join('');
   renderDailyChallenge();
   renderLeaderboard();
+  renderHeatmap();
+}
+
+function renderHeatmap() {
+  const grid = document.getElementById('heatmap-grid');
+  const streakBadge = document.getElementById('streak-count-badge');
+  if (!grid) return;
+
+  const times = [];
+  Object.keys(arenaState.submissions).forEach(probId => {
+    const list = arenaState.submissions[probId] || [];
+    list.forEach(sub => {
+      if (sub.status === 'passed') {
+        times.push(new Date(sub.time));
+      }
+    });
+  });
+
+  let streak = 0;
+  const submissionDates = new Set(times.map(d => d.toDateString()));
+  let checkDate = new Date();
+  
+  if (submissionDates.has(checkDate.toDateString())) {
+    streak = 1;
+    while (true) {
+      checkDate.setDate(checkDate.getDate() - 1);
+      if (submissionDates.has(checkDate.toDateString())) {
+        streak++;
+      } else {
+        break;
+      }
+    }
+  } else {
+    checkDate.setDate(checkDate.getDate() - 1);
+    if (submissionDates.has(checkDate.toDateString())) {
+      streak = 1;
+      while (true) {
+        checkDate.setDate(checkDate.getDate() - 1);
+        if (submissionDates.has(checkDate.toDateString())) {
+          streak++;
+        } else {
+          break;
+        }
+      }
+    }
+  }
+
+  if (streakBadge) {
+    streakBadge.textContent = `${streak} Day Streak ${streak > 0 ? '🔥' : '❄️'}`;
+  }
+
+  const cellsHtml = [];
+  const oneDayMs = 24 * 60 * 60 * 1000;
+  const now = Date.now();
+
+  for (let i = 104; i >= 0; i--) {
+    const day = new Date(now - i * oneDayMs);
+    const dayStr = day.toDateString();
+    const count = times.filter(t => t.toDateString() === dayStr).length;
+
+    let bgClass = 'var(--clr-bg-3)';
+    let titleAttr = `${day.toLocaleDateString()}: No solved problems`;
+    
+    if (count > 0) {
+      titleAttr = `${day.toLocaleDateString()}: ${count} solved problem${count > 1 ? 's' : ''}`;
+      if (count === 1) bgClass = 'rgba(63, 185, 80, 0.35)';
+      else if (count === 2) bgClass = 'rgba(63, 185, 80, 0.65)';
+      else bgClass = 'rgba(63, 185, 80, 1.0)';
+    }
+
+    cellsHtml.push(`
+      <div style="aspect-ratio: 1; background: ${bgClass}; border-radius: 2px;" title="${titleAttr}"></div>
+    `);
+  }
+
+  grid.innerHTML = cellsHtml.join('');
 }
 
 function renderLeaderboard() {
