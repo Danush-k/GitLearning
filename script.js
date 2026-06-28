@@ -3662,6 +3662,21 @@ function initArena() {
     });
   });
 
+  // Workspace Pane Tab switcher
+  const paneTabs = document.querySelectorAll('.pane-tab');
+  paneTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      paneTabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+
+      const target = tab.dataset.paneTab;
+      document.getElementById('pane-description-content').style.display = target === 'desc' ? 'block' : 'none';
+      document.getElementById('pane-submissions-content').style.display = target === 'submissions' ? 'block' : 'none';
+      document.getElementById('pane-discussion-content').style.display = target === 'discussion' ? 'block' : 'none';
+      document.getElementById('pane-solution-content').style.display = target === 'solution' ? 'block' : 'none';
+    });
+  });
+
   // Custom Input checkbox toggle
   const customCheck = document.getElementById('arena-custom-input-check');
   const customWrapper = document.getElementById('arena-custom-input-wrapper');
@@ -3686,6 +3701,31 @@ function initArena() {
       // Reset classes and apply new theme
       editorWrapper.className = 'editor-wrapper';
       editorWrapper.classList.add(`theme-${selected}`);
+    });
+  const submitCommentBtn = document.getElementById('submit-comment-btn');
+  if (submitCommentBtn) {
+    submitCommentBtn.addEventListener('click', () => {
+      const input = document.getElementById('discussion-comment-input');
+      if (!input || !input.value.trim() || !arenaState.activeProblem) return;
+      
+      const problemId = arenaState.activeProblem.id;
+      const key = `arena-comments-${problemId}`;
+      const saved = localStorage.getItem(key);
+      const comments = saved ? JSON.parse(saved) : (defaultDiscussionComments[problemId] || [
+        { author: "git_explorer", time: "3 hours ago", text: "I wonder if there is an edge case where we need to trim whitespaces." },
+        { author: "code_ninja", time: "Yesterday", text: "This is a classical version control helper function. Try to write simple checks!" }
+      ]);
+      
+      comments.push({
+        author: "You (Developer)",
+        time: "Just now",
+        text: input.value.trim()
+      });
+      
+      localStorage.setItem(key, JSON.stringify(comments));
+      input.value = '';
+      renderDiscussion(problemId);
+      showToast('Comment posted! 💬');
     });
   }
 
@@ -4107,6 +4147,48 @@ function loadProblem(id) {
       };
     }
   }
+  renderDiscussion(problem.id);
+}
+
+const defaultDiscussionComments = {
+  1: [
+    { author: "git_wizard", time: "2 hours ago", text: "Pro tip: using regex with `.replace(/[^a-z0-9\\-\\/]/g, '')` makes sanitization super clean!" },
+    { author: "bug_hunter", time: "1 day ago", text: "Don't forget to handle multiple consecutive hyphens, e.g. '--' should squash to '-'." }
+  ],
+  2: [
+    { author: "commit_czar", time: "3 hours ago", text: "This Conventional Commits validator is great. Remember to validate the description length!" },
+    { author: "semver_coder", time: "2 days ago", text: "Does this handle scopes with hyphens like feat(auth-service): ? Yes, the constraints scope only has letters/numbers/hyphens." }
+  ],
+  3: [
+    { author: "init_master", time: "5 hours ago", text: "Make sure to return the exact string array of commands. Spaces matter!" }
+  ]
+};
+
+function renderDiscussion(problemId) {
+  const container = document.getElementById('discussion-comments-list');
+  if (!container) return;
+
+  const key = `arena-comments-${problemId}`;
+  const saved = localStorage.getItem(key);
+  const comments = saved ? JSON.parse(saved) : (defaultDiscussionComments[problemId] || [
+    { author: "git_explorer", time: "3 hours ago", text: "I wonder if there is an edge case where we need to trim whitespaces." },
+    { author: "code_ninja", time: "Yesterday", text: "This is a classical version control helper function. Try to write simple checks!" }
+  ]);
+  
+  if (comments.length === 0) {
+    container.innerHTML = `<p style="text-align: center; color: var(--clr-text-muted); padding: 20px 0;">💬 No comments yet. Be the first to share your approach!</p>`;
+    return;
+  }
+
+  container.innerHTML = comments.map(c => `
+    <div style="background: var(--clr-bg-2); border: 1px solid var(--clr-border); border-radius: var(--radius-sm); padding: 12px; display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem;">
+        <span style="font-weight: 700; color: var(--clr-accent);">${escapeHtml(c.author)}</span>
+        <span style="color: var(--clr-text-muted);">${escapeHtml(c.time)}</span>
+      </div>
+      <p style="margin: 0; font-size: 0.85rem; color: var(--clr-text); white-space: pre-wrap; line-height: 1.4;">${escapeHtml(c.text)}</p>
+    </div>
+  `).join('');
 }
 
 function renderSubmissions(problemId) {

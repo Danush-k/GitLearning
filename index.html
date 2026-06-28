@@ -547,6 +547,7 @@
             <div class="pane-tabs">
               <button class="pane-tab active" data-pane-tab="desc">Description</button>
               <button class="pane-tab" data-pane-tab="submissions">Submissions</button>
+              <button class="pane-tab" data-pane-tab="discussion">Discussion 💬</button>
               <button class="pane-tab" data-pane-tab="solution">Solution 🔒</button>
             </div>
             <div class="pane-content" id="pane-description-content">
@@ -555,6 +556,18 @@
             <div class="pane-content" id="pane-submissions-content" style="display: none;">
               <div class="submissions-list" id="submissions-list">
                 <p class="no-submissions">No submissions yet. Solve the problem to see your history!</p>
+              </div>
+            </div>
+            <div class="pane-content" id="pane-discussion-content" style="display: none; padding: 16px; overflow-y: auto;">
+              <h4 style="margin-bottom: 12px; color: var(--clr-text);">Developer Community Discussion</h4>
+              <div id="discussion-comments-list" style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px;">
+                <!-- Comments rendered dynamically -->
+              </div>
+              <div class="add-comment-box" style="display: flex; flex-direction: column; gap: 8px; border-top: 1px solid var(--clr-border); padding-top: 16px;">
+                <textarea id="discussion-comment-input" placeholder="Type a comment or post your code solution..." style="width: 100%; height: 80px; background: var(--clr-bg-2); border: 1px solid var(--clr-border); border-radius: var(--radius-sm); padding: 10px; color: #fff; font-family: var(--font-main); font-size: 0.85rem; resize: vertical;"></textarea>
+                <div style="display: flex; justify-content: flex-end;">
+                  <button id="submit-comment-btn" class="btn btn-sm btn-primary">Post Comment 💬</button>
+                </div>
               </div>
             </div>
             <div class="pane-content" id="pane-solution-content" style="display: none; position: relative; min-height: 480px;">
