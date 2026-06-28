@@ -978,6 +978,37 @@
   <button id="back-to-top" class="back-to-top" aria-label="Back to top">↑</button>
   <button id="shortcuts-toggle-btn" class="shortcuts-toggle-btn" aria-label="Keyboard Shortcuts" title="Keyboard Shortcuts (Press ?)">⌨️</button>
 
+  <!-- Submission Code Modal -->
+  <div id="sub-code-modal" class="basics-modal" aria-hidden="true" role="dialog">
+    <div class="basics-modal-overlay" id="sub-code-modal-overlay"></div>
+    <div class="basics-modal-content" style="max-width: 700px; width: 90%;">
+      <button id="close-sub-code-modal-btn" class="close-basics-modal-btn" aria-label="Close modal">&times;</button>
+      <div class="basics-modal-body">
+        <div class="basics-modal-header">
+          <div style="display: flex; align-items: center; gap: 14px;">
+            <span class="basics-modal-icon" style="font-size: 2rem;">💻</span>
+            <div>
+              <h2 class="basics-modal-title" id="sub-code-modal-title">Submitted Code</h2>
+              <span class="basics-modal-badge cat-local" id="sub-code-modal-badge">Accepted</span>
+            </div>
+          </div>
+        </div>
+        <div class="basics-modal-scroll-content" style="margin-top: 20px;">
+          <div class="basics-modal-section">
+            <h4 style="margin-bottom: 8px; color: var(--clr-text-muted);">Submission Code:</h4>
+            <div class="basics-modal-code-wrapper" style="margin-top: 0;">
+              <pre class="basics-modal-code" style="margin: 0;"><code id="sub-code-modal-text">// No code available</code></pre>
+            </div>
+          </div>
+          <div class="basics-modal-section" style="margin-top: 20px;">
+            <h4 style="margin-bottom: 8px; color: var(--clr-text-muted);">Console Logs Output:</h4>
+            <pre style="background: var(--clr-bg-2); border: 1px solid var(--clr-border); padding: 12px; border-radius: var(--radius-sm); color: #fff; font-family: var(--font-code); font-size: 0.85rem; max-height: 150px; overflow-y: auto;" id="sub-code-modal-logs">No logs.</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Keyboard Shortcuts Modal -->
   <div id="shortcuts-modal" class="basics-modal" aria-hidden="true" role="dialog">
     <div class="basics-modal-overlay" id="shortcuts-modal-overlay"></div>

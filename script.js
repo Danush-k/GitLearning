@@ -3663,6 +3663,7 @@ function initArena() {
     });
   }
 
+  initSubmissionModalEvents();
   renderArenaDashboard();
 }
 
@@ -4014,22 +4015,71 @@ function renderSubmissions(problemId) {
     return;
   }
 
-  container.innerHTML = history.map(sub => {
+  container.innerHTML = history.map((sub, idx) => {
     const statusClass = sub.status === 'passed' ? 'passed' : 'failed';
     const statusLabel = sub.status === 'passed' ? 'Accepted' : 'Wrong Answer';
     const dateStr = new Date(sub.time).toLocaleString();
+    const hasCode = !!sub.code;
     return `
-      <div class="submission-history-item">
+      <div class="submission-history-item" style="display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid var(--clr-border); gap: 12px;">
         <div style="display: flex; flex-direction: column; gap: 4px;">
           <span class="sub-status ${statusClass}">${statusLabel}</span>
-          <span class="sub-time">${dateStr}</span>
+          <span class="sub-time" style="font-size: 0.75rem; color: var(--clr-text-muted);">${dateStr}</span>
         </div>
-        <div style="font-size: 0.85rem; color: var(--clr-text-muted);">
-          <span>Runtime: ${sub.runtime}</span>
+        <div style="text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
+          <span style="font-size: 0.85rem; color: var(--clr-text-muted);">Runtime: ${sub.runtime}</span>
+          ${hasCode ? `<button class="btn btn-sm btn-outline" style="padding: 2px 8px; font-size: 0.7rem; border-radius: var(--radius-sm);" onclick="openSubmissionCodeModal(${problemId}, ${idx})">View Code 💻</button>` : ''}
         </div>
       </div>
     `;
   }).join('');
+}
+
+function openSubmissionCodeModal(problemId, index) {
+  const modal = document.getElementById('sub-code-modal');
+  const modalTitle = document.getElementById('sub-code-modal-title');
+  const modalBadge = document.getElementById('sub-code-modal-badge');
+  const modalText = document.getElementById('sub-code-modal-text');
+  const modalLogs = document.getElementById('sub-code-modal-logs');
+
+  if (!modal) return;
+
+  const problem = arenaProblemsData.find(p => p.id === problemId);
+  const sub = arenaState.submissions[problemId] ? arenaState.submissions[problemId][index] : null;
+
+  if (!sub) return;
+
+  if (modalTitle) modalTitle.textContent = problem ? `${problem.title} Submission` : 'Submission Detail';
+  if (modalBadge) {
+    modalBadge.textContent = sub.status === 'passed' ? 'Accepted' : 'Wrong Answer';
+    modalBadge.className = `basics-modal-badge ${sub.status === 'passed' ? 'cat-local' : 'cat-remote'}`;
+    modalBadge.style.background = sub.status === 'passed' ? 'var(--clr-accent-3)' : 'var(--clr-accent-warm)';
+  }
+  if (modalText) {
+    modalText.textContent = sub.code || '// No code recorded for this submission.';
+  }
+  if (modalLogs) {
+    modalLogs.textContent = sub.logs || 'No console logs outputted.';
+  }
+
+  modal.classList.add('active');
+  modal.setAttribute('aria-hidden', 'false');
+}
+
+function initSubmissionModalEvents() {
+  const modal = document.getElementById('sub-code-modal');
+  const closeBtn = document.getElementById('close-sub-code-modal-btn');
+  const overlay = document.getElementById('sub-code-modal-overlay');
+
+  if (!modal) return;
+
+  const closeModal = () => {
+    modal.classList.remove('active');
+    modal.setAttribute('aria-hidden', 'true');
+  };
+
+  if (closeBtn) closeBtn.addEventListener('click', closeModal);
+  if (overlay) overlay.addEventListener('click', closeModal);
 }
 
 function updateLineNumbers() {
@@ -4270,7 +4320,8 @@ function executeArenaCode(isSubmit = false) {
       status: allPassed ? 'passed' : 'failed',
       time: Date.now(),
       runtime: `${executionTime.toFixed(2)} ms`,
-      logs: logsCaptured.join('\n')
+      logs: logsCaptured.join('\n'),
+      code: code
     };
 
     if (!arenaState.submissions[problem.id]) {
