@@ -3645,6 +3645,24 @@ function initArena() {
     });
   }
 
+  // Theme selection initialization
+  const themeSelect = document.getElementById('arena-theme-select');
+  const editorWrapper = document.querySelector('.editor-wrapper');
+  if (themeSelect && editorWrapper) {
+    const savedTheme = localStorage.getItem('arena-theme') || 'vscode-dark';
+    themeSelect.value = savedTheme;
+    editorWrapper.classList.add(`theme-${savedTheme}`);
+
+    themeSelect.addEventListener('change', (e) => {
+      const selected = e.target.value;
+      localStorage.setItem('arena-theme', selected);
+      
+      // Reset classes and apply new theme
+      editorWrapper.className = 'editor-wrapper';
+      editorWrapper.classList.add(`theme-${selected}`);
+    });
+  }
+
   renderArenaDashboard();
 }
 
