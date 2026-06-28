@@ -4450,13 +4450,16 @@ function executeArenaCode(isSubmit = false) {
     arenaState.submissions[problem.id].unshift(subRecord);
     localStorage.setItem('arena-submissions', JSON.stringify(arenaState.submissions));
 
-    if (allPassed && !arenaState.solved.includes(problem.id)) {
-      arenaState.solved.push(problem.id);
-      localStorage.setItem('arena-solved', JSON.stringify(arenaState.solved));
-      updateArenaStats();
-      showToast('Problem solved successfully! 🎉');
-    } else if (allPassed) {
-      showToast('All tests passed! 🚀');
+    if (allPassed) {
+      triggerConfetti();
+      if (!arenaState.solved.includes(problem.id)) {
+        arenaState.solved.push(problem.id);
+        localStorage.setItem('arena-solved', JSON.stringify(arenaState.solved));
+        updateArenaStats();
+        showToast('Problem solved successfully! 🎉');
+      } else {
+        showToast('All tests passed! 🚀');
+      }
     } else {
       showToast('Some test cases failed. Keep trying!');
     }
@@ -5130,6 +5133,84 @@ function initGithubActions() {
   });
 
   generateYaml();
+}
+
+function triggerConfetti() {
+  const canvas = document.createElement('canvas');
+  canvas.style.position = 'fixed';
+  canvas.style.top = '0';
+  canvas.style.left = '0';
+  canvas.style.width = '100vw';
+  canvas.style.height = '100vh';
+  canvas.style.pointerEvents = 'none';
+  canvas.style.zIndex = '99999';
+  document.body.appendChild(canvas);
+
+  const ctx = canvas.getContext('2d');
+  let width = canvas.width = window.innerWidth;
+  let height = canvas.height = window.innerHeight;
+
+  window.addEventListener('resize', () => {
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+  });
+
+  const colors = ['#f78166', '#58a6ff', '#3fb950', '#d29922', '#a371f7', '#ff6b6b', '#4ecdc4'];
+  const particles = [];
+
+  for (let i = 0; i < 120; i++) {
+    particles.push({
+      x: width / 2 + (Math.random() - 0.5) * 50,
+      y: height / 2 + (Math.random() - 0.5) * 50 - 100,
+      vx: (Math.random() - 0.5) * 15,
+      vy: (Math.random() - 0.7) * 15 - 5,
+      size: Math.random() * 8 + 6,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      rotation: Math.random() * 360,
+      rotationSpeed: (Math.random() - 0.5) * 10,
+      opacity: 1
+    });
+  }
+
+  let animationFrameId;
+  function update() {
+    ctx.clearRect(0, 0, width, height);
+
+    let active = false;
+    particles.forEach(p => {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.3; // gravity
+      p.vx *= 0.98; // air resistance
+      p.rotation += p.rotationSpeed;
+      
+      if (p.vy > 0) {
+        p.opacity -= 0.01;
+      }
+
+      if (p.opacity > 0 && p.y < height) {
+        active = true;
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rotation * Math.PI / 180);
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = p.opacity;
+        ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+        ctx.restore();
+      }
+    });
+
+    if (active) {
+      animationFrameId = requestAnimationFrame(update);
+    } else {
+      if (document.body.contains(canvas)) {
+        document.body.removeChild(canvas);
+      }
+      cancelAnimationFrame(animationFrameId);
+    }
+  }
+
+  update();
 }
 
 // ─────────────────────────────────────────────
