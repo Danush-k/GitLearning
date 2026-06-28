@@ -630,6 +630,19 @@
                     <span id="compiler-status-badge" class="status-badge error">Run Code first</span>
                     <span id="runtime-display" style="font-size: 0.85rem; color: var(--clr-text-muted);"></span>
                   </div>
+                  <!-- Beats runtime stats details -->
+                  <div id="beats-stats-container" style="display: none; background: rgba(88, 166, 255, 0.05); border: 1px solid rgba(88, 166, 255, 0.2); border-radius: var(--radius-sm); padding: 12px; margin: 12px 0; font-size: 0.85rem; animation: fadeInUp 0.4s ease both;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+                      <span style="color: var(--clr-text-muted);">Performance Beats:</span>
+                      <strong id="beats-percentage-value" style="color: var(--clr-accent-3);">Beats 87.4%</strong>
+                    </div>
+                    <div style="width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden;">
+                      <div id="beats-bar-fill" style="width: 87.4%; height: 100%; background: linear-gradient(90deg, var(--clr-accent) 0%, var(--clr-accent-3) 100%); transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);"></div>
+                    </div>
+                    <div style="margin-top: 6px; font-size: 0.75rem; color: var(--clr-text-muted);">
+                      Your code was evaluated against standard browser execution runtimes.
+                    </div>
+                  </div>
                   <div id="testcases-result-details" class="testcases-result-details">
                     <!-- Dynamic test cases check marks and details -->
                   </div>
