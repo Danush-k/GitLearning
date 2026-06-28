@@ -410,11 +410,18 @@
 
             <!-- Problem list filter & list container -->
             <div class="arena-controls">
-              <div class="filter-group">
-                <button class="filter-btn active" data-filter="all">All</button>
-                <button class="filter-btn" data-filter="easy">Easy</button>
-                <button class="filter-btn" data-filter="medium">Medium</button>
-                <button class="filter-btn" data-filter="hard">Hard</button>
+              <div class="filter-row" style="display: flex; gap: 12px; flex-wrap: wrap;">
+                <div class="filter-group">
+                  <button class="filter-btn active" data-filter="all">All Diff</button>
+                  <button class="filter-btn" data-filter="easy">Easy</button>
+                  <button class="filter-btn" data-filter="medium">Medium</button>
+                  <button class="filter-btn" data-filter="hard">Hard</button>
+                </div>
+                <div class="filter-group">
+                  <button class="filter-btn status-filter-btn active" data-status-filter="all">All Status</button>
+                  <button class="filter-btn status-filter-btn" data-status-filter="solved">Solved</button>
+                  <button class="filter-btn status-filter-btn" data-status-filter="unsolved">Unsolved</button>
+                </div>
               </div>
               <div class="arena-search-wrapper">
                 <span class="search-icon">🔍</span>

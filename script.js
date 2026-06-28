@@ -3426,6 +3426,7 @@ function setupKeyboardShortcuts() {
 let arenaState = {
   activeProblem: null,
   filter: 'all',
+  statusFilter: 'all',
   search: '',
   solved: [],
   submissions: {},
@@ -3506,12 +3507,22 @@ function initArena() {
     });
   }
 
-  const filterBtns = document.querySelectorAll('.filter-btn');
+  const filterBtns = document.querySelectorAll('.filter-btn:not(.status-filter-btn)');
   filterBtns.forEach(btn => {
     btn.addEventListener('click', () => {
       filterBtns.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       arenaState.filter = btn.dataset.filter;
+      renderArenaDashboard();
+    });
+  });
+
+  const statusBtns = document.querySelectorAll('.status-filter-btn');
+  statusBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      statusBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      arenaState.statusFilter = btn.dataset.statusFilter;
       renderArenaDashboard();
     });
   });
@@ -3644,6 +3655,12 @@ function renderArenaDashboard() {
   let problems = arenaProblemsData;
   if (arenaState.filter !== 'all') {
     problems = problems.filter(p => p.difficulty === arenaState.filter);
+  }
+  if (arenaState.statusFilter !== 'all') {
+    problems = problems.filter(p => {
+      const isSolved = arenaState.solved.includes(p.id);
+      return arenaState.statusFilter === 'solved' ? isSolved : !isSolved;
+    });
   }
   if (arenaState.search) {
     const q = arenaState.search.toLowerCase();
