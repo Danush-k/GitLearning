@@ -875,6 +875,180 @@ M script.js`],
   }
   return result;
 }`
+  },
+  {
+    id: 11,
+    title: "Git Branch Name Matcher",
+    category: "Git Advanced",
+    difficulty: "easy",
+    desc: `<div class="problem-desc-rich">
+<p>Implement a glob-like wildcard matcher for branch protection rules. Determine if a branch name matches a search pattern containing wildcard characters (<code>*</code>).</p>
+<ul>
+  <li><code>*</code> matches any sequence of characters (including an empty sequence).</li>
+  <li>All other characters must match exactly.</li>
+</ul>
+
+<h4>Example 1</h4>
+<div class="example-block">
+  <strong>Input:</strong> branch = "feature/login-screen", pattern = "feature/*"<br/>
+  <strong>Output:</strong> true
+</div>
+
+<h4>Example 2</h4>
+<div class="example-block">
+  <strong>Input:</strong> branch = "main", pattern = "feature/*"<br/>
+  <strong>Output:</strong> false
+</div>
+</div>`,
+    template: `function matchBranchPattern(branch, pattern) {
+  // Write your code here
+  
+}`,
+    testCases: [
+      { input: ["feature/login-screen", "feature/*"], expected: true },
+      { input: ["main", "feature/*"], expected: false },
+      { input: ["release/v1.0.2", "release/v1.*"], expected: true },
+      { input: ["hotfix/bug-12", "hotfix/bug-*"], expected: true }
+    ],
+    solutionApproach: "To match simple globs, convert the glob pattern into a regular expression:\n1. Escape regex special characters except `*`.\n2. Convert `*` to `.*`.\n3. Wrap the regex with `^` and `$` to match the entire string.",
+    solutionCode: `function matchBranchPattern(branch, pattern) {
+  const regexPattern = "^" + pattern.replace(/[-\\/\\\\^$*+?.()|[\\]{}]/g, m => m === '*' ? '.*' : '\\\\' + m) + "$";
+  const regex = new RegExp(regexPattern);
+  return regex.test(branch);
+}`
+  },
+  {
+    id: 12,
+    title: "Git Squash Commits Simulator",
+    category: "Git Advanced",
+    difficulty: "medium",
+    desc: `<div class="problem-desc-rich">
+<p>Simulate a Git Squash operation. You are given an array of commit objects, each containing an <code>author</code>, <code>category</code> (like "feat", "fix"), and <code>message</code>.</p>
+<p>Squash consecutive commits from the same author and category into a single commit. The squashed commit should have:</p>
+<ul>
+  <li>The same author and category.</li>
+  <li>The combined messages joined by <code>" & "</code>.</li>
+</ul>
+
+<h4>Example 1</h4>
+<div class="example-block">
+  <strong>Input:</strong> commits = [<br/>
+    &nbsp;&nbsp;{ author: "bob", category: "feat", message: "add login UI" },<br/>
+    &nbsp;&nbsp;{ author: "bob", category: "feat", message: "add oauth support" },<br/>
+    &nbsp;&nbsp;{ author: "alice", category: "fix", message: "fix crash" }<br/>
+  ]<br/>
+  <strong>Output:</strong> [<br/>
+    &nbsp;&nbsp;{ author: "bob", category: "feat", message: "add login UI & add oauth support" },<br/>
+    &nbsp;&nbsp;{ author: "alice", category: "fix", message: "fix crash" }<br/>
+  ]
+</div>
+</div>`,
+    template: `function squashCommits(commits) {
+  // Write your code here
+  
+}`,
+    testCases: [
+      {
+        input: [[
+          { author: "bob", category: "feat", message: "add login UI" },
+          { author: "bob", category: "feat", message: "add oauth support" },
+          { author: "alice", category: "fix", message: "fix crash" }
+        ]],
+        expected: [
+          { author: "bob", category: "feat", message: "add login UI & add oauth support" },
+          { author: "alice", category: "fix", message: "fix crash" }
+        ]
+      },
+      {
+        input: [[
+          { author: "bob", category: "feat", message: "first" },
+          { author: "alice", category: "feat", message: "second" },
+          { author: "bob", category: "feat", message: "third" }
+        ]],
+        expected: [
+          { author: "bob", category: "feat", message: "first" },
+          { author: "alice", category: "feat", message: "second" },
+          { author: "bob", category: "feat", message: "third" }
+        ]
+      }
+    ],
+    solutionApproach: "1. Return the array if empty.\n2. Initialize a result array containing the first commit.\n3. Iterate from the second commit: if the current commit has the same author and category as the last element of the result array, append its message with `\" & \"`.\n4. Otherwise, push a clone of the current commit.",
+    solutionCode: `function squashCommits(commits) {
+  if (commits.length === 0) return [];
+  const result = [JSON.parse(JSON.stringify(commits[0]))];
+  for (let i = 1; i < commits.length; i++) {
+    const current = commits[i];
+    const last = result[result.length - 1];
+    if (last.author === current.author && last.category === current.category) {
+      last.message += " & " + current.message;
+    } else {
+      result.push(JSON.parse(JSON.stringify(current)));
+    }
+  }
+  return result;
+}`
+  },
+  {
+    id: 13,
+    title: "Git Commit Log Filter",
+    category: "Git Advanced",
+    difficulty: "medium",
+    desc: `<div class="problem-desc-rich">
+<p>Implement a parser to filter commit logs. Given an array of commit objects <code>commits</code> containing <code>hash</code>, <code>author</code>, and <code>message</code>, filter the logs matching the requirements:</p>
+<ul>
+  <li>If <code>author</code> is specified (non-empty), match commits written by that author (case-insensitive).</li>
+  <li>If <code>query</code> is specified (non-empty), match commits whose message contains the query as a substring (case-insensitive).</li>
+</ul>
+<p>Return an array of matching commit hashes.</p>
+
+<h4>Example 1</h4>
+<div class="example-block">
+  <strong>Input:</strong> commits = [<br/>
+    &nbsp;&nbsp;{ hash: "abc12", author: "Bob", message: "feat: add payment gateway" },<br/>
+    &nbsp;&nbsp;{ hash: "def34", author: "Alice", message: "fix: fix auth bug" }<br/>
+  ], author = "Bob", query = "payment"<br/>
+  <strong>Output:</strong> ["abc12"]
+</div>
+</div>`,
+    template: `function filterCommitLogs(commits, author, query) {
+  // Write your code here
+  
+}`,
+    testCases: [
+      {
+        input: [
+          [
+            { hash: "abc12", author: "Bob", message: "feat: add payment gateway" },
+            { hash: "def34", author: "Alice", message: "fix: fix auth bug" },
+            { hash: "ghi56", author: "Bob", message: "chore: update readmes" }
+          ],
+          "bob",
+          "readme"
+        ],
+        expected: ["ghi56"]
+      },
+      {
+        input: [
+          [
+            { hash: "abc12", author: "Bob", message: "feat: add payment gateway" },
+            { hash: "def34", author: "Alice", message: "fix: fix auth bug" }
+          ],
+          "",
+          "auth"
+        ],
+        expected: ["def34"]
+      }
+    ],
+    solutionApproach: "Iterate through commits, matching rules:\n1. Check if commit.author matches author parameter (if author is non-empty) case-insensitively.\n2. Check if commit.message contains query parameter (if query is non-empty) case-insensitively.\n3. Return the mapped list of matched commit hashes.",
+    solutionCode: `function filterCommitLogs(commits, author, query) {
+  return commits
+    .filter(c => {
+      const matchAuthor = !author || c.author.toLowerCase() === author.toLowerCase();
+      const matchQuery = !query || c.message.toLowerCase().includes(query.toLowerCase());
+      return matchAuthor && matchQuery;
+    })
+    .map(c => c.hash);
+}`
   }
 ];
 
@@ -4356,7 +4530,10 @@ function executeArenaCode(isSubmit = false) {
     7: "findStaleBranches",
     8: "parseGitStatus",
     9: "twoSum",
-    10: "mergeIntervals"
+    10: "mergeIntervals",
+    11: "matchBranchPattern",
+    12: "squashCommits",
+    13: "filterCommitLogs"
   };
 
   const functionName = entryPoints[problem.id];
