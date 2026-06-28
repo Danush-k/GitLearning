@@ -4585,6 +4585,9 @@ function executeArenaCode(isSubmit = false) {
     const userFunction = new Function(compilationString)();
     executionTime = performance.now() - startTime;
 
+    let tabsHtml = '<div style="display: flex; gap: 8px; border-bottom: 1px solid var(--clr-border); padding-bottom: 8px; margin-bottom: 12px; flex-wrap: wrap;">';
+    let contentsHtml = '';
+
     tcList.forEach((tc, idx) => {
       let passed = false;
       let output = null;
@@ -4601,39 +4604,44 @@ function executeArenaCode(isSubmit = false) {
 
       if (!passed) allPassed = false;
 
-      const headerClass = passed ? 'passed' : 'failed';
+      const dotColor = passed ? 'var(--clr-accent-3)' : 'var(--clr-accent-warm)';
       const statusText = passed ? (tc.isCustom ? 'SUCCESS' : 'PASSED') : 'FAILED';
-      const statusColor = passed ? 'var(--clr-accent-3)' : 'var(--clr-accent-warm)';
       
-      const inputsStr = tc.input.map(i => typeof i === 'object' ? JSON.stringify(i) : String(i)).join(', ');
       const expectedStr = tc.isCustom ? 'N/A (Custom Testcase)' : (typeof tc.expected === 'object' ? JSON.stringify(tc.expected) : String(tc.expected));
       const actualStr = errorMsg ? 'Runtime Error' : (typeof output === 'object' ? JSON.stringify(output) : String(output));
 
-      resultsHtml += `
-        <div class="testcase-pill">
-          <div class="testcase-pill-header ${headerClass}" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'flex' : 'none';">
-            <span>${tc.isCustom ? 'Custom Testcase Run' : `Testcase ${idx + 1}`}: ${functionName}(&lt;span style="color:var(--clr-accent);"&gt;${escapeHtml(inputsStr.substring(0, 40))}${inputsStr.length > 40 ? '...' : ''}&lt;/span&gt;)</span>
-            <span style="color: ${statusColor};">${statusText}</span>
+      tabsHtml += `
+        <button class="testcase-tab-btn ${idx === 0 ? 'active' : ''}" onclick="switchTestcaseTab(event, ${idx})" style="display: flex; align-items: center; gap: 6px; background: var(--clr-bg-2); border: 1px solid var(--clr-border); color: var(--clr-text-muted); padding: 6px 12px; border-radius: var(--radius-sm); font-size: 0.8rem; cursor: pointer; transition: all var(--transition);">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: ${dotColor};"></span>
+          <span>${tc.isCustom ? 'Custom' : `Case ${idx + 1}`}</span>
+        </button>
+      `;
+
+      contentsHtml += `
+        <div class="testcase-tab-content-panel" id="tc-panel-${idx}" style="display: ${idx === 0 ? 'flex' : 'none'}; flex-direction: column; gap: 12px; animation: fadeIn 0.3s ease both;">
+          <div class="testcase-field">
+            <span class="testcase-field-label">Input</span>
+            <pre class="testcase-field-value">${escapeHtml(JSON.stringify(tc.input))}</pre>
           </div>
-          <div class="testcase-pill-body" style="display: ${passed && !tc.isCustom ? 'none' : 'flex'};">
-            <div class="testcase-field">
-              <span class="testcase-field-label">Input</span>
-              <pre class="testcase-field-value">${escapeHtml(JSON.stringify(tc.input))}</pre>
-            </div>
-            ${tc.isCustom ? '' : `
-            <div class="testcase-field">
-              <span class="testcase-field-label">Expected Output</span>
-              <pre class="testcase-field-value">${escapeHtml(expectedStr)}</pre>
-            </div>
-            `}
-            <div class="testcase-field">
-              <span class="testcase-field-label">Your Output</span>
-              <pre class="testcase-field-value ${errorMsg ? 'error-trace' : ''}">${escapeHtml(errorMsg ? errorMsg : actualStr)}</pre>
-            </div>
+          ${tc.isCustom ? '' : `
+          <div class="testcase-field">
+            <span class="testcase-field-label">Expected Output</span>
+            <pre class="testcase-field-value">${escapeHtml(expectedStr)}</pre>
+          </div>
+          `}
+          <div class="testcase-field">
+            <span class="testcase-field-label" style="display: flex; justify-content: space-between;">
+              <span>Your Output</span>
+              <strong style="color: ${dotColor}; font-size: 0.8rem;">${statusText}</strong>
+            </span>
+            <pre class="testcase-field-value ${errorMsg ? 'error-trace' : ''}">${escapeHtml(errorMsg ? errorMsg : actualStr)}</pre>
           </div>
         </div>
       `;
     });
+
+    tabsHtml += '</div>';
+    resultsHtml = tabsHtml + contentsHtml;
   } catch (err) {
     allPassed = false;
     resultsHtml = `
@@ -5392,6 +5400,29 @@ function initGithubActions() {
   });
 
   generateYaml();
+}
+
+function switchTestcaseTab(e, idx) {
+  e.preventDefault();
+  const btns = e.currentTarget.parentNode.querySelectorAll('.testcase-tab-btn');
+  btns.forEach(b => {
+    b.classList.remove('active');
+    b.style.borderColor = 'var(--clr-border)';
+    b.style.background = 'var(--clr-bg-2)';
+    b.style.color = 'var(--clr-text-muted)';
+  });
+  
+  e.currentTarget.classList.add('active');
+  e.currentTarget.style.borderColor = 'var(--clr-accent)';
+  e.currentTarget.style.background = 'rgba(88, 166, 255, 0.1)';
+  e.currentTarget.style.color = '#fff';
+
+  const container = e.currentTarget.parentNode.parentNode;
+  const panels = container.querySelectorAll('.testcase-tab-content-panel');
+  panels.forEach(p => p.style.display = 'none');
+
+  const target = container.querySelector(`#tc-panel-${idx}`);
+  if (target) target.style.display = 'flex';
 }
 
 function triggerConfetti() {
