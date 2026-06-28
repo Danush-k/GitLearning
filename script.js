@@ -3544,6 +3544,32 @@ function initArena() {
     });
   }
 
+  const prevBtn = document.getElementById('arena-prev-btn');
+  if (prevBtn) {
+    prevBtn.addEventListener('click', () => navigateProblem(-1));
+  }
+  const nextBtn = document.getElementById('arena-next-btn');
+  if (nextBtn) {
+    nextBtn.addEventListener('click', () => navigateProblem(1));
+  }
+
+  function navigateProblem(direction) {
+    if (!arenaState.activeProblem) return;
+    const editor = document.getElementById('arena-code-editor');
+    if (editor) {
+      arenaState.drafts[arenaState.activeProblem.id] = editor.value;
+      localStorage.setItem('arena-drafts', JSON.stringify(arenaState.drafts));
+    }
+    const currentIndex = arenaProblemsData.findIndex(p => p.id === arenaState.activeProblem.id);
+    let nextIndex = currentIndex + direction;
+    if (nextIndex < 0) {
+      nextIndex = arenaProblemsData.length - 1;
+    } else if (nextIndex >= arenaProblemsData.length) {
+      nextIndex = 0;
+    }
+    loadProblem(arenaProblemsData[nextIndex].id);
+  }
+
   // Runner buttons
   const runBtn = document.getElementById('arena-run-btn');
   if (runBtn) {

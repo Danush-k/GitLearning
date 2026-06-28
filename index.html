@@ -503,11 +503,17 @@
       <!-- Coding Workspace View (Initially Hidden) -->
       <div id="arena-workspace" class="arena-workspace" style="display: none;">
         <!-- Workspace Header -->
-        <div class="workspace-header">
-          <button id="arena-back-btn" class="btn btn-sm btn-outline">← Back to Problems</button>
-          <div class="active-problem-info">
-            <h3 id="active-problem-title">Problem Name</h3>
-            <span id="active-problem-difficulty" class="diff-badge easy">Easy</span>
+        <div class="workspace-header" style="display: flex; justify-content: space-between; align-items: center; width: 100%; gap: 20px; flex-wrap: wrap;">
+          <div style="display: flex; align-items: center; gap: 20px;">
+            <button id="arena-back-btn" class="btn btn-sm btn-outline">← Back to Problems</button>
+            <div class="active-problem-info">
+              <h3 id="active-problem-title">Problem Name</h3>
+              <span id="active-problem-difficulty" class="diff-badge easy">Easy</span>
+            </div>
+          </div>
+          <div class="workspace-nav-buttons" style="display: flex; gap: 8px;">
+            <button id="arena-prev-btn" class="btn btn-sm btn-outline">◀ Prev</button>
+            <button id="arena-next-btn" class="btn btn-sm btn-outline">Next ▶</button>
           </div>
         </div>
 
