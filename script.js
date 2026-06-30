@@ -1735,11 +1735,8 @@ function escapeHtml(str) {
 
 function setupNavbar() {
   const navbar = document.getElementById('navbar');
-  const links = document.querySelectorAll('.nav-link');
-  const sections = document.querySelectorAll('section[id]');
-  const progressBar = document.getElementById('reading-progress');
-  const menuToggle = document.getElementById('menu-toggle');
   const navLinks = document.getElementById('nav-links');
+  const menuToggle = document.getElementById('menu-toggle');
 
   // Mobile menu toggle
   if (menuToggle && navLinks) {
@@ -1757,49 +1754,66 @@ function setupNavbar() {
         menuToggle.querySelector('.menu-toggle-icon').textContent = '☰';
       }
     });
-
-    // Close menu when clicking a link
-    links.forEach(link => {
-      link.addEventListener('click', () => {
-        navLinks.classList.remove('active');
-        menuToggle.querySelector('.menu-toggle-icon').textContent = '☰';
-      });
-    });
   }
 
   window.addEventListener('scroll', () => {
     const scrollPos = window.scrollY || window.pageYOffset;
-    navbar.classList.toggle('scrolled', scrollPos > 50);
-
-    // Highlight active nav link (Scrollspy)
-    let current = '';
-    const isAtBottom = (window.innerHeight + scrollPos) >= document.documentElement.scrollHeight - 20;
-
-    if (isAtBottom) {
-      if (sections.length > 0) {
-        current = sections[sections.length - 1].id;
-      }
-    } else {
-      sections.forEach(sec => {
-        const top = sec.offsetTop - 150;
-        if (scrollPos >= top) {
-          current = sec.id;
-        }
-      });
-    }
-
-    links.forEach(link => {
-      link.classList.toggle('active', link.getAttribute('href') === `#${current}`);
-    });
-
-    // Update Reading Progress Bar
-    if (progressBar) {
-      const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-      const scrolled = height > 0 ? (winScroll / height) * 100 : 0;
-      progressBar.style.width = scrolled + '%';
+    if (navbar) {
+      navbar.classList.toggle('scrolled', scrollPos > 50);
     }
   });
+
+  const logo = document.getElementById('nav-logo');
+  const btnDashboard = document.getElementById('nav-btn-dashboard');
+  const btnWorkspace = document.getElementById('nav-btn-workspace');
+
+  function showDashboardView() {
+    if (arenaState.activeProblem) {
+      const editor = document.getElementById('arena-code-editor');
+      if (editor) {
+        arenaState.drafts[arenaState.activeProblem.id] = editor.value;
+        localStorage.setItem('arena-drafts', JSON.stringify(arenaState.drafts));
+      }
+    }
+    arenaState.activeProblem = null;
+    document.getElementById('arena-workspace').style.display = 'none';
+    document.getElementById('arena-dashboard').style.display = 'block';
+    if (btnDashboard) btnDashboard.classList.add('active');
+    if (btnWorkspace) btnWorkspace.classList.remove('active');
+    renderArenaDashboard();
+  }
+
+  function showWorkspaceView() {
+    if (!arenaState.activeProblem) {
+      // Load the first problem or last solved if available
+      const lastSolved = arenaState.solved[0] || (arenaProblemsData && arenaProblemsData.length > 0 ? arenaProblemsData[0].id : 1);
+      loadProblem(lastSolved);
+    } else {
+      document.getElementById('arena-dashboard').style.display = 'none';
+      document.getElementById('arena-workspace').style.display = 'block';
+    }
+    if (btnDashboard) btnDashboard.classList.remove('active');
+    if (btnWorkspace) btnWorkspace.classList.add('active');
+  }
+
+  if (logo) {
+    logo.addEventListener('click', (e) => {
+      e.preventDefault();
+      showDashboardView();
+    });
+  }
+  if (btnDashboard) {
+    btnDashboard.addEventListener('click', (e) => {
+      e.preventDefault();
+      showDashboardView();
+    });
+  }
+  if (btnWorkspace) {
+    btnWorkspace.addEventListener('click', (e) => {
+      e.preventDefault();
+      showWorkspaceView();
+    });
+  }
 }
 
 function setupCommandTabs() {
@@ -5514,33 +5528,9 @@ document.addEventListener('DOMContentLoaded', () => {
     themeToggle.addEventListener('click', toggleTheme);
   }
 
-  renderConcepts();
-  renderCommands('setup');
-  renderWorkflow();
-  setupBranchingStrategies();
-  setupConfigBuilder();
-  setupCertificateEvents();
-  setupGenerator();
-  setupVisualizer();
-  renderCheatsheet();
-  renderQuiz();
   initArena();
-  setupGithubBasics();
-  const heroQuizCount = document.getElementById('hero-quiz-count');
-  if (heroQuizCount) {
-    heroQuizCount.textContent = quizData.length;
-  }
-  setupProTipWidget();
   setupNavbar();
-  setupCommandTabs();
-  setupSearch();
-  setupBasicsFilter();
-  setupBasicsModal();
   setupShortcutsModal();
   setupKeyboardShortcuts();
-  setupBackToTop();
-
-  // Setup scroll reveal after a tick so elements exist
-  setTimeout(setupScrollReveal, 100);
 });
 
