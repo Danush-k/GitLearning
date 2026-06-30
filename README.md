@@ -1,68 +1,24 @@
-# 🌿 GitLearning — Learn GitHub Basics
+# 💻 GitCode Arena
 
-A beautifully designed, interactive website to help beginners learn Git & GitHub fundamentals.
+A premium, LeetCode-style interactive coding playground containing curated programmatic Git & version-control challenges.
 
-## 📚 What's Inside
+## 🚀 Key Features
 
-- **Git Basics (Interactive!)** — Core concepts explained simply with illustrative examples, now featuring 10 expanded topics. Filter by local core vs remote collaboration, search in real-time, click any card to view a premium glassmorphic modal with real-world analogies, direct sandbox/command generator integration, and custom check-your-understanding checkpoints with micro-animations.
-- **Common Commands** — Interactive command reference cards organized by category (Setup, Basic, Branching, Remote, and Advanced) with search functionality.
-- **Branching Strategies** — Visual tabbed section explaining GitHub Flow, Git Flow, and Trunk-Based Development.
-- **Git Command Generator** — Choose actions (including stashing and undoing) and configure parameters to generate exact Git terminal command syntax.
-- **Config Profile Builder** — Live preview generator for Git username, email, default branch, editor, and colored output.
-- **Git Commit Visualizer** — Interactive sandbox to simulate commits, switches, branches, merges, and soft resets on a real-time graph.
-- **Git Cheatsheet** — Quick-reference lookup tables for basic commands, branching, remotes, undoing, and extras.
-- **Mini Quiz & Certificate** — Test your Git knowledge with 16 comprehensive questions and receive a downloadable / printable Certificate of Completion when you score 8/10 or higher.
-- **GitCode Arena (NEW!)** — A premium, LeetCode-style interactive coding playground containing 13 curated programmatic Git & version-control challenges.
-  - **Phase 1 Core**: Split-pane layout, auto-pairing text editor with live line numbering, real-time client-side JS code execution engine, detailed testcase verification tabs, console output logging, and localStorage-backed progress persistence.
-  - **Phase 2 Professional Enhancements**:
-    - **Locked Solution Reference**: Explains the optimal logic and includes reference code, protected by a lock screen overlay.
-    - **Custom Testcase Runner**: Test custom arguments against the live compiler runtime.
-    - **Daily Challenge Hero Widget**: countdown timer and custom widgets to midnight.
-    - **Global Git Leaderboard**: Dynamic ranking sidebar containing top Git learners.
-    - **Reset Progress Utility**: Reset solved problems, drafts, and logs from local storage.
-  - **Phase 3 Ultimate LeetCode Upgrade (NEW!)**:
-    - **Combined Status & Difficulty Filters**: Filter dashboard challenges by both Easy/Medium/Hard and Solved/Unsolved status.
-    - **Custom Code Editor Themes**: Toggle between VS Code Dark, Dracula, Monokai, and GitHub Light themes.
-    - **Submissions Code History Viewer**: Access complete code historical records and stdout/stderr logs from past runs in a glassmorphic viewer.
-    - **Workspace Quick Navigation**: Seamlessly cycle through adjacent problems using Prev / Next buttons.
-    - **Submission Activity Heatmap**: Track solved challenges using a green GitHub/LeetCode-style daily streak grid.
-    - **Performance Beats Percentile**: View execution time analysis showing performance compared to other submissions.
-    - **Acceptance Particle Emitters**: Responsive canvas confetti animations on compilation success.
-    - **Problem Discussion Forum**: Read community postings, share solutions, and post customized notes locally.
-    - **Multi-Testcase Tabs Runner**: Separate tab buttons with individual green/red passed/failed badges showing step-by-step evaluations.
-    - **Expanded Challenge Index**: 3 brand new programmatic git puzzles (11. Git Branch Name Matcher, 12. Git Squash Commits Simulator, and 13. Git Commit Log Filter) totaling 13 premium problems.
-- **GitHub Basics Suite (NEW!)** — An interactive educational toolset dedicated specifically to GitHub collaboration workflows:
-  - **Auth & SSH Setup Wizard**: Interactively choose SSH or HTTPS connection methods, customize configuration parameters (email, username), and generate dynamic, copyable CLI commands.
-  - **Fork & PR Collaboration Lab**: Simulate the exact steps of Forking, Cloning, setting up Upstream tracking remotes, Committing, Pushing, opening Pull Requests, and Syncing Upstream updates via a real-time repository state graph and terminal simulator.
-  - **GitHub Actions (CI/CD) Workflow Builder**: Configurator tool to build custom GitHub Action workflows (.github/workflows/main.yml) with toggleable events, branch filters, build/test/deploy runners, and custom secrets security parameters.
-
-
-## 🚀 Getting Started
-
-Just open `index.html` in your web browser — no build steps, node modules, or compile tools needed!
+- **LeetCode-Style Workspace** — Split-pane layout with problem description, examples, submissions history, and locked optimal solution reference.
+- **Custom Code Editor** — Auto-pairing, live line numbering, and custom editor themes (VS Code Dark, Dracula, Monokai, GitHub Light).
+- **Live Client-Side Compiler** — Execute JavaScript code in real-time, test custom input arguments, and see logs in a collapsible console.
+- **Visual Stats & Streak Grid** — Track completed tasks with progress rings and a GitHub-style green streak heatmap.
+- **Confetti Particle Emitters** — Accept animations when challenges are successfully compiled and verified against testcases.
 
 ## 🛠 Tech Stack
 
 - HTML5
-- CSS3 (custom design system, dark-mode first, glassmorphism, responsive)
-- Vanilla JavaScript (dynamic DOM rendering, SVG rendering for commit history and certificates)
+- CSS3 (custom design system, dark-mode first, glassmorphism)
+- Vanilla JavaScript (dynamic compiler engine, confetti canvas, LocalStorage)
 
-## 📖 References & Cheat Sheets
+## 🏁 Getting Started
 
-The project includes several helpful quick-reference text documents:
-- [f.txt](file:///Users/danush/Desktop/GitLearning/f.txt) — Quick Git commands reference.
-- [a1.txt](file:///Users/danush/Desktop/GitLearning/a1.txt) — Standard Git workflow overview and stashing/restoring tips.
-- [a3.txt](file:///Users/danush/Desktop/GitLearning/a3.txt) — Branch naming conventions, conventional commits guide, and merge vs. rebase advice.
-
-## 🤝 Contributing & Commit Style Guide
-
-We welcome contributions to make GitLearning even better! To keep the repository clean and professional, please follow these guidelines:
-- Follow the branch naming convention (e.g., `feat/feature-name`, `fix/bug-name`).
-- Write professional commit messages following the Conventional Commits specification (e.g., `feat: add search history`, `docs: fix typo in README`).
+Just open `index.html` in your web browser — no node modules, build steps, or compilation tools needed!
 
 ---
-Made with ❤️ to make Git learning fun, easy, and accessible.
-
-Let's learn Git together!
-
-
+Made with ❤️ to make Git mastery fun, easy, and gamified.
