@@ -621,6 +621,31 @@ code {
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 16px;
 }
+/* ============================================
+   ARENA WELCOME BANNER
+   ============================================ */
+.arena-welcome-banner {
+  background: linear-gradient(135deg, rgba(88, 166, 255, 0.08) 0%, rgba(163, 113, 247, 0.08) 100%);
+  border: 1px solid var(--clr-border);
+  padding: 30px;
+  border-radius: var(--radius-md);
+  margin-top: 100px;
+  margin-bottom: 30px;
+  text-align: left;
+  position: relative;
+  overflow: hidden;
+}
+.arena-welcome-banner h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #fff;
+}
+.arena-welcome-banner p {
+  color: var(--clr-text-muted);
+  font-size: 1rem;
+  max-width: 750px;
+}
 .cmd-card {
   background: var(--clr-bg-3);
   border: 1px solid var(--clr-border);
