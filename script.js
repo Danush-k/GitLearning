@@ -3728,6 +3728,12 @@ function initArena() {
       arenaState.activeProblem = null;
       document.getElementById('arena-workspace').style.display = 'none';
       document.getElementById('arena-dashboard').style.display = 'block';
+      
+      const btnDashboard = document.getElementById('nav-btn-dashboard');
+      const btnWorkspace = document.getElementById('nav-btn-workspace');
+      if (btnDashboard) btnDashboard.classList.add('active');
+      if (btnWorkspace) btnWorkspace.classList.remove('active');
+
       renderArenaDashboard();
     });
   }
@@ -4238,7 +4244,17 @@ function loadProblem(id) {
   document.getElementById('arena-dashboard').style.display = 'none';
   document.getElementById('arena-workspace').style.display = 'block';
 
+  // Toggle navbar links active class
+  const btnDashboard = document.getElementById('nav-btn-dashboard');
+  const btnWorkspace = document.getElementById('nav-btn-workspace');
+  if (btnDashboard) btnDashboard.classList.remove('active');
+  if (btnWorkspace) btnWorkspace.classList.add('active');
+
   // Set header info
+  const problemIdEl = document.getElementById('active-problem-id');
+  if (problemIdEl) {
+    problemIdEl.textContent = `${problem.id}.`;
+  }
   document.getElementById('active-problem-title').textContent = problem.title;
   const diffBadge = document.getElementById('active-problem-difficulty');
   diffBadge.textContent = problem.difficulty.charAt(0).toUpperCase() + problem.difficulty.slice(1);
