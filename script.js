@@ -3896,6 +3896,7 @@ function initArena() {
       editorWrapper.className = 'editor-wrapper';
       editorWrapper.classList.add(`theme-${selected}`);
     });
+  }
   const submitCommentBtn = document.getElementById('submit-comment-btn');
   if (submitCommentBtn) {
     submitCommentBtn.addEventListener('click', () => {
