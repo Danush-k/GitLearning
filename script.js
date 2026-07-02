@@ -1049,6 +1049,86 @@ M script.js`],
     })
     .map(c => c.hash);
 }`
+  },
+  {
+    id: 14,
+    title: "Git Squash Log Analyzer",
+    category: "Git Advanced",
+    difficulty: "medium",
+    desc: `<div class="problem-desc-rich">
+<p>Implement a parser to analyze a git squash merge commit message. When merging a branch using squash, Git aggregates the individual commit messages into a single message starting with <code>Squash commit of branch '&lt;branch-name&gt;'</code>, followed by the commit messages prefixed with a hyphen (<code>- </code>).</p>
+<p>Write a function <code>parseSquashMergeMessage(message)</code> that parses this string and returns an object containing:</p>
+<ul>
+  <li><code>branch</code>: The name of the squash-merged branch (e.g. <code>feature/auth</code>).</li>
+  <li><code>commitsCount</code>: The number of commit messages inside the body.</li>
+  <li><code>prs</code>: An array of numbers representing any Pull Request ID numbers extracted from the commits (formatted as <code>(#ID)</code> at the end of a commit line, e.g. <code>(#102)</code>).</li>
+</ul>
+<p>If the message is empty or does not start with the standard <code>Squash commit of branch '&lt;branch-name&gt;'</code> line, return <code>null</code>.</p>
+
+<h4>Example 1</h4>
+<div class="example-block">
+  <strong>Input:</strong> message = "Squash commit of branch 'feature/auth'\\n\\n- Implement login flow (#12)\\n- Add Google SSO integration (#13)\\n- Resolve routing bugs (#14)"<br/>
+  <strong>Output:</strong> { branch: "feature/auth", commitsCount: 3, prs: [12, 13, 14] }
+</div>
+
+<h4>Example 2</h4>
+<div class="example-block">
+  <strong>Input:</strong> message = "Merge branch 'main' into dev"<br/>
+  <strong>Output:</strong> null
+</div>
+
+<h4>Constraints</h4>
+<ul class="constraint-list">
+  <li>The message string can be up to 1000 characters long.</li>
+</ul>
+</div>`,
+    template: `function parseSquashMergeMessage(message) {
+  // Write your code here
+  
+}`,
+    testCases: [
+      {
+        input: ["Squash commit of branch 'feature/auth'\n\n- Implement login flow (#12)\n- Add Google SSO integration (#13)\n- Resolve routing bugs (#14)"],
+        expected: { branch: "feature/auth", commitsCount: 3, prs: [12, 13, 14] }
+      },
+      {
+        input: ["Squash commit of branch 'bugfix/routing'\n\n- Fix navbar issues (#45)"],
+        expected: { branch: "bugfix/routing", commitsCount: 1, prs: [45] }
+      },
+      {
+        input: ["Squash commit of branch 'main'"],
+        expected: { branch: "main", commitsCount: 0, prs: [] }
+      },
+      {
+        input: ["Merge branch 'main' into dev"],
+        expected: null
+      }
+    ],
+    solutionApproach: "1. Split the message into lines, trim each line, and remove empty lines.\n2. Verify the first line starts with 'Squash commit of branch ' and matches the expected regex /\\^Squash commit of branch '([^']+)'$/.\n3. Extract the branch name from the first match group.\n4. Loop through the subsequent lines and check if they start with '- '.\n5. If a line matches, increment commitsCount, and check if it ends with a PR match like /\\(#(\\d+)\\)$/. Extract and parse the PR number to integer.\n6. Return the resulting object.",
+    solutionCode: `function parseSquashMergeMessage(message) {
+  const lines = message.split('\\n').map(l => l.trim()).filter(l => l.length > 0);
+  if (lines.length === 0) return null;
+  const headerMatch = lines[0].match(/^Squash commit of branch '([^']+)'$/);
+  if (!headerMatch) return null;
+  const branchName = headerMatch[1];
+  let commitsCount = 0;
+  const prs = [];
+  for (let i = 1; i < lines.length; i++) {
+    const line = lines[i];
+    if (line.startsWith('- ')) {
+      commitsCount++;
+      const prMatch = line.match(/\\(#(\\d+)\\)$/);
+      if (prMatch) {
+        prs.push(parseInt(prMatch[1], 10));
+      }
+    }
+  }
+  return {
+    branch: branchName,
+    commitsCount: commitsCount,
+    prs: prs
+  };
+}`
   }
 ];
 
