@@ -3786,6 +3786,18 @@ function initArena() {
     });
   }
 
+  const formatBtn = document.getElementById('arena-format-code-btn');
+  if (formatBtn) {
+    formatBtn.addEventListener('click', () => {
+      const editor = document.getElementById('arena-code-editor');
+      if (editor && editor.value.trim()) {
+        editor.value = formatJSCode(editor.value);
+        updateLineNumbers();
+        showToast('Code formatted! 🧹');
+      }
+    });
+  }
+
   // Reset Progress Button listener
   const resetProgressBtn = document.getElementById('arena-reset-progress-btn');
   if (resetProgressBtn) {
@@ -4486,6 +4498,41 @@ function updateLineNumbers() {
     html += `<div>${i}</div>`;
   }
   lineNumbers.innerHTML = html;
+}
+
+function formatJSCode(code) {
+  const lines = code.split('\n');
+  let formatted = [];
+  let indentLevel = 0;
+  
+  for (let line of lines) {
+    let trimmed = line.trim();
+    if (trimmed === '') {
+      formatted.push('');
+      continue;
+    }
+    
+    let startsWithClose = /^[\]\}]/.test(trimmed);
+    if (startsWithClose) {
+      indentLevel = Math.max(0, indentLevel - 1);
+    }
+    
+    formatted.push('  '.repeat(indentLevel) + trimmed);
+    
+    let netBrackets = 0;
+    for (let char of trimmed) {
+      if (char === '{' || char === '[') netBrackets++;
+      if (char === '}' || char === ']') netBrackets--;
+    }
+    
+    if (!startsWithClose) {
+      indentLevel += netBrackets;
+    } else {
+      indentLevel += (netBrackets + 1);
+    }
+    indentLevel = Math.max(0, indentLevel);
+  }
+  return formatted.join('\n');
 }
 
 function executeArenaCode(isSubmit = false) {
