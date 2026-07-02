@@ -4065,7 +4065,7 @@ function renderArenaDashboard() {
 
   listBody.innerHTML = problems.map(p => {
     const isSolved = arenaState.solved.includes(p.id);
-    const statusIcon = isSolved ? '<span class="problem-status-icon" style="color: var(--clr-accent-3);">✓</span>' : '<span class="problem-status-icon" style="color: var(--clr-text-muted); opacity: 0.3;">○</span>';
+    const statusIcon = isSolved ? '<span class="problem-status-icon solved">✓</span>' : '<span class="problem-status-icon unsolved">○</span>';
     const diffLabel = p.difficulty.charAt(0).toUpperCase() + p.difficulty.slice(1);
     
     return `
@@ -4359,7 +4359,11 @@ function loadProblem(id) {
   if (problemIdEl) {
     problemIdEl.textContent = `${problem.id}.`;
   }
-  document.getElementById('active-problem-title').textContent = problem.title;
+  const isSolved = arenaState.solved.includes(problem.id);
+  const titleEl = document.getElementById('active-problem-title');
+  if (titleEl) {
+    titleEl.innerHTML = `${problem.title} ${isSolved ? '<span class="solved-checkmark-badge" style="color: var(--clr-accent-3); font-size: 1.1rem; margin-left: 6px; text-shadow: 0 0 8px rgba(63, 185, 80, 0.5);" title="Solved!">✓</span>' : ''}`;
+  }
   const diffBadge = document.getElementById('active-problem-difficulty');
   diffBadge.textContent = problem.difficulty.charAt(0).toUpperCase() + problem.difficulty.slice(1);
   diffBadge.className = `diff-badge ${problem.difficulty}`;
@@ -4670,6 +4674,10 @@ function executeArenaCode(isSubmit = false) {
       if (!arenaState.solved.includes(problem.id)) {
         arenaState.solved.push(problem.id);
         localStorage.setItem('arena-solved', JSON.stringify(arenaState.solved));
+        const titleEl = document.getElementById('active-problem-title');
+        if (titleEl && !titleEl.querySelector('.solved-checkmark-badge')) {
+          titleEl.innerHTML += ` <span class="solved-checkmark-badge" style="color: var(--clr-accent-3); font-size: 1.1rem; margin-left: 6px; text-shadow: 0 0 8px rgba(63, 185, 80, 0.5);" title="Solved!">✓</span>`;
+        }
       }
       showToast('Solved with Python (Mock)! 🎉');
     }
@@ -4892,6 +4900,10 @@ function executeArenaCode(isSubmit = false) {
         arenaState.solved.push(problem.id);
         localStorage.setItem('arena-solved', JSON.stringify(arenaState.solved));
         updateArenaStats();
+        const titleEl = document.getElementById('active-problem-title');
+        if (titleEl && !titleEl.querySelector('.solved-checkmark-badge')) {
+          titleEl.innerHTML += ` <span class="solved-checkmark-badge" style="color: var(--clr-accent-3); font-size: 1.1rem; margin-left: 6px; text-shadow: 0 0 8px rgba(63, 185, 80, 0.5);" title="Solved!">✓</span>`;
+        }
         showToast('Problem solved successfully! 🎉');
       } else {
         showToast('All tests passed! 🚀');
