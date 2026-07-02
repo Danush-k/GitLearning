@@ -3658,6 +3658,17 @@ function initArena() {
       const start = editor.selectionStart;
       const end = editor.selectionEnd;
 
+      // Run / Submit Code Shortcuts
+      if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault();
+        if (e.shiftKey) {
+          executeArenaCode(true);
+        } else {
+          executeArenaCode(false);
+        }
+        return;
+      }
+
       // Tab Key (2 spaces)
       if (e.key === 'Tab') {
         e.preventDefault();
