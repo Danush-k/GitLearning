@@ -3906,6 +3906,67 @@ function initArena() {
     });
   }
 
+  // Export Progress Button listener
+  const exportBtn = document.getElementById('arena-export-btn');
+  if (exportBtn) {
+    exportBtn.addEventListener('click', () => {
+      const data = {
+        solved: arenaState.solved,
+        submissions: arenaState.submissions,
+        drafts: arenaState.drafts
+      };
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", "gitcode-arena-backup.json");
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+      showToast('Progress backup exported successfully! 📥');
+    });
+  }
+
+  // Import Progress Button listener
+  const importBtn = document.getElementById('arena-import-btn');
+  const importInput = document.getElementById('arena-import-file-input');
+  if (importBtn && importInput) {
+    importBtn.addEventListener('click', () => {
+      importInput.click();
+    });
+    importInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        try {
+          const data = JSON.parse(evt.target.result);
+          if (data && (Array.isArray(data.solved) || data.submissions || data.drafts)) {
+            if (data.solved) {
+              arenaState.solved = data.solved;
+              localStorage.setItem('arena-solved', JSON.stringify(data.solved));
+            }
+            if (data.submissions) {
+              arenaState.submissions = data.submissions;
+              localStorage.setItem('arena-submissions', JSON.stringify(data.submissions));
+            }
+            if (data.drafts) {
+              arenaState.drafts = data.drafts;
+              localStorage.setItem('arena-drafts', JSON.stringify(data.drafts));
+            }
+            renderArenaDashboard();
+            showToast('Backup restored successfully! 📤');
+          } else {
+            showToast('Invalid backup file structure.');
+          }
+        } catch (err) {
+          showToast('Error parsing backup file.');
+        }
+      };
+      reader.readAsText(file);
+      importInput.value = ''; // reset input
+    });
+  }
+
   // Copy Solution button listener
   const copySolutionBtn = document.getElementById('arena-copy-solution-btn');
   if (copySolutionBtn) {

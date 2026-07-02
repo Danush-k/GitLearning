@@ -3714,3 +3714,14 @@ code {
     opacity: 1;
   }
 }
+
+/* --- Progress Backup Actions --- */
+.progress-backup-actions button {
+  transition: all var(--transition);
+}
+.progress-backup-actions button:hover {
+  background: rgba(88, 166, 255, 0.1);
+  border-color: var(--clr-accent);
+  color: #fff;
+  transform: translateY(-1px);
+}

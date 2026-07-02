@@ -136,7 +136,11 @@
                     <span id="hard-solved">0/1</span>
                     <span class="ring-label">Hard</span>
                   </div>
-                </div>
+              </div>
+              <div class="progress-backup-actions" style="margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--clr-border); display: flex; gap: 8px;">
+                <button id="arena-export-btn" class="btn btn-outline" style="flex: 1; font-size: 0.75rem; padding: 6px 4px;" title="Backup your progress to a file">Export Backup 📥</button>
+                <button id="arena-import-btn" class="btn btn-outline" style="flex: 1; font-size: 0.75rem; padding: 6px 4px;" title="Restore progress from a file">Import Backup 📤</button>
+                <input type="file" id="arena-import-file-input" style="display: none;" accept=".json" />
               </div>
             </div>
 
