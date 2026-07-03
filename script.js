@@ -4314,6 +4314,12 @@ function renderHeatmap() {
     streakBadge.textContent = `${streak} Day Streak ${streak > 0 ? '🔥' : '❄️'}`;
   }
 
+  const submissionCountsByDay = {};
+  times.forEach(t => {
+    const dayStr = t.toDateString();
+    submissionCountsByDay[dayStr] = (submissionCountsByDay[dayStr] || 0) + 1;
+  });
+
   const cellsHtml = [];
   const oneDayMs = 24 * 60 * 60 * 1000;
   const now = Date.now();
@@ -4321,7 +4327,7 @@ function renderHeatmap() {
   for (let i = 104; i >= 0; i--) {
     const day = new Date(now - i * oneDayMs);
     const dayStr = day.toDateString();
-    const count = times.filter(t => t.toDateString() === dayStr).length;
+    const count = submissionCountsByDay[dayStr] || 0;
 
     let bgClass = 'var(--clr-bg-3)';
     let titleAttr = `${day.toLocaleDateString()}: No solved problems`;
