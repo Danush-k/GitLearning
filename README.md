@@ -16,9 +16,21 @@ A premium, LeetCode-style interactive coding playground containing curated progr
 - CSS3 (custom design system, dark-mode first, glassmorphism)
 - Vanilla JavaScript (dynamic compiler engine, confetti canvas, LocalStorage)
 
+## ⌨️ Keyboard Shortcuts
+
+We've built-in keyboard shortcuts to make coding and navigating fast:
+
+| Shortcut | Action |
+| --- | --- |
+| `Ctrl + Enter` | Run Code (compiles & runs tests locally) |
+| `Ctrl + Shift + Enter` | Submit Code (verifies all testcases & records submission) |
+| `?` (Shift + `/`) | Toggle Keyboard Shortcuts Help modal |
+| `Escape` | Close active popups (Shortcuts or Certificate modal) |
+
 ## 🏁 Getting Started
 
 Just open `index.html` in your web browser — no node modules, build steps, or compilation tools needed!
 
 ---
 Made with ❤️ to make Git mastery fun, easy, and gamified.
+
