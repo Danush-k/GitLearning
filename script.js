@@ -1187,6 +1187,53 @@ M script.js`],
     originalSubject: originalSubject,
     prId: prMatch ? parseInt(prMatch[1], 10) : null
   };
+  }
+  },
+  {
+    id: 16,
+    title: "Git Tag Version Filter",
+    category: "Git Advanced",
+    difficulty: "medium",
+    desc: `<div class="problem-desc-rich">
+<p>Git tags are often used for releases using semantic versioning. Implement a utility to filter a list of release tag strings (e.g. <code>v1.0.0</code>, <code>v2.1.0</code>, etc.) and return only those that are greater than or equal to a specified minimum version.</p>
+<p>Write a function <code>filterGitTags(tags, minVersion)</code> where each tag starts with an optional <code>v</code>. You should sort the matching tags in ascending order of their versions.</p>
+
+<h4>Example</h4>
+<div class="example-block">
+  <strong>Input:</strong> tags = ["v2.0.0", "v1.2.3", "v0.9.0", "v1.5.0"], minVersion = "1.2.3"<br/>
+  <strong>Output:</strong> ["v1.2.3", "v1.5.0", "v2.0.0"]
+</div>
+</div>`,
+    template: `function filterGitTags(tags, minVersion) {
+  // Write your code here
+  
+}`,
+    testCases: [
+      {
+        input: [["v2.0.0", "v1.2.3", "v0.9.0", "v1.5.0"], "1.2.3"],
+        expected: ["v1.2.3", "v1.5.0", "v2.0.0"]
+      },
+      {
+        input: [["v0.1.0", "v0.2.0", "v0.1.5"], "0.1.5"],
+        expected: ["v0.1.5", "v0.2.0"]
+      }
+    ],
+    solutionApproach: "1. Clean prefix 'v' and split versions by dot.\n2. Create a comparison function helper `compareSemVer(a, b)`.\n3. Filter out tags that are less than the `minVersion`.\n4. Sort the remaining tags in ascending order using the helper.",
+    solutionCode: `function filterGitTags(tags, minVersion) {
+  function parseVer(v) {
+    return v.replace(/^v/, '').split('.').map(Number);
+  }
+  function compare(v1, v2) {
+    const p1 = parseVer(v1);
+    const p2 = parseVer(v2);
+    for (let i = 0; i < 3; i++) {
+      if (p1[i] !== p2[i]) return p1[i] - p2[i];
+    }
+    return 0;
+  }
+  return tags
+    .filter(t => compare(t, minVersion) >= 0)
+    .sort(compare);
 }`
   }
 ];
