@@ -4567,6 +4567,19 @@ function loadProblem(id) {
   diffBadge.textContent = problem.difficulty.charAt(0).toUpperCase() + problem.difficulty.slice(1);
   diffBadge.className = `diff-badge ${problem.difficulty}`;
 
+  const bestTimeEl = document.getElementById('active-problem-best-time');
+  if (bestTimeEl) {
+    const solvedTime = arenaState.solvedTimes ? arenaState.solvedTimes[problem.id] : undefined;
+    if (solvedTime !== undefined) {
+      const mins = Math.floor(solvedTime / 60).toString().padStart(2, '0');
+      const secs = (solvedTime % 60).toString().padStart(2, '0');
+      bestTimeEl.textContent = `⏱️ Best: ${mins}:${secs}`;
+      bestTimeEl.style.display = 'inline-block';
+    } else {
+      bestTimeEl.style.display = 'none';
+    }
+  }
+
   // Render details
   document.getElementById('pane-description-content').innerHTML = problem.desc;
   
@@ -5052,6 +5065,13 @@ function executeArenaCode(isSubmit = false) {
       if (oldBest === undefined || stopwatchSeconds < oldBest) {
         arenaState.solvedTimes[problem.id] = stopwatchSeconds;
         localStorage.setItem('arena-solved-times', JSON.stringify(arenaState.solvedTimes));
+        const bestTimeEl = document.getElementById('active-problem-best-time');
+        if (bestTimeEl) {
+          const mins = Math.floor(stopwatchSeconds / 60).toString().padStart(2, '0');
+          const secs = (stopwatchSeconds % 60).toString().padStart(2, '0');
+          bestTimeEl.textContent = `⏱️ Best: ${mins}:${secs}`;
+          bestTimeEl.style.display = 'inline-block';
+        }
       }
     }
     statusBadge.className = 'status-badge success arena-success-animate';
