@@ -5043,6 +5043,17 @@ function executeArenaCode(isSubmit = false) {
   const beatsFill = document.getElementById('beats-bar-fill');
 
   if (allPassed) {
+    stopWorkspaceStopwatch();
+    if (isSubmit) {
+      if (!arenaState.solvedTimes) {
+        arenaState.solvedTimes = {};
+      }
+      const oldBest = arenaState.solvedTimes[problem.id];
+      if (oldBest === undefined || stopwatchSeconds < oldBest) {
+        arenaState.solvedTimes[problem.id] = stopwatchSeconds;
+        localStorage.setItem('arena-solved-times', JSON.stringify(arenaState.solvedTimes));
+      }
+    }
     statusBadge.className = 'status-badge success arena-success-animate';
     statusBadge.textContent = isSubmit ? 'Accepted' : 'Tests Passed';
     if (details) details.classList.add('arena-success-animate');
