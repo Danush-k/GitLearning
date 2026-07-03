@@ -200,11 +200,16 @@
         <div class="split-pane">
           <!-- Left Pane: Problem Description -->
           <div class="pane pane-left">
-            <div class="pane-tabs">
-              <button class="pane-tab active" data-pane-tab="desc">Description</button>
-              <button class="pane-tab" data-pane-tab="submissions">Submissions</button>
-              <button class="pane-tab" data-pane-tab="discussion">Discussion 💬</button>
-              <button class="pane-tab" data-pane-tab="solution">Solution 🔒</button>
+            <div class="pane-tabs" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+              <div style="display: flex; gap: 4px;">
+                <button class="pane-tab active" data-pane-tab="desc">Description</button>
+                <button class="pane-tab" data-pane-tab="submissions">Submissions</button>
+                <button class="pane-tab" data-pane-tab="discussion">Discussion 💬</button>
+                <button class="pane-tab" data-pane-tab="solution">Solution 🔒</button>
+              </div>
+              <div id="workspace-stopwatch" style="margin-right: 12px; font-family: var(--font-mono); font-size: 0.85rem; color: var(--clr-text-muted); display: flex; align-items: center; gap: 6px;" title="Time elapsed solving this challenge">
+                <span>⏱️</span> <span id="stopwatch-display">00:00</span>
+              </div>
             </div>
             <div class="pane-content" id="pane-description-content">
               <!-- Description and Examples here -->
