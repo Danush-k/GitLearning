@@ -4008,9 +4008,11 @@ function initArena() {
         localStorage.removeItem('arena-solved');
         localStorage.removeItem('arena-submissions');
         localStorage.removeItem('arena-drafts');
+        localStorage.removeItem('arena-solved-times');
         arenaState.solved = [];
         arenaState.submissions = {};
         arenaState.drafts = {};
+        arenaState.solvedTimes = {};
         renderArenaDashboard();
         showToast('All progress reset successfully! 🔄');
       }
@@ -4024,7 +4026,8 @@ function initArena() {
       const data = {
         solved: arenaState.solved,
         submissions: arenaState.submissions,
-        drafts: arenaState.drafts
+        drafts: arenaState.drafts,
+        solvedTimes: arenaState.solvedTimes
       };
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data));
       const downloadAnchor = document.createElement('a');
@@ -4051,7 +4054,7 @@ function initArena() {
       reader.onload = function(evt) {
         try {
           const data = JSON.parse(evt.target.result);
-          if (data && (Array.isArray(data.solved) || data.submissions || data.drafts)) {
+          if (data && (Array.isArray(data.solved) || data.submissions || data.drafts || data.solvedTimes)) {
             if (data.solved) {
               arenaState.solved = data.solved;
               localStorage.setItem('arena-solved', JSON.stringify(data.solved));
@@ -4063,6 +4066,10 @@ function initArena() {
             if (data.drafts) {
               arenaState.drafts = data.drafts;
               localStorage.setItem('arena-drafts', JSON.stringify(data.drafts));
+            }
+            if (data.solvedTimes) {
+              arenaState.solvedTimes = data.solvedTimes;
+              localStorage.setItem('arena-solved-times', JSON.stringify(data.solvedTimes));
             }
             renderArenaDashboard();
             showToast('Backup restored successfully! 📤');
