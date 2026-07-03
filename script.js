@@ -1130,6 +1130,65 @@ M script.js`],
   };
 }`
   }
+  },
+  {
+    id: 15,
+    title: "Git Revert Message Parser",
+    category: "Git Basics",
+    difficulty: "easy",
+    desc: `<div class="problem-desc-rich">
+<p>When you revert a commit in Git, the default commit message starts with <code>Revert "original commit subject"</code>. If the reverted commit was a Pull Request merge, it might also have a PR reference at the end of the subject line (e.g. <code>(#42)</code>).</p>
+<p>Write a function <code>parseRevertMessage(message)</code> that parses a revert commit message and returns an object with details. If it is NOT a revert commit message, return <code>null</code>.</p>
+<p>Returned object structure:</p>
+<ul>
+  <li><code>isRevert</code>: <code>true</code></li>
+  <li><code>originalSubject</code>: The subject of the reverted commit.</li>
+  <li><code>prId</code>: The numerical PR ID if present at the end of the subject, otherwise <code>null</code>.</li>
+</ul>
+
+<h4>Example 1</h4>
+<div class="example-block">
+  <strong>Input:</strong> message = 'Revert "feat: add payment gateway (#102)"'<br/>
+  <strong>Output:</strong> { isRevert: true, originalSubject: "feat: add payment gateway (#102)", prId: 102 }
+</div>
+
+<h4>Example 2</h4>
+<div class="example-block">
+  <strong>Input:</strong> message = 'fix: routing issues'<br/>
+  <strong>Output:</strong> null
+</div>
+</div>`,
+    template: `function parseRevertMessage(message) {
+  // Write your code here
+  
+}`,
+    testCases: [
+      {
+        input: ['Revert "feat: add payment gateway (#102)"'],
+        expected: { isRevert: true, originalSubject: "feat: add payment gateway (#102)", prId: 102 }
+      },
+      {
+        input: ['Revert "fix: homepage layout error"'],
+        expected: { isRevert: true, originalSubject: "fix: homepage layout error", prId: null }
+      },
+      {
+        input: ['initial commit'],
+        expected: null
+      }
+    ],
+    solutionApproach: "1. Check if the message starts with 'Revert \"' and ends with '\"'.\n2. Extract the inner content between the double quotes.\n3. Search for PR ID pattern like `(#123)` at the end of that inner content.\n4. Return the parsed fields.",
+    solutionCode: `function parseRevertMessage(message) {
+  const match = message.match(/^Revert "(.+)"$/);
+  if (!match) return null;
+  const originalSubject = match[1];
+  const prMatch = originalSubject.match(/\\(#(\\d+)\\)$/);
+  return {
+    isRevert: true,
+    originalSubject: originalSubject,
+    prId: prMatch ? parseInt(prMatch[1], 10) : null
+  };
+}`
+  }
 ];
 
 // ─────────────────────────────────────────────
