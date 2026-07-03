@@ -4526,6 +4526,10 @@ function updateArenaStats() {
 let stopwatchInterval = null;
 let stopwatchSeconds = 0;
 
+/**
+ * Starts the stopwatch timer for the current coding challenge.
+ * Resets the elapsed time to 0 and updates the UI display every second.
+ */
 function startWorkspaceStopwatch() {
   if (stopwatchInterval) clearInterval(stopwatchInterval);
   stopwatchSeconds = 0;
@@ -4542,6 +4546,9 @@ function startWorkspaceStopwatch() {
   }, 1000);
 }
 
+/**
+ * Stops the stopwatch timer when the challenge is completed or exited.
+ */
 function stopWorkspaceStopwatch() {
   if (stopwatchInterval) {
     clearInterval(stopwatchInterval);
