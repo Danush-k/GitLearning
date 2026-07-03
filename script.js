@@ -3804,7 +3804,8 @@ let arenaState = {
   search: '',
   solved: [],
   submissions: {},
-  drafts: {}
+  drafts: {},
+  solvedTimes: {}
 };
 
 function initArena() {
@@ -3819,6 +3820,10 @@ function initArena() {
   const savedDrafts = localStorage.getItem('arena-drafts');
   if (savedDrafts) {
     arenaState.drafts = JSON.parse(savedDrafts);
+  }
+  const savedSolvedTimes = localStorage.getItem('arena-solved-times');
+  if (savedSolvedTimes) {
+    arenaState.solvedTimes = JSON.parse(savedSolvedTimes);
   }
 
   // Setup interactive editor events
@@ -4505,11 +4510,38 @@ function updateArenaStats() {
   });
 }
 
+let stopwatchInterval = null;
+let stopwatchSeconds = 0;
+
+function startWorkspaceStopwatch() {
+  if (stopwatchInterval) clearInterval(stopwatchInterval);
+  stopwatchSeconds = 0;
+  const display = document.getElementById('stopwatch-display');
+  if (display) display.textContent = '00:00';
+  
+  stopwatchInterval = setInterval(() => {
+    stopwatchSeconds++;
+    if (display) {
+      const mins = Math.floor(stopwatchSeconds / 60).toString().padStart(2, '0');
+      const secs = (stopwatchSeconds % 60).toString().padStart(2, '0');
+      display.textContent = `${mins}:${secs}`;
+    }
+  }, 1000);
+}
+
+function stopWorkspaceStopwatch() {
+  if (stopwatchInterval) {
+    clearInterval(stopwatchInterval);
+    stopwatchInterval = null;
+  }
+}
+
 function loadProblem(id) {
   const problem = arenaProblemsData.find(p => p.id === id);
   if (!problem) return;
 
   arenaState.activeProblem = problem;
+  startWorkspaceStopwatch();
 
   // Toggle views
   document.getElementById('arena-dashboard').style.display = 'none';
