@@ -5871,10 +5871,11 @@ function triggerConfetti() {
   let width = canvas.width = window.innerWidth;
   let height = canvas.height = window.innerHeight;
 
-  window.addEventListener('resize', () => {
+  const handleResize = () => {
     width = canvas.width = window.innerWidth;
     height = canvas.height = window.innerHeight;
-  });
+  };
+  window.addEventListener('resize', handleResize);
 
   const colors = ['#f78166', '#58a6ff', '#3fb950', '#d29922', '#a371f7', '#ff6b6b', '#4ecdc4'];
   const particles = [];
@@ -5924,6 +5925,7 @@ function triggerConfetti() {
     if (active) {
       animationFrameId = requestAnimationFrame(update);
     } else {
+      window.removeEventListener('resize', handleResize);
       if (document.body.contains(canvas)) {
         document.body.removeChild(canvas);
       }
