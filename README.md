@@ -16,7 +16,15 @@ A premium, LeetCode-style interactive coding playground containing curated progr
 - CSS3 (custom design system, dark-mode first, glassmorphism)
 - Vanilla JavaScript (dynamic compiler engine, confetti canvas, LocalStorage)
 
+## 📂 Repository Structure
+
+- `index.html` — Main layout and UI structure for the GitCode Arena application.
+- `style.css` — Modern glassmorphic styles, custom themes, and animations.
+- `script.js` — Core compiler engine, challenge database, statistics tracker, and interactivity.
+- `README.md` — Project documentation and setup guidelines.
+
 ## ⌨️ Keyboard Shortcuts
+
 
 We've built-in keyboard shortcuts to make coding and navigating fast:
 
