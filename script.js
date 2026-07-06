@@ -1129,7 +1129,6 @@ M script.js`],
     prs: prs
   };
 }`
-  }
   },
   {
     id: 15,
@@ -1187,7 +1186,7 @@ M script.js`],
     originalSubject: originalSubject,
     prId: prMatch ? parseInt(prMatch[1], 10) : null
   };
-  }
+}`
   },
   {
     id: 16,
@@ -1234,6 +1233,98 @@ M script.js`],
   return tags
     .filter(t => compare(t, minVersion) >= 0)
     .sort(compare);
+}`
+  },
+  {
+    id: 17,
+    title: "Git Cherry-Pick Conflict Simulator",
+    category: "Git Advanced",
+    difficulty: "hard",
+    desc: `<div class="problem-desc-rich">
+<p>In Git, cherry-picking copies changes from a specific commit to another branch. Implement a cherry-pick simulation function <code>simulateCherryPick(sourceCommit, targetFiles)</code>.</p>
+<p>You are given:</p>
+<ul>
+  <li><code>sourceCommit</code>: An object with <code>id</code> (hash string) and <code>changes</code> (an object where keys are filenames and values are the new contents).</li>
+  <li><code>targetFiles</code>: An object representing the current state of files in the destination branch (keys are filenames and values are the contents).</li>
+</ul>
+<p>For each file in the source commit changes:</p>
+<ul>
+  <li>If the file does not exist in <code>targetFiles</code>, create/add it with the source commit content.</li>
+  <li>If the file exists and its content matches the source commit change content, no change/conflict occurs.</li>
+  <li>If the file exists and its content differs from the source commit content, a merge conflict occurs. In this case, wrap the contents in conflict markers:</li>
+</ul>
+<pre><code>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+[target content]
+=======
+[source content]
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; [commit_id]</code></pre>
+<p>Return an object with:</p>
+<ul>
+  <li><code>success</code>: <code>true</code> if no conflicts occur, <code>false</code> if there is at least one conflict.</li>
+  <li><code>files</code>: The final state of all files in the destination branch.</li>
+</ul>
+
+<h4>Example</h4>
+<div class="example-block">
+  <strong>Input:</strong><br/>
+  <code>sourceCommit = { id: "a7b3c2", changes: { "main.js": "console.log('hello');" } }</code><br/>
+  <code>targetFiles = { "main.js": "console.log('world');" }</code><br/>
+  <strong>Output:</strong><br/>
+  <code>{ success: false, files: { "main.js": "&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD\\nconsole.log('world');\\n=======\\nconsole.log('hello');\\n&gt;&gt;&gt;&gt;&gt;&gt;&gt; a7b3c2" } }</code>
+</div>
+</div>`,
+    template: `function simulateCherryPick(sourceCommit, targetFiles) {
+  // Write your code here
+  
+}`,
+    testCases: [
+      {
+        input: [
+          { id: "c1", changes: { "README.md": "New Info" } },
+          { "README.md": "Old Info" }
+        ],
+        expected: {
+          success: false,
+          files: { "README.md": "<<<<<<< HEAD\nOld Info\n=======\nNew Info\n>>>>>>> c1" }
+        }
+      },
+      {
+        input: [
+          { id: "c2", changes: { "utils.js": "const sum = (a,b) => a+b;" } },
+          {}
+        ],
+        expected: {
+          success: true,
+          files: { "utils.js": "const sum = (a,b) => a+b;" }
+        }
+      },
+      {
+        input: [
+          { id: "c3", changes: { "index.html": "<h1>Test</h1>" } },
+          { "index.html": "<h1>Test</h1>" }
+        ],
+        expected: {
+          success: true,
+          files: { "index.html": "<h1>Test</h1>" }
+        }
+      }
+    ],
+    solutionApproach: "1. Clone targetFiles to avoid modifying input.\n2. Initialize success = true.\n3. Loop through keys in sourceCommit.changes.\n4. For each key: if the file exists and targetFiles[key] !== changes[key], set success = false and wrap with conflict markers (HEAD vs sourceCommit.id).\n5. If the file doesn't exist or matches, overwrite/set targetFiles[key] to changes[key].\n6. Return { success, files: targetFiles }.",
+    solutionCode: `function simulateCherryPick(sourceCommit, targetFiles) {
+  const files = { ...targetFiles };
+  let success = true;
+  for (const filename in sourceCommit.changes) {
+    const sourceContent = sourceCommit.changes[filename];
+    if (filename in files) {
+      if (files[filename] !== sourceContent) {
+        success = false;
+        files[filename] = \`<<<<<<< HEAD\\n\${files[filename]}\\n=======\\n\${sourceContent}\\n>>>>>>> \${sourceCommit.id}\`;
+      }
+    } else {
+      files[filename] = sourceContent;
+    }
+  }
+  return { success, files };
 }`
   }
 ];
@@ -4649,7 +4740,6 @@ function loadProblem(id) {
   if (customWrapper) customWrapper.style.display = 'none';
 
   // Solution locks update
-  const isSolved = arenaState.solved.includes(problem.id);
   const lockOverlay = document.getElementById('solution-locked-overlay');
   const unlockedContent = document.getElementById('solution-unlocked-content');
   const unlockBtn = document.getElementById('unlock-solution-btn');
