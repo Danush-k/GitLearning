@@ -37,7 +37,13 @@ We've built-in keyboard shortcuts to make coding and navigating fast:
 
 ## 🏁 Getting Started
 
-Just open `index.html` in your web browser — no node modules, build steps, or compilation tools needed!
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/Danush-k/GitLearning.git
+   cd GitLearning
+   ```
+2. **Launch the application:**
+   Simply open `index.html` in your web browser (no `node_modules`, build tools, or complex configurations required).
 
 ---
 Made with ❤️ to make Git mastery fun, easy, and gamified.
