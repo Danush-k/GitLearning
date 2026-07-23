@@ -25,7 +25,6 @@ A premium, LeetCode-style interactive coding playground containing curated progr
 
 ## ⌨️ Keyboard Shortcuts
 
-
 We've built-in keyboard shortcuts to make coding and navigating fast:
 
 | Shortcut | Action |
@@ -46,5 +45,5 @@ We've built-in keyboard shortcuts to make coding and navigating fast:
    Simply open `index.html` in your web browser (no `node_modules`, build tools, or complex configurations required).
 
 ---
-Made with ❤️ to make Git mastery fun, easy, and gamified.
 
+Made with ❤️ to make Git mastery fun, easy, and gamified.
